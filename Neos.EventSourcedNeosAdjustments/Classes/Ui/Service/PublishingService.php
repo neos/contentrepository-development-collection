@@ -18,17 +18,10 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\RebaseWo
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Changes\ChangeFinder;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Factory\NodeFactory;
-use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\ContentRepository\Exception\WorkspaceException;
-use Neos\ContentRepository\Service\Utility\NodePublishingDependencySolver;
 
 /**
  * A generic ContentRepository Publishing Service
@@ -74,7 +67,7 @@ class PublishingService
     {
         $workspace = $this->workspaceFinder->findOneByName($workspaceName);
         if ($workspace->getBaseWorkspaceName() === null) {
-            return array();
+            return [];
         }
         $changes = $this->changeFinder->findByContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
         $unpublishedNodes = [];
@@ -125,5 +118,4 @@ class PublishingService
         );
         $this->workspaceCommandHandler->handlePublishWorkspace($command);
     }
-
 }

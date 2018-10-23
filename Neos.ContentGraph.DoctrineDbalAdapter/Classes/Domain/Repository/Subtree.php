@@ -8,10 +8,8 @@
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
-
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-
 
 /**
  * Class Subtree
@@ -34,7 +32,8 @@ class Subtree implements SubtreeInterface
      */
     protected $children = [];
 
-    public function __construct(int $level, NodeInterface $node = null) {
+    public function __construct(int $level, NodeInterface $node = null)
+    {
         $this->level = $level;
         $this->node = $node;
     }

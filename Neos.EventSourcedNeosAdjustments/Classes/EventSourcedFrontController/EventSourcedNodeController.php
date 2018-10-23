@@ -261,7 +261,6 @@ class EventSourcedNodeController extends ActionController
         foreach ($subtree->getChildren() as $childSubtree) {
             self::fillCacheInternal($childSubtree, $currentDocumentNode, $nodePathOfDocumentNode, $subgraph->getInMemoryCache());
         }
-
     }
 
     private static function fillCacheInternal(SubtreeInterface $subtree, NodeInterface $parentNode, NodePath $parentNodePath, InMemoryCache $inMemoryCache)
@@ -289,6 +288,4 @@ class EventSourcedNodeController extends ActionController
         // TODO Explain why this is safe (Content can not contain other documents)
         $allChildNodesByNodeIdentifierCache->add($node->getNodeIdentifier(), $allChildNodes);
     }
-
-
 }

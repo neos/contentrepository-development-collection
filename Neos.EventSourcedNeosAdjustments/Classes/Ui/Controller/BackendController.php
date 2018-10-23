@@ -15,7 +15,6 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\ContextParameters;
@@ -200,7 +199,8 @@ class BackendController extends ActionController
      */
     protected $contentDimensionSource;
 
-    protected function findDefaultDimensionSpacePoint(): DimensionSpacePoint {
+    protected function findDefaultDimensionSpacePoint(): DimensionSpacePoint
+    {
         $coordinates = [];
         foreach ($this->contentDimensionSource->getContentDimensionsOrderedByPriority() as $dimension) {
             $coordinates[(string)$dimension->getIdentifier()] = (string)$dimension->getDefaultValue();

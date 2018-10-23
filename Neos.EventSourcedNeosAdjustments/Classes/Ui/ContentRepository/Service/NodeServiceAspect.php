@@ -53,5 +53,4 @@ class NodeServiceAspect
         // TODO: Context Parameter Handling
         return new TraversableNode($node, $subgraph, new ContextParameters(new \DateTimeImmutable(), [], true, false));
     }
-
 }

@@ -26,7 +26,6 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode
  */
 final class TraversableNode implements TraversableNodeInterface, ProtectedContextAwareInterface
 {
-
     use NodeInterfaceProxy;
 
     /**
@@ -94,7 +93,8 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
     /**
      * @return TraversableNode[]
      */
-    public function findReferencingNodes(): array {
+    public function findReferencingNodes(): array
+    {
         $nodes = $this->subgraph->findReferencingNodes($this->node->getNodeIdentifier());
 
         $traversableNodes = [];

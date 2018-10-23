@@ -14,7 +14,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Changes;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * Change Read Model
@@ -54,8 +53,7 @@ class Change
         NodeIdentifier $nodeIdentifier,
         bool $changed = false,
         bool $moved = false
-    )
-    {
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->changed = $changed;
