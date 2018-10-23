@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Command;
 
 /*
@@ -20,15 +21,15 @@ use Neos\Flow\Cli\CommandController;
  */
 class ContentRepositoryMigrateCommandController extends CommandController
 {
-
     /**
      * @Flow\Inject
+     *
      * @var ContentRepositoryExportService
      */
     protected $contentRepositoryExportService;
 
     /**
-     * Run a CR export
+     * Run a CR export.
      */
     public function runCommand()
     {

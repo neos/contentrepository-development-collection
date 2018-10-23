@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Fusion;
 
 /*
@@ -21,24 +22,26 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 
 /**
- * Create a link to a node
+ * Create a link to a node.
  */
 class NodeUriImplementation extends AbstractFusionObject
 {
     /**
      * @Flow\Inject
+     *
      * @var NodeAddressFactory
      */
     protected $nodeAddressFactory;
 
     /**
      * @Flow\Inject
+     *
      * @var NodeSiteResolvingService
      */
     protected $nodeSiteResolvingService;
 
     /**
-     * A node object or a string node path or NULL to resolve the current document node
+     * A node object or a string node path or NULL to resolve the current document node.
      *
      * @return mixed
      */
@@ -48,7 +51,7 @@ class NodeUriImplementation extends AbstractFusionObject
     }
 
     /**
-     * The requested format, for example "html"
+     * The requested format, for example "html".
      *
      * @return string
      */
@@ -58,17 +61,17 @@ class NodeUriImplementation extends AbstractFusionObject
     }
 
     /**
-     * The anchor to be appended to the URL
+     * The anchor to be appended to the URL.
      *
      * @return string
      */
     public function getSection()
     {
-        return (string)$this->fusionValue('section');
+        return (string) $this->fusionValue('section');
     }
 
     /**
-     * Additional query parameters that won't be prefixed like $arguments (overrule $arguments)
+     * Additional query parameters that won't be prefixed like $arguments (overrule $arguments).
      *
      * @return array
      */
@@ -78,7 +81,7 @@ class NodeUriImplementation extends AbstractFusionObject
     }
 
     /**
-     * Arguments to be removed from the URI. Only active if addQueryString = TRUE
+     * Arguments to be removed from the URI. Only active if addQueryString = TRUE.
      *
      * @return array
      */
@@ -88,23 +91,23 @@ class NodeUriImplementation extends AbstractFusionObject
     }
 
     /**
-     * If TRUE, the current query parameters will be kept in the URI
+     * If TRUE, the current query parameters will be kept in the URI.
      *
-     * @return boolean
+     * @return bool
      */
     public function getAddQueryString()
     {
-        return (boolean)$this->fusionValue('addQueryString');
+        return (bool) $this->fusionValue('addQueryString');
     }
 
     /**
-     * If TRUE, an absolute URI is rendered
+     * If TRUE, an absolute URI is rendered.
      *
-     * @return boolean
+     * @return bool
      */
     public function isAbsolute()
     {
-        return (boolean)$this->fusionValue('absolute');
+        return (bool) $this->fusionValue('absolute');
     }
 
     /**
@@ -128,8 +131,9 @@ class NodeUriImplementation extends AbstractFusionObject
     /**
      * Render the Uri.
      *
-     * @return string The rendered URI or NULL if no URI could be resolved for the given node
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
+     *
+     * @return string The rendered URI or NULL if no URI could be resolved for the given node
      */
     public function evaluate()
     {
@@ -161,7 +165,7 @@ class NodeUriImplementation extends AbstractFusionObject
         return $uriBuilder->uriFor(
             'show',
             [
-                'node' => $nodeAddress
+                'node' => $nodeAddress,
             ],
             'Frontend\\Node',
             'Neos.Neos'

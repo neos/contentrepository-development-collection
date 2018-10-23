@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
 /*
@@ -17,11 +18,10 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\ReferencePosition;
 use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * Node was moved after, into or before another node event
+ * Node was moved after, into or before another node event.
  */
 final class NodeWasMoved implements EventInterface, CopyableAcrossContentStreamsInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -46,9 +46,9 @@ final class NodeWasMoved implements EventInterface, CopyableAcrossContentStreams
      * NodeWasMoved constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
-     * @param ReferencePosition $referencePosition
-     * @param NodeIdentifier $referenceNodeIdentifier
+     * @param NodeIdentifier          $nodeIdentifier
+     * @param ReferencePosition       $referencePosition
+     * @param NodeIdentifier          $referenceNodeIdentifier
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -96,11 +96,12 @@ final class NodeWasMoved implements EventInterface, CopyableAcrossContentStreams
 
     /**
      * @param ContentStreamIdentifier $targetContentStream
+     *
      * @return NodeWasMoved
      */
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
     {
-        return new NodeWasMoved(
+        return new self(
             $targetContentStream,
             $this->nodeIdentifier,
             $this->referencePosition,

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Exception;
 
 /*
@@ -15,12 +16,10 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\Flow\Exception;
 
 /**
- * An node not found exception
- *
+ * An node not found exception.
  */
 class NodeNotFoundException extends Exception
 {
-
     /**
      * @var NodeIdentifier
      */
@@ -29,11 +28,11 @@ class NodeNotFoundException extends Exception
     /**
      * NodeNotFoundException constructor.
      *
-     * @param string $message
-     * @param int $code
+     * @param string         $message
+     * @param int            $code
      * @param NodeIdentifier $nodeIdentifier
      */
-    public function __construct($message = "", $code = 0, NodeIdentifier $nodeIdentifier)
+    public function __construct($message, $code, NodeIdentifier $nodeIdentifier)
     {
         parent::__construct($message, $code);
         $this->nodeIdentifier = $nodeIdentifier;

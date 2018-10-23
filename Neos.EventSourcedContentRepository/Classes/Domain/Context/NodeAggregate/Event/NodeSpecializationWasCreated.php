@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 
 /*
@@ -17,11 +18,10 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * A node specialization was created
+ * A node specialization was created.
  */
 final class NodeSpecializationWasCreated implements EventInterface, CopyableAcrossContentStreamsInterface
 {
@@ -55,14 +55,13 @@ final class NodeSpecializationWasCreated implements EventInterface, CopyableAcro
      */
     protected $specializationVisibility;
 
-
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $sourceDimensionSpacePoint
-     * @param NodeIdentifier $specializationIdentifier
-     * @param DimensionSpacePoint $specializationLocation
-     * @param DimensionSpacePointSet $specializationVisibility
+     * @param DimensionSpacePoint     $sourceDimensionSpacePoint
+     * @param NodeIdentifier          $specializationIdentifier
+     * @param DimensionSpacePoint     $specializationLocation
+     * @param DimensionSpacePointSet  $specializationVisibility
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -79,7 +78,6 @@ final class NodeSpecializationWasCreated implements EventInterface, CopyableAcro
         $this->specializationLocation = $specializationLocation;
         $this->specializationVisibility = $specializationVisibility;
     }
-
 
     /**
      * @return ContentStreamIdentifier
@@ -129,14 +127,14 @@ final class NodeSpecializationWasCreated implements EventInterface, CopyableAcro
         return $this->specializationVisibility;
     }
 
-
     /**
      * @param ContentStreamIdentifier $targetContentStream
+     *
      * @return NodeSpecializationWasCreated
      */
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): NodeSpecializationWasCreated
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
     {
-        return new NodeSpecializationWasCreated(
+        return new self(
             $targetContentStream,
             $this->nodeAggregateIdentifier,
             $this->sourceDimensionSpacePoint,

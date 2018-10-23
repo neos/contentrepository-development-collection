@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command;
 
 /*
@@ -11,14 +12,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
 
 /**
- * Publish a workspace
+ * Publish a workspace.
  */
 final class PublishWorkspace
 {
@@ -29,6 +26,7 @@ final class PublishWorkspace
 
     /**
      * PublishWorkspace constructor.
+     *
      * @param WorkspaceName $workspaceName
      */
     public function __construct(WorkspaceName $workspaceName)

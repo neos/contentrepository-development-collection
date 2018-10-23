@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
 /*
@@ -21,22 +22,21 @@ final class NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy imp
 {
     const STRATEGY_DELETE = 'delete';
 
-
     /**
      * @var string
      */
     private $strategy;
 
-
     /**
      * @param string $strategy
+     *
      * @throws NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyUnknown
      */
     public function __construct(string $strategy)
     {
         if ($strategy !== self::STRATEGY_DELETE) {
             throw new NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyUnknown(
-                'Given strategy "' . $strategy . '" is not known for resolving child node type constraint conflicts when changing a node type.', 15200134492
+                'Given strategy "'.$strategy.'" is not known for resolving child node type constraint conflicts when changing a node type.', 15200134492
             );
         }
         $this->strategy = $strategy;

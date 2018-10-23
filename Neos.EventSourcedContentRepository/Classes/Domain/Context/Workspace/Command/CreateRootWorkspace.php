@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command;
 
 /*
@@ -20,11 +21,10 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
 
 /**
- * Create a root workspace
+ * Create a root workspace.
  */
 final class CreateRootWorkspace
 {
-
     /**
      * @var WorkspaceName
      */
@@ -62,13 +62,14 @@ final class CreateRootWorkspace
 
     /**
      * CreateRootWorkspace constructor.
-     * @param WorkspaceName $workspaceName
-     * @param WorkspaceTitle $workspaceTitle
-     * @param WorkspaceDescription $workspaceDescription
-     * @param UserIdentifier $initiatingUserIdentifier
+     *
+     * @param WorkspaceName           $workspaceName
+     * @param WorkspaceTitle          $workspaceTitle
+     * @param WorkspaceDescription    $workspaceDescription
+     * @param UserIdentifier          $initiatingUserIdentifier
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $rootNodeIdentifier
-     * @param NodeTypeName $rootNodeTypeName
+     * @param NodeIdentifier          $rootNodeIdentifier
+     * @param NodeTypeName            $rootNodeTypeName
      */
     public function __construct(WorkspaceName $workspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $rootNodeIdentifier, NodeTypeName $rootNodeTypeName)
     {
@@ -80,7 +81,6 @@ final class CreateRootWorkspace
         $this->rootNodeIdentifier = $rootNodeIdentifier;
         $this->rootNodeTypeName = $rootNodeTypeName;
     }
-
 
     /**
      * @return WorkspaceName
@@ -137,5 +137,4 @@ final class CreateRootWorkspace
     {
         return $this->rootNodeTypeName;
     }
-
 }

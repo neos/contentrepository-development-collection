@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
 
 /*
@@ -12,7 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  */
 
 /**
- * Description for a workspace
+ * Description for a workspace.
  */
 class WorkspaceDescription implements \JsonSerializable
 {

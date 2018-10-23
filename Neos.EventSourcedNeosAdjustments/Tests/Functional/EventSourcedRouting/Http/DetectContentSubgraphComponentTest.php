@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Tests\Functional\EventSourcedRouting\Http;
 
 /*
@@ -14,13 +15,13 @@ namespace Neos\EventSourcedNeosAdjustments\Tests\Functional\EventSourcedRouting\
 use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\BasicContentDimensionResolutionMode;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\DetectContentSubgraphComponent;
 use Neos\Flow\Http;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\RoutingComponent;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\BasicContentDimensionResolutionMode;
-use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\DetectContentSubgraphComponent;
 
 class DetectContentSubgraphComponentTest extends FunctionalTestCase
 {
@@ -45,83 +46,83 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
             'market' => new Dimension\ContentDimension(
                 new Dimension\ContentDimensionIdentifier('market'),
                 [
-                    $world->getValue() => $world,
+                    $world->getValue()        => $world,
                     $greatBritain->getValue() => $greatBritain,
-                    $germany->getValue() => $germany
+                    $germany->getValue()      => $germany,
                 ],
                 $world,
                 [
                     new Dimension\ContentDimensionValueVariationEdge($greatBritain, $world),
-                    new Dimension\ContentDimensionValueVariationEdge($germany, $world)
+                    new Dimension\ContentDimensionValueVariationEdge($germany, $world),
                 ],
                 [
                     'resolution' => [
-                        'mode' => BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTSUFFIX
-                    ]
+                        'mode' => BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTSUFFIX,
+                    ],
                 ]
             ),
             'seller' => new Dimension\ContentDimension(
                 new Dimension\ContentDimensionIdentifier('seller'),
                 [
                     $defaultSeller->getValue() => $defaultSeller,
-                    $sellerA->getValue() => $sellerA
+                    $sellerA->getValue()       => $sellerA,
                 ],
                 $defaultSeller,
                 [
-                    new Dimension\ContentDimensionValueVariationEdge($sellerA, $defaultSeller)
+                    new Dimension\ContentDimensionValueVariationEdge($sellerA, $defaultSeller),
                 ],
                 [
                     'resolution' => [
                         'options' => [
-                            'allowEmptyValue' => true
-                        ]
-                    ]
+                            'allowEmptyValue' => true,
+                        ],
+                    ],
                 ]
             ),
             'channel' => new Dimension\ContentDimension(
                 new Dimension\ContentDimensionIdentifier('channel'),
                 [
                     $defaultChannel->getValue() => $defaultChannel,
-                    $channelA->getValue() => $channelA
+                    $channelA->getValue()       => $channelA,
                 ],
                 $defaultChannel,
                 [
-                    new Dimension\ContentDimensionValueVariationEdge($channelA, $defaultChannel)
+                    new Dimension\ContentDimensionValueVariationEdge($channelA, $defaultChannel),
                 ],
                 [
                     'resolution' => [
                         'options' => [
-                            'allowEmptyValue' => true
-                        ]
-                    ]
+                            'allowEmptyValue' => true,
+                        ],
+                    ],
                 ]
             ),
             'language' => new Dimension\ContentDimension(
                 new Dimension\ContentDimensionIdentifier('language'),
                 [
                     $english->getValue() => $english,
-                    $german->getValue() => $german
+                    $german->getValue()  => $german,
                 ],
                 $english,
                 [],
                 [
                     'resolution' => [
-                        'mode' => BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTPREFIX,
+                        'mode'    => BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTPREFIX,
                         'options' => [
-                            'allowEmptyValue' => true
-                        ]
-                    ]
+                            'allowEmptyValue' => true,
+                        ],
+                    ],
                 ]
-            )
+            ),
         ];
 
         $dimensionPresetSource = $this->objectManager->get(Dimension\ContentDimensionSourceInterface::class);
         $this->inject($dimensionPresetSource, 'contentDimensions', $contentDimensions);
     }
 
-
     /**
      * @test
+     *
      * @throws InvalidContentDimensionValueDetectorException
      */
     public function handleAddsCorrectSubgraphIdentityToComponentContextWithAllDimensionValuesGivenLiveWorkspaceAndDefaultDelimiter()
@@ -139,10 +140,10 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
         $this->assertSame(1, $routeParameters->getValue('uriPathSegmentOffset'));
 
         $expectedDimensionSpacePoint = new DimensionSpacePoint([
-            'market' => 'WORLD',
-            'seller' => 'sellerA',
-            'channel' => 'channelA',
-            'language' => 'de'
+            'market'   => 'WORLD',
+            'seller'   => 'sellerA',
+            'channel'  => 'channelA',
+            'language' => 'de',
         ]);
         $this->assertEquals(
             $expectedDimensionSpacePoint,
@@ -169,10 +170,10 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
         $this->assertSame(1, $routeParameters->getValue('uriPathSegmentOffset'));
 
         $expectedDimensionSpacePoint = new DimensionSpacePoint([
-            'market' => 'WORLD',
-            'seller' => 'sellerA',
-            'channel' => 'channelA',
-            'language' => 'de'
+            'market'   => 'WORLD',
+            'seller'   => 'sellerA',
+            'channel'  => 'channelA',
+            'language' => 'de',
         ]);
         $this->assertEquals(
             $expectedDimensionSpacePoint,
@@ -182,6 +183,7 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
 
     /**
      * @test
+     *
      * @throws InvalidContentDimensionValueDetectorException
      */
     public function handleAddsCorrectSubgraphIdentityToComponentContextWithMinimalDimensionValuesGivenLiveWorkspaceAndModifiedDelimiter()
@@ -199,10 +201,10 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
         $this->assertSame(0, $routeParameters->getValue('uriPathSegmentOffset'));
 
         $expectedDimensionSpacePoint = new DimensionSpacePoint([
-            'market' => 'WORLD',
-            'seller' => 'default',
-            'channel' => 'default',
-            'language' => 'en'
+            'market'   => 'WORLD',
+            'seller'   => 'default',
+            'channel'  => 'default',
+            'language' => 'en',
         ]);
         $this->assertEquals(
             $expectedDimensionSpacePoint,
@@ -212,6 +214,7 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
 
     /**
      * @test
+     *
      * @throws InvalidContentDimensionValueDetectorException
      */
     public function handleAddsCorrectSubgraphIdentityToComponentContextWithDimensionValuesGivenButOverriddenViaContextPath()
@@ -229,10 +232,10 @@ class DetectContentSubgraphComponentTest extends FunctionalTestCase
         $this->assertSame(1, $routeParameters->getValue('uriPathSegmentOffset'));
 
         $expectedDimensionSpacePoint = new DimensionSpacePoint([
-            'market' => 'GB',
-            'seller' => 'default',
-            'channel' => 'default',
-            'language' => 'en'
+            'market'   => 'GB',
+            'seller'   => 'default',
+            'channel'  => 'default',
+            'language' => 'en',
         ]);
         $this->assertEquals(
             $expectedDimensionSpacePoint,

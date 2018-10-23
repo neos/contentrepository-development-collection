@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionDetection\Exception;
 
 /*
@@ -14,7 +15,7 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimen
 use Neos\Neos\Exception;
 
 /**
- * An "invalid dimension value detector" exception
+ * An "invalid dimension value detector" exception.
  */
 class InvalidContentDimensionValueDetectorException extends Exception
 {

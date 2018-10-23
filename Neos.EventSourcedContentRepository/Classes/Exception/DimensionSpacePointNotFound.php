@@ -14,7 +14,7 @@ namespace Neos\EventSourcedContentRepository\Exception;
 use Neos\Flow\Exception;
 
 /**
- * A dimension space point was not found exception
+ * A dimension space point was not found exception.
  */
 class DimensionSpacePointNotFound extends Exception
 {

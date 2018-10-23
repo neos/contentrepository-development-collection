@@ -11,17 +11,14 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
-use Neos\Flow\Annotations as Flow;
 
 /**
- * A read model to read node aggregates from the projection
+ * A read model to read node aggregates from the projection.
  */
 class NodeAggregate
 {
-
     /**
      * @var NodeAggregateIdentifier
      */
@@ -36,7 +33,7 @@ class NodeAggregate
      * NodeAggregate constructor.
      *
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param NodeTypeName $nodeTypeName
+     * @param NodeTypeName            $nodeTypeName
      */
     public function __construct(NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $nodeTypeName)
     {
@@ -46,6 +43,7 @@ class NodeAggregate
 
     /**
      * @param array $databaseRow
+     *
      * @return static
      */
     public static function fromDatabaseRow(array $databaseRow)

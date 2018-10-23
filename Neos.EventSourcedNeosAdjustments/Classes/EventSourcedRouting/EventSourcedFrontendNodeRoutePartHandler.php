@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting;
 
 /*
@@ -11,29 +12,29 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\HierarchyTraversalDirection;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\HierarchyTraversalDirection;
+use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentSubgraphUriProcessor;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Routing\WorkspaceNameAndDimensionSpacePointForUriSerialization;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\ThrowableStorageInterface;
+use Neos\Flow\Mvc\Routing\Dto\MatchResult;
 use Neos\Flow\Mvc\Routing\Dto\ResolveResult;
 use Neos\Flow\Mvc\Routing\Dto\RouteTags;
 use Neos\Flow\Mvc\Routing\DynamicRoutePart;
-use Neos\Flow\Mvc\Routing\Dto\MatchResult;
 use Neos\Flow\Mvc\Routing\ParameterAwareRoutePartInterface;
 use Neos\Flow\Security\Context;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Routing\Exception\MissingNodePropertyException;
 use Neos\Neos\Routing\Exception\NoSiteException;
@@ -48,57 +49,65 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
 {
     /**
      * @Flow\Inject
+     *
      * @var ThrowableStorageInterface
      */
     protected $exceptionLogger;
 
     /**
      * @Flow\Inject
+     *
      * @var Context
      */
     protected $securityContext;
 
     /**
      * @Flow\Inject
+     *
      * @var DomainRepository
      */
     protected $domainRepository;
 
     /**
      * @Flow\Inject
+     *
      * @var ContentGraphInterface
      */
     protected $contentGraph;
 
     /**
      * @Flow\Inject
+     *
      * @var WorkspaceFinder
      */
     protected $workspaceFinder;
 
     /**
      * @Flow\Inject
+     *
      * @var NodeAddressFactory
      */
     protected $nodeAddressFactory;
 
     /**
      * @Flow\Inject
+     *
      * @var ContentSubgraphUriProcessor
      */
     protected $contentSubgraphUriProcessor;
 
     /**
      * @Flow\Inject
+     *
      * @var NodeTypeManager
      */
     protected $nodeTypeManager;
-
 
     /**
      * Extracts the node path from the request path.
      *
      * @param string $requestPath The request path to be matched
+     *
      * @return string value to match, or an empty string if $requestPath is empty or split string was not found
      */
     protected function findValueToMatch($requestPath)
@@ -123,9 +132,11 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
      * in time the route part handler is invoked, the security framework is not yet fully initialized.
      *
      * @param string $requestPath The request path (without leading "/", relative to the current Site Node)
-     * @return bool|MatchResult An instance of MatchResult if value could be matched successfully, otherwise false.
+     *
      * @throws \Exception
      * @throws Exception\NoHomepageException if no node could be found on the homepage (empty $requestPath)
+     *
+     * @return bool|MatchResult An instance of MatchResult if value could be matched successfully, otherwise false.
      */
     protected function matchValue($requestPath)
     {
@@ -149,7 +160,7 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
             $matchingRootNode = $this->contentGraph->findRootNodeByType(new NodeTypeName('Neos.Neos:Sites'));
 
             $matchingSite = $this->fetchSiteFromRequest($matchingRootNode, $matchingSubgraph, $requestPath);
-            $tagArray[] = (string)$matchingSite->getNodeIdentifier();
+            $tagArray[] = (string) $matchingSite->getNodeIdentifier();
 
             if (strpos($requestPath, '/') === false) {
                 // if the request path does not contain path segments (i.e. no slashes), we *know* that we found the
@@ -157,6 +168,7 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
                 // a workspace name and/or dimension information like @user-admin;language=en_US. We do not need to
                 // process this information here, as it has been already extracted beforehand and is part of $matchingSubgraph
                 $matchingNode = $matchingSite;
+
                 return;
             }
 
@@ -173,12 +185,10 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
             if (!$parentOfMatchingNodeIsSitesNode) {
                 return false;
             }
-
-
         }
 
-
         $nodeAddress = $this->nodeAddressFactory->createFromNode($matchingNode);
+
         return new MatchResult($nodeAddress->serializeForUri(), RouteTags::createFromArray($tagArray));
     }
 
@@ -187,11 +197,13 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
      * In the process, the tag array is populated with the traversed nodes' (the fetched node and its parents) identifiers.
      *
      * @param ContentSubgraphInterface $subgraph
-     * @param Node $site
-     * @param string $requestPath
-     * @param array $tagArray
-     * @return NodeInterface
+     * @param Node                     $site
+     * @param string                   $requestPath
+     * @param array                    $tagArray
+     *
      * @throws NoSuchNodeException
+     *
+     * @return NodeInterface
      */
     protected function fetchNodeForRequestPath(ContentSubgraphInterface $subgraph, NodeInterface $site, string $requestPath, array &$tagArray): NodeInterface
     {
@@ -215,7 +227,7 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
                 }
                 $continueTraversal = false;
                 if ($node->getProperty('uriPathSegment') === $currentPathSegment) {
-                    $tagArray[] = (string)$node->getNodeIdentifier();
+                    $tagArray[] = (string) $node->getNodeIdentifier();
                     array_shift($remainingUriPathSegments);
                     if (empty($remainingUriPathSegments)) {
                         $matchingNode = $node;
@@ -230,13 +242,16 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
         if (!$matchingNode instanceof NodeInterface) {
             throw new NoSuchNodeException(sprintf('No node found on request path "%s"', $requestPath), 1346949857);
         }
+
         return $matchingNode;
     }
 
     /**
      * @param string $requestPath
-     * @return ContentSubgraphInterface
+     *
      * @throws NoWorkspaceException
+     *
+     * @return ContentSubgraphInterface
      */
     protected function fetchSubgraphForParameters(string $requestPath): ContentSubgraphInterface
     {
@@ -252,11 +267,13 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
     }
 
     /**
-     * @param NodeInterface $rootNode
+     * @param NodeInterface            $rootNode
      * @param ContentSubgraphInterface $contentSubgraph
-     * @param string $requestPath
-     * @return NodeInterface
+     * @param string                   $requestPath
+     *
      * @throws NoSiteException
+     *
+     * @return NodeInterface
      */
     protected function fetchSiteFromRequest(NodeInterface $rootNode, ContentSubgraphInterface $contentSubgraph, string $requestPath): NodeInterface
     {
@@ -316,8 +333,10 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
      * $this->value:       homepage/about@user-admin
      *
      * @param $node
-     * @return boolean|ResolveResult if value could be resolved successfully, otherwise false.
+     *
      * @throws \Exception
+     *
+     * @return bool|ResolveResult if value could be resolved successfully, otherwise false.
      */
     protected function resolveValue($node)
     {
@@ -358,9 +377,8 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
             if ($workspace) {
                 $routePath .= WorkspaceNameAndDimensionSpacePointForUriSerialization::fromWorkspaceAndDimensionSpacePoint($workspace->getWorkspaceName(), $subgraph->getDimensionSpacePoint())->toBackendUriSuffix();
             } else {
-                throw new \Exception("TODO: Workspace not found for CS " . $nodeAddress->getContentStreamIdentifier());
+                throw new \Exception('TODO: Workspace not found for CS '.$nodeAddress->getContentStreamIdentifier());
             }
-
         }
         $uriConstraints = $this->contentSubgraphUriProcessor->resolveDimensionUriConstraints($nodeAddress, $isSiteNode);
 
@@ -368,9 +386,9 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
     }
 
     /**
-     * Whether the current route part should only match/resolve site nodes (e.g. the homepage)
+     * Whether the current route part should only match/resolve site nodes (e.g. the homepage).
      *
-     * @return boolean
+     * @return bool
      */
     protected function onlyMatchSiteNodes(): bool
     {
@@ -381,9 +399,11 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
      * Renders a request path based on the "uriPathSegment" properties of the nodes leading to the given node.
      *
      * @param ContentSubgraphInterface $contentSubgraph
-     * @param NodeInterface $node The node where the generated path should lead to
-     * @return string A relative request path
+     * @param NodeInterface            $node            The node where the generated path should lead to
+     *
      * @throws \Exception
+     *
+     * @return string A relative request path
      */
     protected function getRequestPathByNode(ContentSubgraphInterface $contentSubgraph, NodeInterface $node)
     {
@@ -415,6 +435,7 @@ class EventSourcedFrontendNodeRoutePartHandler extends DynamicRoutePart implemen
                     }
 
                     $requestPathSegments[] = $node->getProperty('uriPathSegment');
+
                     return true;
                 });
         });

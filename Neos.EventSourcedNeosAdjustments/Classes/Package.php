@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments;
 
 /*
@@ -19,7 +20,7 @@ use Neos\Flow\Security\Authentication\AuthenticationProviderManager;
 class Package extends BasePackage
 {
     /**
-     * @var boolean
+     * @var bool
      */
     protected $protected = true;
 
@@ -32,6 +33,3 @@ class Package extends BasePackage
         $dispatcher->connect(AuthenticationProviderManager::class, 'authenticatedToken', EditorContentStreamZookeeper::class, 'relayEditorAuthentication');
     }
 }
-
-
-

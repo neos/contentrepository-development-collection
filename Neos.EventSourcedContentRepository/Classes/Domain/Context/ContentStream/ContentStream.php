@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 
 /*
@@ -18,7 +19,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregat
 use Neos\EventSourcing\EventStore;
 
 /**
- * A content stream to write events into
+ * A content stream to write events into.
  *
  * Content streams contain an arbitrary amount of node aggregates that can be retrieved by identifier
  */
@@ -45,14 +46,13 @@ final class ContentStream
     protected $nodeEventPublisher;
 
     /**
-     * The node aggregate registry
+     * The node aggregate registry.
      *
      * Serves as a means to preserve object identity.
      *
      * @var array|NodeAggregate\NodeAggregate[]
      */
     protected $nodeAggregates;
-
 
     public function __construct(ContentStreamIdentifier $identifier, EventStore\EventStoreManager $eventStoreManager, NodeEventPublisher $nodeEventPublisher)
     {
@@ -62,22 +62,20 @@ final class ContentStream
         $this->nodeEventPublisher = $nodeEventPublisher;
     }
 
-
     public function getNodeAggregate(NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAggregate
     {
-        if (!isset($this->nodeAggregates[(string)$nodeAggregateIdentifier])) {
-            $nodeAggregateStreamName = $this->getStreamName() . ':NodeAggregate:' . $nodeAggregateIdentifier;
+        if (!isset($this->nodeAggregates[(string) $nodeAggregateIdentifier])) {
+            $nodeAggregateStreamName = $this->getStreamName().':NodeAggregate:'.$nodeAggregateIdentifier;
             $eventStore = $this->eventStoreManager->getEventStoreForStreamName($nodeAggregateStreamName);
-            $this->nodeAggregates[(string)$nodeAggregateIdentifier] = new NodeAggregate($nodeAggregateIdentifier, $eventStore, $nodeAggregateStreamName, $this->nodeEventPublisher);
+            $this->nodeAggregates[(string) $nodeAggregateIdentifier] = new NodeAggregate($nodeAggregateIdentifier, $eventStore, $nodeAggregateStreamName, $this->nodeEventPublisher);
         }
 
-        return $this->nodeAggregates[(string)$nodeAggregateIdentifier];
+        return $this->nodeAggregates[(string) $nodeAggregateIdentifier];
     }
-
 
     public function getStreamName(): string
     {
-        return 'Neos.ContentRepository:ContentStream:' . $this->identifier;
+        return 'Neos.ContentRepository:ContentStream:'.$this->identifier;
     }
 
     public function getIdentifier(): ContentStreamIdentifier

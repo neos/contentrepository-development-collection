@@ -12,12 +12,10 @@ namespace Neos\EventSourcedNeosAdjustments\Domain\Context\Content;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain as ContentRepository;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * A persistent, external "address" of a node; used to link to it.
@@ -54,10 +52,11 @@ final class NodeAddress
 
     /**
      * NodeAddress constructor.
+     *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param DimensionSpacePoint     $dimensionSpacePoint
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param WorkspaceName $workspaceName
+     * @param WorkspaceName           $workspaceName
      */
     public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier, WorkspaceName $workspaceName)
     {
@@ -104,12 +103,14 @@ final class NodeAddress
         // the reverse method is {@link NodeAddressFactory::createFromUriString} - ensure to adjust it
         // when changing the serialization here
         if ($this->workspaceName === null) {
-            throw new Exception\NodeAddressCannotBeSerializedException('The node Address ' . $this->__toString() . ' cannot be serialized because no workspace name was resolved.', 1531637028);
+            throw new Exception\NodeAddressCannotBeSerializedException('The node Address '.$this->__toString().' cannot be serialized because no workspace name was resolved.', 1531637028);
         }
-        return $this->workspaceName->jsonSerialize() . '__' . $this->dimensionSpacePoint->serializeForUri() . '__' . $this->nodeAggregateIdentifier->jsonSerialize();
+
+        return $this->workspaceName->jsonSerialize().'__'.$this->dimensionSpacePoint->serializeForUri().'__'.$this->nodeAggregateIdentifier->jsonSerialize();
     }
 
-    public function isInLiveWorkspace(): bool {
+    public function isInLiveWorkspace(): bool
+    {
         return $this->workspaceName != null && $this->workspaceName->isLive();
     }
 

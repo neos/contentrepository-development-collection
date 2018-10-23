@@ -12,13 +12,13 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\Node\ReadOnlyNodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\ReadOnlyNodeInterface;
 
 /**
- * Node aggregate read model
+ * Node aggregate read model.
  */
 final class NodeAggregate
 {
@@ -44,9 +44,9 @@ final class NodeAggregate
 
     /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param NodeTypeName $nodeTypeName
-     * @param NodeName $nodeName
-     * @param array $nodes
+     * @param NodeTypeName            $nodeTypeName
+     * @param NodeName                $nodeName
+     * @param array                   $nodes
      */
     public function __construct(NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $nodeTypeName, NodeName $nodeName, array $nodes)
     {

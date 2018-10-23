@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 
 /*
@@ -23,122 +24,137 @@ use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
-use Neos\Flow\Annotations as Flow;
 
 /**
- * The interface to be implemented by content subgraphs
+ * The interface to be implemented by content subgraphs.
  */
 interface ContentSubgraphInterface extends \JsonSerializable
 {
     /**
-     * @param NodeInterface $startNode
+     * @param NodeInterface               $startNode
      * @param HierarchyTraversalDirection $direction
-     * @param NodeTypeConstraints $nodeTypeConstraints
-     * @param callable $callback
+     * @param NodeTypeConstraints         $nodeTypeConstraints
+     * @param callable                    $callback
      */
     public function traverseHierarchy(NodeInterface $startNode, HierarchyTraversalDirection $direction, NodeTypeConstraints $nodeTypeConstraints, callable $callback): void;
 
     /**
      * @param NodeIdentifier $nodeIdentifier
+     *
      * @return NodeInterface|null
      */
     public function findNodeByIdentifier(NodeIdentifier $nodeIdentifier): ?NodeInterface;
 
     /**
-     * @param NodeIdentifier $parentNodeIdentifier
+     * @param NodeIdentifier      $parentNodeIdentifier
      * @param NodeTypeConstraints $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
+     * @param int|null            $limit
+     * @param int|null            $offset
+     *
      * @return array|NodeInterface[]
      */
     public function findChildNodes(NodeIdentifier $parentNodeIdentifier, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
 
     /**
-     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeIdentifier    $nodeIdentifier
      * @param PropertyName|null $name
+     *
      * @return NodeInterface[]
      */
     public function findReferencedNodes(NodeIdentifier $nodeIdentifier, PropertyName $name = null): array;
 
     /**
      * @param NodeIdentifier $nodeIdentifier
-     * @param PropertyName $name
+     * @param PropertyName   $name
+     *
      * @return NodeInterface[]
      */
     public function findReferencingNodes(NodeIdentifier $nodeIdentifier, PropertyName $name = null): array;
 
     /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     *
      * @return NodeInterface|null
      */
     public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface;
 
     /**
-     * @param NodeIdentifier $parentIdentifier
+     * @param NodeIdentifier           $parentIdentifier
      * @param NodeTypeConstraints|null $nodeTypeConstraints
+     *
      * @return int
      */
     public function countChildNodes(NodeIdentifier $parentIdentifier, NodeTypeConstraints $nodeTypeConstraints = null): int;
 
     /**
      * @param NodeIdentifier $childIdentifier
+     *
      * @return NodeInterface|null
      */
     public function findParentNode(NodeIdentifier $childIdentifier): ?NodeInterface;
 
     /**
      * @param NodeAggregateIdentifier $childNodeAggregateIdentifier
+     *
      * @return NodeInterface|null
      */
     public function findParentNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $childNodeAggregateIdentifier): ?NodeInterface;
 
     /**
      * @param NodeIdentifier $parentIdentifier
+     *
      * @return NodeInterface|null
      */
     public function findFirstChildNode(NodeIdentifier $parentIdentifier): ?NodeInterface;
 
     /**
-     * @param string $path
+     * @param string         $path
      * @param NodeIdentifier $startingNodeIdentifier
+     *
      * @return NodeInterface|null
      */
     public function findNodeByPath(string $path, NodeIdentifier $startingNodeIdentifier): ?NodeInterface;
 
     /**
      * @param NodeIdentifier $parentIdentifier
-     * @param NodeName $edgeName
+     * @param NodeName       $edgeName
+     *
      * @return NodeInterface|null
      */
     public function findChildNodeConnectedThroughEdgeName(NodeIdentifier $parentIdentifier, NodeName $edgeName): ?NodeInterface;
 
     /**
      * @param NodeAggregateIdentifier $parentAggregateIdentifier
-     * @param NodeName $edgeName
+     * @param NodeName                $edgeName
+     *
      * @return NodeInterface|null
      */
     public function findChildNodeByNodeAggregateIdentifierConnectedThroughEdgeName(NodeAggregateIdentifier $parentAggregateIdentifier, NodeName $edgeName): ?NodeInterface;
 
     /**
      * @param NodeIdentifier $sibling
+     *
      * @return NodeInterface|null
      */
     public function findSucceedingSibling(NodeIdentifier $sibling): ?NodeInterface;
 
     /**
      * @param NodeIdentifier $sibling
+     *
      * @return NodeInterface|null
      */
     public function findPrecedingSibling(NodeIdentifier $sibling): ?NodeInterface;
 
     /**
      * @param NodeTypeName $nodeTypeName
+     *
      * @return array|NodeInterface[]
      */
     public function findNodesByType(NodeTypeName $nodeTypeName): array;
 
     /**
      * @param NodeIdentifier $nodeIdentifier
+     *
      * @return NodePath
      */
     public function findNodePath(NodeIdentifier $nodeIdentifier): NodePath;
@@ -154,10 +170,11 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function getDimensionSpacePoint(): DimensionSpacePoint;
 
     /**
-     * @param NodeAggregateIdentifier[] $entryNodeAggregateIdentifiers
-     * @param int $maximumLevels
+     * @param NodeAggregateIdentifier[]                   $entryNodeAggregateIdentifiers
+     * @param int                                         $maximumLevels
      * @param Domain\Context\Parameters\ContextParameters $contextParameters
-     * @param NodeTypeConstraints $nodeTypeConstraints
+     * @param NodeTypeConstraints                         $nodeTypeConstraints
+     *
      * @return mixed
      */
     public function findSubtrees(array $entryNodeAggregateIdentifiers, int $maximumLevels, Domain\Context\Parameters\ContextParameters $contextParameters, NodeTypeConstraints $nodeTypeConstraints): SubtreeInterface;

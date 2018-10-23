@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Ui\Service;
 
 /*
@@ -26,26 +27,28 @@ use Neos\Utility\TypeHandling;
  */
 class NodePropertyConversionService
 {
-
     /**
      * @Flow\Inject
+     *
      * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
      * @Flow\Inject
+     *
      * @var PropertyMapper
      */
     protected $propertyMapper;
 
     /**
-     * Convert raw property values to the correct type according to a node type configuration
+     * Convert raw property values to the correct type according to a node type configuration.
      *
      * @param NodeType $nodeType
-     * @param string $propertyName
-     * @param string $rawValue
-     * @param Context $context
+     * @param string   $propertyName
+     * @param string   $rawValue
+     * @param Context  $context
+     *
      * @return mixed
      */
     public function convert(NodeType $nodeType, $propertyName, $rawValue)
@@ -57,11 +60,11 @@ class NodePropertyConversionService
                 return $rawValue;
 
             case 'reference':
-                throw new \Exception("TODO FIX");
+                throw new \Exception('TODO FIX');
                 return $this->convertReference($rawValue, $context);
 
             case 'references':
-                throw new \Exception("TODO FIX");
+                throw new \Exception('TODO FIX');
                 return $this->convertReferences($rawValue, $context);
 
             case 'DateTime':
@@ -102,10 +105,11 @@ class NodePropertyConversionService
     }
 
     /**
-     * Convert raw value to reference
+     * Convert raw value to reference.
      *
-     * @param string $rawValue
+     * @param string  $rawValue
      * @param Context $context
+     *
      * @return NodeInterface
      */
     protected function convertReference($rawValue, Context $context)
@@ -114,10 +118,11 @@ class NodePropertyConversionService
     }
 
     /**
-     * Convert raw value to references
+     * Convert raw value to references.
      *
-     * @param string $rawValue
+     * @param string  $rawValue
      * @param Context $context
+     *
      * @return array<NodeInterface>
      */
     protected function convertReferences($rawValue, Context $context)
@@ -138,9 +143,10 @@ class NodePropertyConversionService
     }
 
     /**
-     * Convert raw value to \DateTime
+     * Convert raw value to \DateTime.
      *
      * @param string $rawValue
+     *
      * @return \DateTime|null
      */
     protected function convertDateTime($rawValue)
@@ -154,21 +160,23 @@ class NodePropertyConversionService
     }
 
     /**
-     * Convert raw value to integer
+     * Convert raw value to integer.
      *
      * @param mixed $rawValue
-     * @return integer
+     *
+     * @return int
      */
     protected function convertInteger($rawValue)
     {
-        return (int)$rawValue;
+        return (int) $rawValue;
     }
 
     /**
-     * Convert raw value to boolean
+     * Convert raw value to boolean.
      *
      * @param mixed $rawValue
-     * @return boolean
+     *
+     * @return bool
      */
     protected function convertBoolean($rawValue)
     {
@@ -176,13 +184,14 @@ class NodePropertyConversionService
             return false;
         }
 
-        return (bool)$rawValue;
+        return (bool) $rawValue;
     }
 
     /**
-     * Convert raw value to array
+     * Convert raw value to array.
      *
      * @param string|array $rawValue
+     *
      * @return array
      */
     protected function convertArray($rawValue)

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
 
 /*
@@ -16,7 +17,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\ReferencePosition;
 
 /**
- * Move nodes in aggregate command
+ * Move nodes in aggregate command.
  *
  * Moves all nodes in the given `nodeAggregateIdentifier` to the `referencePosition` of the
  * `referenceNodeAggregateIdentifier`. Each node in the node aggregate needs a suitable
@@ -24,7 +25,6 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\ReferencePosition;
  */
 final class MoveNodesInAggregate
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -50,7 +50,7 @@ final class MoveNodesInAggregate
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param ReferencePosition $referencePosition
+     * @param ReferencePosition       $referencePosition
      * @param NodeAggregateIdentifier $referenceNodeAggregateIdentifier
      */
     public function __construct(

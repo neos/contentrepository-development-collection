@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
 /*
@@ -17,11 +18,10 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\ReferencePosition;
 use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * Nodes in aggregate were moved after, into or before another node event
+ * Nodes in aggregate were moved after, into or before another node event.
  */
 final class NodesInAggregateWereMoved implements EventInterface, CopyableAcrossContentStreamsInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -43,7 +43,7 @@ final class NodesInAggregateWereMoved implements EventInterface, CopyableAcrossC
     private $referenceNodeAggregateIdentifier;
 
     /**
-     * Array from node identifier (string) to reference node identifier (string)
+     * Array from node identifier (string) to reference node identifier (string).
      *
      * @var array
      */
@@ -54,9 +54,9 @@ final class NodesInAggregateWereMoved implements EventInterface, CopyableAcrossC
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param ReferencePosition $referencePosition
+     * @param ReferencePosition       $referencePosition
      * @param NodeAggregateIdentifier $referenceNodeAggregateIdentifier
-     * @param array $nodesToReferenceNodes
+     * @param array                   $nodesToReferenceNodes
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -114,11 +114,12 @@ final class NodesInAggregateWereMoved implements EventInterface, CopyableAcrossC
 
     /**
      * @param ContentStreamIdentifier $targetContentStream
+     *
      * @return NodesInAggregateWereMoved
      */
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
     {
-        return new NodesInAggregateWereMoved(
+        return new self(
             $targetContentStream,
             $this->nodeAggregateIdentifier,
             $this->referencePosition,

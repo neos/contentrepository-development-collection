@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\Uri;
 
 /*
@@ -19,8 +20,8 @@ use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingSer
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
+use Neos\Neos\Domain\Service\NodeShortcutResolver;
 
 /**
  * A view helper for creating URIs pointing to nodes.
@@ -88,6 +89,7 @@ use Neos\Fusion\ViewHelpers\FusionContextTrait;
  * about/us.html
  * (depending on current workspace, current node, format etc.)
  * </output>
+ *
  * @api
  */
 class NodeViewHelper extends AbstractViewHelper
@@ -96,19 +98,21 @@ class NodeViewHelper extends AbstractViewHelper
 
     /**
      * @Flow\Inject
+     *
      * @var NodeShortcutResolver
      */
     protected $nodeShortcutResolver;
 
-
     /**
      * @Flow\Inject
+     *
      * @var NodeAddressFactory
      */
     protected $nodeAddressFactory;
 
     /**
      * @Flow\Inject
+     *
      * @var NodeSiteResolvingService
      */
     protected $nodeSiteResolvingService;
@@ -116,32 +120,33 @@ class NodeViewHelper extends AbstractViewHelper
     /**
      * Renders the URI.
      *
-     * @param mixed $node A node object, a string node path (absolute or relative), a string node://-uri or NULL
-     * @param string $format Format to use for the URL, for example "html" or "json"
-     * @param boolean $absolute If set, an absolute URI is rendered
-     * @param array $arguments Additional arguments to be passed to the UriBuilder (for example pagination parameters)
-     * @param string $section
-     * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
-     * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
-     * @param boolean $resolveShortcuts INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
-     * @param ContentSubgraphInterface|null $subgraph The explicit override of the subgraph retrieved from the fusion context, e.g. for dimension menus
-     * @return string The rendered URI or NULL if no URI could be resolved for the given node
+     * @param mixed                         $node                                 A node object, a string node path (absolute or relative), a string node://-uri or NULL
+     * @param string                        $format                               Format to use for the URL, for example "html" or "json"
+     * @param bool                          $absolute                             If set, an absolute URI is rendered
+     * @param array                         $arguments                            Additional arguments to be passed to the UriBuilder (for example pagination parameters)
+     * @param string                        $section
+     * @param bool                          $addQueryString                       If set, the current query parameters will be kept in the URI
+     * @param array                         $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
+     * @param bool                          $resolveShortcuts                     INTERNAL Parameter - if FALSE, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
+     * @param ContentSubgraphInterface|null $subgraph                             The explicit override of the subgraph retrieved from the fusion context, e.g. for dimension menus
+     *
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
+     *
+     * @return string The rendered URI or NULL if no URI could be resolved for the given node
      */
     public function render(
         $node = null,
         $format = null,
         $absolute = false,
-        array $arguments = array(),
+        array $arguments = [],
         $section = '',
         $addQueryString = false,
-        array $argumentsToBeExcludedFromQueryString = array(),
+        array $argumentsToBeExcludedFromQueryString = [],
         $resolveShortcuts = true,
         ContentSubgraphInterface $subgraph = null
     ) {
         $uri = null;
         $nodeAddress = null;
-
 
         if ($node instanceof NodeInterface) {
             // the latter case is only relevant in extremely rare occasions in the Neos Backend, when we want to generate
@@ -187,7 +192,7 @@ class NodeViewHelper extends AbstractViewHelper
             $uri = $uriBuilder->uriFor(
                 'show',
                 [
-                    'node' => $nodeAddress
+                    'node' => $nodeAddress,
                 ],
                 'Frontend\Node',
                 'Neos.Neos'

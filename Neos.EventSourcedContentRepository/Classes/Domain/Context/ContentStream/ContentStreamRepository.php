@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 
 /*
@@ -18,7 +19,7 @@ use Neos\EventSourcing\EventStore\Exception\EventStreamNotFoundException;
 use Neos\EventSourcing\EventStore\StreamNameFilter;
 
 /**
- * A content stream to write events into
+ * A content stream to write events into.
  *
  * Content streams contain an arbitrary amount of node aggregates that can be retrieved by identifier
  */
@@ -35,7 +36,7 @@ final class ContentStreamRepository
     protected $nodeEventPublisher;
 
     /**
-     * The content stream registry
+     * The content stream registry.
      *
      * Serves as a means to preserve object identity.
      *
@@ -43,19 +44,18 @@ final class ContentStreamRepository
      */
     protected $contentStreams;
 
-
     public function __construct(EventStoreManager $eventStoreManager, NodeEventPublisher $nodeEventPublisher)
     {
         $this->eventStoreManager = $eventStoreManager;
         $this->nodeEventPublisher = $nodeEventPublisher;
     }
 
-
     public function findContentStream(ContentStreamIdentifier $contentStreamIdentifier): ?ContentStream
     {
-        if (!isset($this->contentStreams[(string)$contentStreamIdentifier])) {
+        if (!isset($this->contentStreams[(string) $contentStreamIdentifier])) {
             $eventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
             $eventStore = $this->eventStoreManager->getEventStoreForStreamName($eventStreamName);
+
             try {
                 $eventStream = $eventStore->get(new StreamNameFilter($eventStreamName));
                 $eventStream->rewind();
@@ -67,9 +67,9 @@ final class ContentStreamRepository
                 return null;
             }
 
-            $this->contentStreams[(string)$contentStreamIdentifier] = new ContentStream($contentStreamIdentifier, $this->eventStoreManager, $this->nodeEventPublisher);
+            $this->contentStreams[(string) $contentStreamIdentifier] = new ContentStream($contentStreamIdentifier, $this->eventStoreManager, $this->nodeEventPublisher);
         }
 
-        return $this->contentStreams[(string)$contentStreamIdentifier];
+        return $this->contentStreams[(string) $contentStreamIdentifier];
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
 /*
@@ -11,18 +12,18 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\EventStream;
 use Neos\EventSourcing\EventStore\Exception\EventStreamNotFoundException;
 use Neos\EventSourcing\EventStore\StreamNameFilter;
 
 /**
- * The node aggregate
+ * The node aggregate.
  *
  * Aggregates all nodes with a shared external identity that are varied across the Dimension Space.
  * An example would be a product node that is translated into different languages but uses a shared identifier,
@@ -52,7 +53,6 @@ final class NodeAggregate
      */
     protected $nodeEventPublisher;
 
-
     public function __construct(NodeAggregateIdentifier $identifier, EventStore $eventStore, string $streamName, NodeEventPublisher $nodeEventPublisher)
     {
         $this->identifier = $identifier;
@@ -61,26 +61,27 @@ final class NodeAggregate
         $this->nodeEventPublisher = $nodeEventPublisher;
     }
 
-
     /**
      * @param DimensionSpacePoint $dimensionSpacePoint
+     *
      * @throws DimensionSpacePointIsNotYetOccupied
      */
     public function requireDimensionSpacePointToBeOccupied(DimensionSpacePoint $dimensionSpacePoint)
     {
         if (!$this->isDimensionSpacePointOccupied($dimensionSpacePoint)) {
-            throw new DimensionSpacePointIsNotYetOccupied('The source dimension space point "' . $dimensionSpacePoint . '" is not yet occupied', 1521312039);
+            throw new DimensionSpacePointIsNotYetOccupied('The source dimension space point "'.$dimensionSpacePoint.'" is not yet occupied', 1521312039);
         }
     }
 
     /**
      * @param DimensionSpacePoint $dimensionSpacePoint
+     *
      * @throws DimensionSpacePointIsAlreadyOccupied
      */
     public function requireDimensionSpacePointToBeUnoccupied(DimensionSpacePoint $dimensionSpacePoint)
     {
         if ($this->isDimensionSpacePointOccupied($dimensionSpacePoint)) {
-            throw new DimensionSpacePointIsAlreadyOccupied('The target dimension space point "' . $dimensionSpacePoint . '" is already occupied', 1521314881);
+            throw new DimensionSpacePointIsAlreadyOccupied('The target dimension space point "'.$dimensionSpacePoint.'" is already occupied', 1521314881);
         }
     }
 
@@ -94,15 +95,15 @@ final class NodeAggregate
                 $event = $eventAndRawEvent->getEvent();
                 switch (get_class($event)) {
                     case NodeAggregateWithNodeWasCreated::class:
-                        /** @var NodeAggregateWithNodeWasCreated $event */
+                        /* @var NodeAggregateWithNodeWasCreated $event */
                         $occupiedDimensionSpacePoints[$event->getDimensionSpacePoint()->getHash()] = $event->getDimensionSpacePoint();
                         break;
                     case Event\NodeSpecializationWasCreated::class:
-                        /** @var Event\NodeSpecializationWasCreated $event */
+                        /* @var Event\NodeSpecializationWasCreated $event */
                         $occupiedDimensionSpacePoints[$event->getSpecializationLocation()->getHash()] = $event->getSpecializationLocation();
                         break;
                     case Event\NodeGeneralizationWasCreated::class:
-                        /** @var Event\NodeGeneralizationWasCreated $event */
+                        /* @var Event\NodeGeneralizationWasCreated $event */
                         $occupiedDimensionSpacePoints[$event->getGeneralizationLocation()->getHash()] = $event->getGeneralizationLocation();
                         break;
                     default:
@@ -159,15 +160,15 @@ final class NodeAggregate
                 $event = $eventAndRawEvent->getEvent();
                 switch (get_class($event)) {
                     case NodeAggregateWithNodeWasCreated::class:
-                        /** @var NodeAggregateWithNodeWasCreated $event */
+                        /* @var NodeAggregateWithNodeWasCreated $event */
                         $dimensionSpacePointOccupied |= $event->getDimensionSpacePoint()->equals($dimensionSpacePoint);
                         break;
                     case Event\NodeSpecializationWasCreated::class:
-                        /** @var Event\NodeSpecializationWasCreated $event */
+                        /* @var Event\NodeSpecializationWasCreated $event */
                         $dimensionSpacePointOccupied |= $event->getSpecializationLocation()->equals($dimensionSpacePoint);
                         break;
                     case Event\NodeGeneralizationWasCreated::class:
-                        /** @var Event\NodeGeneralizationWasCreated $event */
+                        /* @var Event\NodeGeneralizationWasCreated $event */
                         $dimensionSpacePointOccupied |= $event->getGeneralizationLocation()->equals($dimensionSpacePoint);
                         break;
                     default:

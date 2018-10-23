@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
 
 /*
@@ -19,7 +20,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 
 /**
- * CreateNodeAggregateWithNode command
+ * CreateNodeAggregateWithNode command.
  *
  * Creates a new node aggregate with a new node with the given `nodeAggregateIdentifier` and `nodeIdentifier`.
  * The node will be appended as child node of the given `parentNodeIdentifier` which must be visible in the given
@@ -27,7 +28,6 @@ use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
  */
 final class CreateNodeAggregateWithNode
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -44,7 +44,7 @@ final class CreateNodeAggregateWithNode
     private $nodeTypeName;
 
     /**
-     * Location of the new node in the dimension space
+     * Location of the new node in the dimension space.
      *
      * @var DimensionSpacePoint
      */
@@ -70,11 +70,11 @@ final class CreateNodeAggregateWithNode
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier New node aggregate identifier
-     * @param NodeTypeName $nodeTypeName
-     * @param DimensionSpacePoint $dimensionSpacePoint The dimension space point of the node, will be used to calculate a set of dimension points from the configured generalizations
-     * @param NodeIdentifier $nodeIdentifier New node identifier
-     * @param NodeIdentifier $parentNodeIdentifier Parent node of the created node
-     * @param NodeName $nodeName
+     * @param NodeTypeName            $nodeTypeName
+     * @param DimensionSpacePoint     $dimensionSpacePoint     The dimension space point of the node, will be used to calculate a set of dimension points from the configured generalizations
+     * @param NodeIdentifier          $nodeIdentifier          New node identifier
+     * @param NodeIdentifier          $parentNodeIdentifier    Parent node of the created node
+     * @param NodeName                $nodeName
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,

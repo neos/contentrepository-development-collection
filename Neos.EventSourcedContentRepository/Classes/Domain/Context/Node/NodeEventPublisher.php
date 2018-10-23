@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
 
 /*
@@ -22,7 +23,7 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 
 /**
- * Ensure all invariants are held for Node-based events:
+ * Ensure all invariants are held for Node-based events:.
  *
  * - all node events need to implement CopyableAcrossContentStreamsInterface; otherwise
  *   they could not be published to the live workspace.
@@ -32,21 +33,23 @@ use Neos\Flow\Property\PropertyMappingConfiguration;
  */
 final class NodeEventPublisher
 {
-
     /**
      * @Flow\Inject
+     *
      * @var EventPublisher
      */
     protected $eventPublisher;
 
     /**
      * @Flow\Inject
+     *
      * @var PropertyMapper
      */
     protected $propertyMapper;
 
     /**
      * safeguard that the "withCommand()" method is never called recursively.
+     *
      * @var bool
      */
     private $currentlyInCommandClosure = false;
@@ -56,6 +59,7 @@ final class NodeEventPublisher
     /**
      * @param $command
      * @param $callback
+     *
      * @return mixed
      */
     public function withCommand($command, $callback)
@@ -70,6 +74,7 @@ final class NodeEventPublisher
         $this->command = $command;
 
         $this->currentlyInCommandClosure = true;
+
         try {
             $result = $callback();
             if ($this->command !== null) {
@@ -78,17 +83,18 @@ final class NodeEventPublisher
 
                 throw new \RuntimeException(sprintf('TODO: Command %s did not lead to the creation of events', get_class($command)));
             }
+
             return $result;
         } finally {
             $this->currentlyInCommandClosure = false;
         }
-
     }
 
     /**
-     * @param string $streamName
+     * @param string         $streamName
      * @param EventInterface $event
-     * @param int $expectedVersion
+     * @param int            $expectedVersion
+     *
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
@@ -99,8 +105,9 @@ final class NodeEventPublisher
 
     /**
      * @param string $streamName
-     * @param array $events
-     * @param int $expectedVersion
+     * @param array  $events
+     * @param int    $expectedVersion
+     *
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
@@ -125,8 +132,8 @@ final class NodeEventPublisher
                     throw new \RuntimeException(sprintf('TODO: Command %s does not have a property "contentStreamIdentifier" (which is required).', get_class($this->command)));
                 }
                 $metadata = [
-                    'commandClass' => get_class($this->command),
-                    'commandPayload' => $commandPayload
+                    'commandClass'   => get_class($this->command),
+                    'commandPayload' => $commandPayload,
                 ];
                 $event = new EventWithMetadata($event, $metadata);
                 $this->command = null;

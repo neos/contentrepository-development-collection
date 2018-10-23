@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
 /*
@@ -18,7 +19,6 @@ use Neos\EventSourcing\Event\EventInterface;
 
 final class NodeNameWasChanged implements EventInterface, CopyableAcrossContentStreamsInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -38,8 +38,8 @@ final class NodeNameWasChanged implements EventInterface, CopyableAcrossContentS
      * NodeNameWasChanged constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
-     * @param NodeName $newNodeName
+     * @param NodeIdentifier          $nodeIdentifier
+     * @param NodeName                $newNodeName
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -77,7 +77,7 @@ final class NodeNameWasChanged implements EventInterface, CopyableAcrossContentS
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
     {
-        return new NodeNameWasChanged(
+        return new self(
             $targetContentStream,
             $this->nodeIdentifier,
             $this->newNodeName

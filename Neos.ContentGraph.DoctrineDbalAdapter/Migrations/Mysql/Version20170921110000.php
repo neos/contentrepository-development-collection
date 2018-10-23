@@ -27,7 +27,6 @@ class Version20170921110000 extends AbstractMigration
 
         $this->addSql('CREATE UNIQUE INDEX IDENTIFIER_IN_GRAPH ON neos_contentgraph_node (nodeaggregateidentifier, contentstreamidentifier, dimensionspacepointhash)');
 
-
         $this->addSql('ALTER TABLE neos_contentgraph_hierarchyrelation DROP PRIMARY KEY');
 
         $this->addSql('ALTER TABLE neos_contentgraph_hierarchyrelation DROP subgraphidentityhash');
@@ -53,7 +52,6 @@ class Version20170921110000 extends AbstractMigration
         $this->addSql('ALTER TABLE neos_contentgraph_hierarchyrelation ADD subgraphidentityhash VARCHAR(255) NOT NULL');
 
         $this->addSql('ALTER TABLE neos_contentgraph_hierarchyrelation ADD PRIMARY KEY (parentnodeidentifier, subgraphidentityhash, childnodeidentifier)');
-
 
         $this->addSql('DROP INDEX IDENTIFIER_IN_GRAPH ON neos_contentgraph_node');
 

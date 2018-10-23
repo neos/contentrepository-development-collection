@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 
 /*
@@ -20,7 +21,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\CopyableAcrossC
 use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * A node generalization was created
+ * A node generalization was created.
  */
 final class NodeGeneralizationWasCreated implements EventInterface, CopyableAcrossContentStreamsInterface
 {
@@ -54,14 +55,13 @@ final class NodeGeneralizationWasCreated implements EventInterface, CopyableAcro
      */
     protected $generalizationVisibility;
 
-
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $sourceDimensionSpacePoint
-     * @param NodeIdentifier $generalizationIdentifier
-     * @param DimensionSpacePoint $generalizationLocation
-     * @param DimensionSpacePointSet $generalizationVisibility
+     * @param DimensionSpacePoint     $sourceDimensionSpacePoint
+     * @param NodeIdentifier          $generalizationIdentifier
+     * @param DimensionSpacePoint     $generalizationLocation
+     * @param DimensionSpacePointSet  $generalizationVisibility
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -78,7 +78,6 @@ final class NodeGeneralizationWasCreated implements EventInterface, CopyableAcro
         $this->generalizationLocation = $generalizationLocation;
         $this->generalizationVisibility = $generalizationVisibility;
     }
-
 
     /**
      * @return ContentStreamIdentifier
@@ -128,14 +127,14 @@ final class NodeGeneralizationWasCreated implements EventInterface, CopyableAcro
         return $this->generalizationVisibility;
     }
 
-
     /**
      * @param ContentStreamIdentifier $targetContentStream
+     *
      * @return NodeGeneralizationWasCreated
      */
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): NodeGeneralizationWasCreated
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
     {
-        return new NodeGeneralizationWasCreated(
+        return new self(
             $targetContentStream,
             $this->nodeAggregateIdentifier,
             $this->sourceDimensionSpacePoint,

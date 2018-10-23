@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
 
 /*
@@ -12,7 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  */
 
 /**
- * User Identifier
+ * User Identifier.
  */
 final class UserIdentifier extends AbstractIdentifier
 {

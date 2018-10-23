@@ -14,7 +14,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
 use Neos\Flow\Exception;
 
 /**
- * The exception to be thrown if a node aggregate's name is ambiguous
+ * The exception to be thrown if a node aggregate's name is ambiguous.
  */
 class NodeAggregatesNameIsAmbiguous extends Exception
 {

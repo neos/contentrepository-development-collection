@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 
 /*
@@ -15,7 +16,7 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcing\Event\EventPublisher;
 
 /**
- * ContentStreamCommandHandler
+ * ContentStreamCommandHandler.
  */
 final class ContentStreamCommandHandler
 {
@@ -29,16 +30,15 @@ final class ContentStreamCommandHandler
      */
     protected $eventPublisher;
 
-
     public function __construct(ContentStreamRepository $contentStreamRepository, EventPublisher $eventPublisher)
     {
         $this->contentStreamRepository = $contentStreamRepository;
         $this->eventPublisher = $eventPublisher;
     }
 
-
     /**
      * @param Command\CreateContentStream $command
+     *
      * @throws ContentStreamAlreadyExists
      */
     public function handleCreateContentStream(Command\CreateContentStream $command)
@@ -56,6 +56,7 @@ final class ContentStreamCommandHandler
 
     /**
      * @param Command\ForkContentStream $command
+     *
      * @throws ContentStreamAlreadyExists
      * @throws ContentStreamDoesNotExistYet
      */
@@ -76,26 +77,27 @@ final class ContentStreamCommandHandler
         );
     }
 
-
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
+     *
      * @throws ContentStreamAlreadyExists
      */
     protected function requireContentStreamToNotExistYet(ContentStreamIdentifier $contentStreamIdentifier)
     {
         if ($this->contentStreamRepository->findContentStream($contentStreamIdentifier)) {
-            throw new ContentStreamAlreadyExists('Content stream "' . $contentStreamIdentifier . '" already exists.', 1521386345);
+            throw new ContentStreamAlreadyExists('Content stream "'.$contentStreamIdentifier.'" already exists.', 1521386345);
         }
     }
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
+     *
      * @throws ContentStreamDoesNotExistYet
      */
     protected function requireContentStreamToExist(ContentStreamIdentifier $contentStreamIdentifier)
     {
         if (!$this->contentStreamRepository->findContentStream($contentStreamIdentifier)) {
-            throw new ContentStreamDoesNotExistYet('Content stream "' . $contentStreamIdentifier . '" does not exist yet.', 1521386692);
+            throw new ContentStreamDoesNotExistYet('Content stream "'.$contentStreamIdentifier.'" does not exist yet.', 1521386692);
         }
     }
 }

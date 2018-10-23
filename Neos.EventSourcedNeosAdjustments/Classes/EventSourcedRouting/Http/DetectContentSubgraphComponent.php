@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http;
 
 /*
@@ -21,37 +22,41 @@ use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\RoutingComponent;
 
 /**
- * The HTTP component for detecting the requested dimension space point
+ * The HTTP component for detecting the requested dimension space point.
  */
 final class DetectContentSubgraphComponent implements Http\Component\ComponentInterface
 {
     /**
      * @Flow\Inject
+     *
      * @var Dimension\ContentDimensionSourceInterface
      */
     protected $dimensionSource;
 
     /**
      * @Flow\Inject
+     *
      * @var ContentDimensionDetection\ContentDimensionValueDetectorResolver
      */
     protected $contentDimensionPresetDetectorResolver;
 
     /**
      * @Flow\InjectConfiguration(path="contentDimensions.resolution.uriPathSegmentDelimiter")
+     *
      * @var string
      */
     protected $uriPathSegmentDelimiter;
 
     /**
      * @Flow\InjectConfiguration("routing.supportEmptySegmentForDimensions")
-     * @var boolean
+     *
+     * @var bool
      */
     protected $supportEmptySegmentForDimensions;
 
-
     /**
      * @param Http\Component\ComponentContext $componentContext
+     *
      * @throws ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
      */
     public function handle(Http\Component\ComponentContext $componentContext)
@@ -72,9 +77,11 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
 
     /**
      * @param Http\Component\ComponentContext $componentContext
-     * @param bool $uriPathSegmentUsed
-     * @return DimensionSpacePoint
+     * @param bool                            $uriPathSegmentUsed
+     *
      * @throws ContentDimensionDetection\Exception\InvalidContentDimensionValueDetectorException
+     *
+     * @return DimensionSpacePoint
      */
     protected function detectDimensionSpacePoint(Http\Component\ComponentContext $componentContext, bool &$uriPathSegmentUsed): DimensionSpacePoint
     {
@@ -102,7 +109,7 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
             if ($isContextPath) {
                 $dimensionValue = $backendUriDimensionPresetDetector->detectValue($contentDimension, $componentContext);
                 if ($dimensionValue) {
-                    $coordinates[$rawDimensionIdentifier] = (string)$dimensionValue;
+                    $coordinates[$rawDimensionIdentifier] = (string) $dimensionValue;
                     if ($detector instanceof ContentDimensionDetection\UriPathSegmentContentDimensionValueDetector) {
                         // we might have to remove the uri path segment anyway
                         $dimensionValueByUriPathSegment = $detector->detectValue($contentDimension, $componentContext, $detectorOverrideOptions);
@@ -116,7 +123,7 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
 
             $dimensionValue = $detector->detectValue($contentDimension, $componentContext, $detectorOverrideOptions);
             if ($dimensionValue) {
-                $coordinates[$rawDimensionIdentifier] = (string)$dimensionValue;
+                $coordinates[$rawDimensionIdentifier] = (string) $dimensionValue;
                 if ($resolutionMode === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT) {
                     $uriPathSegmentUsed = true;
                     $uriPathSegmentOffset++;
@@ -125,7 +132,7 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
                 $allowEmptyValue = ($detectorOverrideOptions['allowEmptyValue'] ?? false)
                     || $resolutionMode === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT && $this->supportEmptySegmentForDimensions;
                 if ($allowEmptyValue || $resolutionMode === BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT && $path === '/') {
-                    $coordinates[$rawDimensionIdentifier] = (string)$contentDimension->getDefaultValue();
+                    $coordinates[$rawDimensionIdentifier] = (string) $contentDimension->getDefaultValue();
                 }
             }
         }
@@ -135,9 +142,10 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
 
     /**
      * @param array|Dimension\ContentDimension[] $dimensions
+     *
      * @return void
      */
-    protected function sortDimensionsByOffset(array & $dimensions)
+    protected function sortDimensionsByOffset(array &$dimensions)
     {
         uasort($dimensions, function (Dimension\ContentDimension $dimensionA, Dimension\ContentDimension $dimensionB) {
             return ($dimensionA->getConfigurationValue('resolution.options.offset') ?: 0)
@@ -147,6 +155,7 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
 
     /**
      * @param Http\Component\ComponentContext $componentContext
+     *
      * @return WorkspaceName|null
      */
     protected function detectWorkspaceName(Http\Component\ComponentContext $componentContext): ?WorkspaceName
@@ -155,6 +164,7 @@ final class DetectContentSubgraphComponent implements Http\Component\ComponentIn
         $requestPath = mb_substr($requestPath, mb_strrpos($requestPath, '/'));
         if ($requestPath !== '' && WorkspaceNameAndDimensionSpacePointForUriSerialization::isParseablebackendUri($requestPath)) {
             $nodePathAndContext = WorkspaceNameAndDimensionSpacePointForUriSerialization::fromBackendUri($requestPath);
+
             try {
                 return $nodePathAndContext->getWorkspaceName();
             } catch (\InvalidArgumentException $exception) {

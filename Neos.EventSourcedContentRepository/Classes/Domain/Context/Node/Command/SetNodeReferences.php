@@ -3,16 +3,15 @@
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 
 /**
- * Create a named reference from source- to destination-node
+ * Create a named reference from source- to destination-node.
  */
 final class SetNodeReferences
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -37,9 +36,9 @@ final class SetNodeReferences
      * CreateReferenceBetweenNodes constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
-     * @param PropertyName $propertyName
-     * @param array $destinationNodeAggregateIdentifiers
+     * @param NodeIdentifier          $nodeIdentifier
+     * @param PropertyName            $propertyName
+     * @param array                   $destinationNodeAggregateIdentifiers
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -84,6 +83,4 @@ final class SetNodeReferences
     {
         return $this->propertyName;
     }
-
-
 }

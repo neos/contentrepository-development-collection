@@ -16,10 +16,9 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
-use Neos\Flow\Annotations as Flow;
 
 /**
- * The active record for reading and writing nodes from and to the database
+ * The active record for reading and writing nodes from and to the database.
  */
 class Node
 {
@@ -64,7 +63,7 @@ class Node
     public $hidden;
 
     /**
-     * Transient node name to store a node name after fetching a node with hierarchy (not always available)
+     * Transient node name to store a node name after fetching a node with hierarchy (not always available).
      *
      * @var NodeName
      */
@@ -74,14 +73,14 @@ class Node
      * Node constructor.
      *
      * @param NodeRelationAnchorPoint $relationAnchorPoint
-     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeIdentifier          $nodeIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param array $dimensionSpacePoint
-     * @param string $dimensionSpacePointHash
-     * @param array $properties
-     * @param NodeTypeName $nodeTypeName
-     * @param bool $hidden
-     * @param NodeName $nodeName
+     * @param array                   $dimensionSpacePoint
+     * @param string                  $dimensionSpacePointHash
+     * @param array                   $properties
+     * @param NodeTypeName            $nodeTypeName
+     * @param bool                    $hidden
+     * @param NodeName                $nodeName
      */
     public function __construct(
         NodeRelationAnchorPoint $relationAnchorPoint,
@@ -111,14 +110,14 @@ class Node
     public function addToDatabase(Connection $databaseConnection): void
     {
         $databaseConnection->insert('neos_contentgraph_node', [
-            'relationanchorpoint' => (string) $this->relationAnchorPoint,
+            'relationanchorpoint'     => (string) $this->relationAnchorPoint,
             'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
-            'nodeidentifier' => (string) $this->nodeIdentifier,
-            'dimensionspacepoint' => json_encode($this->dimensionSpacePoint),
+            'nodeidentifier'          => (string) $this->nodeIdentifier,
+            'dimensionspacepoint'     => json_encode($this->dimensionSpacePoint),
             'dimensionspacepointhash' => (string) $this->dimensionSpacePointHash,
-            'properties' => json_encode($this->properties),
-            'nodetypename' => (string) $this->nodeTypeName,
-            'hidden' => (int)$this->hidden
+            'properties'              => json_encode($this->properties),
+            'nodetypename'            => (string) $this->nodeTypeName,
+            'hidden'                  => (int) $this->hidden,
         ]);
     }
 
@@ -126,15 +125,15 @@ class Node
     {
         $databaseConnection->update('neos_contentgraph_node', [
             'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
-            'nodeidentifier' => (string) $this->nodeIdentifier,
-            'dimensionspacepoint' => json_encode($this->dimensionSpacePoint),
+            'nodeidentifier'          => (string) $this->nodeIdentifier,
+            'dimensionspacepoint'     => json_encode($this->dimensionSpacePoint),
             'dimensionspacepointhash' => (string) $this->dimensionSpacePointHash,
-            'properties' => json_encode($this->properties),
-            'nodetypename' => (string) $this->nodeTypeName,
-            'hidden' => (int)$this->hidden
+            'properties'              => json_encode($this->properties),
+            'nodetypename'            => (string) $this->nodeTypeName,
+            'hidden'                  => (int) $this->hidden,
         ],
         [
-            'relationanchorpoint' => $this->relationAnchorPoint
+            'relationanchorpoint' => $this->relationAnchorPoint,
         ]);
     }
 
@@ -144,13 +143,13 @@ class Node
     public function removeFromDatabase(Connection $databaseConnection): void
     {
         $databaseConnection->delete('neos_contentgraph_node', [
-            'relationanchorpoint' => $this->relationAnchorPoint
+            'relationanchorpoint' => $this->relationAnchorPoint,
         ]);
     }
 
-
     /**
      * @param array $databaseRow
+     *
      * @return static
      */
     public static function fromDatabaseRow(array $databaseRow)
@@ -163,7 +162,7 @@ class Node
             $databaseRow['dimensionspacepointhash'],
             json_decode($databaseRow['properties'], true),
             new NodeTypeName($databaseRow['nodetypename']),
-            (bool)$databaseRow['hidden'],
+            (bool) $databaseRow['hidden'],
             isset($databaseRow['name']) ? new NodeName($databaseRow['name']) : null
         );
     }

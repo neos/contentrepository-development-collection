@@ -14,7 +14,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 use Neos\Flow\Exception;
 
 /**
- * The exception to be thrown if a given node type was not found
+ * The exception to be thrown if a given node type was not found.
  */
 class NodeTypeNotFound extends Exception
 {

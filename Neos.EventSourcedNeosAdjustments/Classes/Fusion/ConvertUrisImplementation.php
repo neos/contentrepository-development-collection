@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Fusion;
 
 /*
@@ -16,12 +17,12 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Service\LinkingService;
-use Neos\Fusion\FusionObjects\AbstractFusionObject;
 
 /**
- * A Fusion Object that converts link references in the format "<type>://<UUID>" to proper URIs
+ * A Fusion Object that converts link references in the format "<type>://<UUID>" to proper URIs.
  *
  * Right now node://<UUID> and asset://<UUID> are supported URI schemes.
  *
@@ -55,24 +56,27 @@ class ConvertUrisImplementation extends AbstractFusionObject
 {
     /**
      * @Flow\Inject
+     *
      * @var LinkingService
      */
     protected $linkingService;
 
     /**
      * @Flow\Inject
+     *
      * @var NodeAddressFactory
      */
     protected $nodeAddressFactory;
 
     /**
-     * Convert URIs matching a supported scheme with generated URIs
+     * Convert URIs matching a supported scheme with generated URIs.
      *
      * If the workspace of the current node context is not live, no replacement will be done unless forceConversion is
      * set. This is needed to show the editable links with metadata in the content module.
      *
-     * @return string
      * @throws Exception
+     *
+     * @return string
      */
     public function evaluate()
     {
@@ -113,7 +117,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
                     $resolvedUri = $uriBuilder->uriFor(
                         'show',
                         [
-                            'node' => $nodeAddress
+                            'node' => $nodeAddress,
                         ],
                         'Frontend\Node',
                         'Neos.Neos'
@@ -131,13 +135,14 @@ class ConvertUrisImplementation extends AbstractFusionObject
 
             if ($resolvedUri === null) {
                 $unresolvedUris[] = $matches[0];
+
                 return $matches[0];
             }
 
             return $resolvedUri;
         }, $text);
 
-        if ($unresolvedUris !== array()) {
+        if ($unresolvedUris !== []) {
             $processedContent = preg_replace('/<a[^>]* href="(node|asset):\/\/[^"]+"[^>]*>(.*?)<\/a>/', '$2', $processedContent);
             $processedContent = preg_replace(LinkingService::PATTERN_SUPPORTED_URIS, '', $processedContent);
         }
@@ -153,6 +158,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
      * Additionally set rel="noopener" for links with target="_blank".
      *
      * @param string $processedContent
+     *
      * @return string
      */
     protected function replaceLinkTargets($processedContent)
@@ -183,10 +189,12 @@ class ConvertUrisImplementation extends AbstractFusionObject
                 if (preg_match_all('~target="(.*?)~i', $linkText, $targetMatches)) {
                     return preg_replace('/target=".*?"/', sprintf('target="%s"%s', $target, $target === '_blank' ? $noOpenerString : ''), $linkText);
                 }
+
                 return str_replace('<a', sprintf('<a target="%s"%s', $target, $target === '_blank' ? $noOpenerString : ''), $linkText);
             },
             $processedContent
         );
+
         return $processedContent;
     }
 }

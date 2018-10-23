@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
 
 /*
@@ -12,7 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  */
 
 /**
- * Position of a reference (when moving or copying)
+ * Position of a reference (when moving or copying).
  */
 final class ReferencePosition implements \JsonSerializable
 {
@@ -25,17 +26,17 @@ final class ReferencePosition implements \JsonSerializable
      */
     private $position;
 
-    public static function before(): ReferencePosition
+    public static function before(): self
     {
         return new static(static::BEFORE);
     }
 
-    public static function into(): ReferencePosition
+    public static function into(): self
     {
         return new static(static::INTO);
     }
 
-    public static function after(): ReferencePosition
+    public static function after(): self
     {
         return new static(static::AFTER);
     }

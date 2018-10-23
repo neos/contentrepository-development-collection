@@ -28,7 +28,6 @@ class Version20170921194900 extends AbstractMigration
         $this->addSql('CREATE INDEX NODE_AGGREGATE_IDENTIFIER ON neos_contentgraph_node (nodeaggregateidentifier)');
         $this->addSql('CREATE INDEX NODE_TYPE_NAME ON neos_contentgraph_node (nodetypename)');
 
-
         $this->addSql('ALTER TABLE neos_contentgraph_hierarchyrelation DROP PRIMARY KEY');
 
         $this->addSql('ALTER TABLE neos_contentgraph_hierarchyrelation ADD parentnodeanchor VARCHAR(255) NULL');
@@ -56,7 +55,6 @@ class Version20170921194900 extends AbstractMigration
         $this->addSql('ALTER TABLE neos_contentgraph_hierarchyrelation DROP parentnodeanchor');
 
         $this->addSql('ALTER TABLE neos_contentgraph_hierarchyrelation ADD PRIMARY KEY (parentnodeidentifier, contentstreamidentifier, dimensionspacepointhash, childnodeidentifier)');
-
 
         $this->addSql('DROP INDEX NODE_TYPE_NAME ON neos_contentgraph_node');
         $this->addSql('DROP INDEX NODE_AGGREGATE_IDENTIFIER ON neos_contentgraph_node');

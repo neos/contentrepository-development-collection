@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
 /*
@@ -16,11 +17,10 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * Node was hidden
+ * Node was hidden.
  */
 final class NodeWasHidden implements EventInterface, CopyableAcrossContentStreamsInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -35,7 +35,7 @@ final class NodeWasHidden implements EventInterface, CopyableAcrossContentStream
      * NodeWasHidden constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeIdentifier          $nodeIdentifier
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -63,11 +63,12 @@ final class NodeWasHidden implements EventInterface, CopyableAcrossContentStream
 
     /**
      * @param ContentStreamIdentifier $targetContentStream
+     *
      * @return NodeWasHidden
      */
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
     {
-        return new NodeWasHidden(
+        return new self(
             $targetContentStream,
             $this->nodeIdentifier
         );

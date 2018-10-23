@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\EventSourcedFrontController;
 
 /*
@@ -13,13 +14,13 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedFrontController;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Domain\Factory\NodeTypeConstraintFactory;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\ContextParameters;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
@@ -28,66 +29,71 @@ use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeSiteResolvingSer
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Utility\Now;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
 use Neos\Neos\Controller\Exception\UnresolvableShortcutException;
 use Neos\Neos\Domain\Service\NodeShortcutResolver;
 use Neos\Neos\View\FusionView;
-use Neos\Flow\Security\Context as SecurityContext;
 
 /**
- * Event Sourced Node Controller; as Replacement of NodeController
+ * Event Sourced Node Controller; as Replacement of NodeController.
  */
 class EventSourcedNodeController extends ActionController
 {
-
-
     /**
      * @Flow\Inject
+     *
      * @var ContentGraphInterface
      */
     protected $contentGraph;
 
-
     /**
      * @Flow\Inject(lazy=false)
+     *
      * @var Now
      */
     protected $now;
 
     /**
      * @Flow\Inject
+     *
      * @var SecurityContext
      */
     protected $securityContext;
 
     /**
      * @Flow\Inject
+     *
      * @var WorkspaceFinder
      */
     protected $workspaceFinder;
 
     /**
      * @Flow\Inject
+     *
      * @var SessionInterface
      */
     protected $session;
 
     /**
      * @Flow\Inject
+     *
      * @var NodeShortcutResolver
      */
     protected $nodeShortcutResolver;
 
     /**
      * @Flow\Inject
+     *
      * @var NodeFactory
      */
     protected $nodeFactory;
 
     /**
      * @Flow\Inject
+     *
      * @var PropertyMapper
      */
     protected $propertyMapper;
@@ -104,26 +110,30 @@ class EventSourcedNodeController extends ActionController
 
     /**
      * @Flow\Inject
+     *
      * @var NodeTypeConstraintFactory
      */
     protected $nodeTypeConstraintFactory;
 
     /**
      * @Flow\Inject
+     *
      * @var NodeAddressFactory
      */
     protected $nodeAddressService;
 
     /**
      * @Flow\Inject
+     *
      * @var NodeSiteResolvingService
      */
     protected $nodeSiteResolvingService;
 
     /**
-     * Initializes the view with the necessary parameters encoded in the given NodeAddress
+     * Initializes the view with the necessary parameters encoded in the given NodeAddress.
      *
      * @param NodeAddress $node Legacy name for backwards compatibility of route components
+     *
      * @throws NodeNotFoundException
      * @throws UnresolvableShortcutException
      * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
@@ -144,7 +154,7 @@ class EventSourcedNodeController extends ActionController
         $contextParameters = $this->createContextParameters($inBackend);
         $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress);
         if (!$site) {
-            throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
+            throw new NodeNotFoundException('TODO: SITE NOT FOUND; should not happen (for address '.$nodeAddress);
         }
 
         $this->fillCacheWithContentNodes($subgraph, $nodeAddress, $contextParameters);
@@ -162,10 +172,10 @@ class EventSourcedNodeController extends ActionController
         $traversableSite = new TraversableNode($site, $subgraph, $contextParameters);
 
         $this->view->assignMultiple([
-            'value' => $traversableNode,
-            'subgraph' => $subgraph,
-            'site' => $traversableSite,
-            'contextParameters' => $contextParameters
+            'value'             => $traversableNode,
+            'subgraph'          => $subgraph,
+            'site'              => $traversableSite,
+            'contextParameters' => $contextParameters,
         ]);
 
         if ($inBackend) {
@@ -181,9 +191,9 @@ class EventSourcedNodeController extends ActionController
         }
     }
 
-
     /**
      * @param bool $inBackend
+     *
      * @return ContextParameters
      */
     protected function createContextParameters(bool $inBackend): ContextParameters
@@ -197,8 +207,9 @@ class EventSourcedNodeController extends ActionController
      * actually affected node is different from the one routing resolved.
      * This is used in out of band rendering for the backend.
      *
-     * @return void
      * @throws NodeNotFoundException
+     *
+     * @return void
      */
     protected function overrideViewVariablesFromInternalArguments()
     {
@@ -223,8 +234,10 @@ class EventSourcedNodeController extends ActionController
      * Handles redirects to shortcut targets in live rendering.
      *
      * @param NodeInterface $node
-     * @return void
+     *
      * @throws NodeNotFoundException|UnresolvableShortcutException
+     *
+     * @return void
      */
     protected function handleShortcutNode(NodeInterface $node)
     {
@@ -261,7 +274,6 @@ class EventSourcedNodeController extends ActionController
         foreach ($subtree->getChildren() as $childSubtree) {
             self::fillCacheInternal($childSubtree, $currentDocumentNode, $nodePathOfDocumentNode, $subgraph->getInMemoryCache());
         }
-
     }
 
     private static function fillCacheInternal(SubtreeInterface $subtree, NodeInterface $parentNode, NodePath $parentNodePath, InMemoryCache $inMemoryCache)
@@ -289,6 +301,4 @@ class EventSourcedNodeController extends ActionController
         // TODO Explain why this is safe (Content can not contain other documents)
         $allChildNodesByNodeIdentifierCache->add($node->getNodeIdentifier(), $allChildNodes);
     }
-
-
 }

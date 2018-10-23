@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
 
 /*
@@ -16,7 +17,6 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 
 final class ShowNode
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -31,7 +31,7 @@ final class ShowNode
      * ShowNode constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeIdentifier          $nodeIdentifier
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -56,5 +56,4 @@ final class ShowNode
     {
         return $this->nodeIdentifier;
     }
-
 }

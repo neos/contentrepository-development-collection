@@ -12,10 +12,10 @@ namespace Neos\EventSourcedNeosAdjustments\Domain\Context\Content;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 
@@ -24,9 +24,9 @@ use Neos\Flow\Annotations as Flow;
  */
 class NodeAddressFactory
 {
-
     /**
      * @Flow\Inject
+     *
      * @var WorkspaceFinder
      */
     protected $workspaceFinder;
@@ -34,6 +34,7 @@ class NodeAddressFactory
     public function createFromNode(NodeInterface $node): NodeAddress
     {
         $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($node->getContentStreamIdentifier());
+
         return new NodeAddress($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), $node->getNodeAggregateIdentifier(), $workspace->getWorkspaceName());
     }
 

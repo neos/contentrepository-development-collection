@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model;
 
 /*
@@ -13,37 +14,36 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model;
 
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 
-
 /**
- * An interface to describe a change
+ * An interface to describe a change.
  */
 interface ChangeInterface
 {
-
     /**
-     * Set the subject
+     * Set the subject.
      *
      * @param NodeInterface $subject
+     *
      * @return void
      */
     public function setSubject(NodeInterface $subject);
 
     /**
-     * Get the subject
+     * Get the subject.
      *
      * @return NodeInterface
      */
     public function getSubject();
 
     /**
-     * Checks whether this change can be applied to the subject
+     * Checks whether this change can be applied to the subject.
      *
-     * @return boolean
+     * @return bool
      */
     public function canApply();
 
     /**
-     * Applies this change
+     * Applies this change.
      *
      * @return void
      */

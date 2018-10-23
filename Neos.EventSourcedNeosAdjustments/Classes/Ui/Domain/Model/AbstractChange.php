@@ -17,8 +17,6 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateWorkspaceInfo;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Neos\Ui\ContentRepository\Service\NodeService;
 use Neos\Neos\Ui\Domain\Model\Feedback\Operations\NodeCreated;
 use Neos\Neos\Ui\Domain\Model\Feedback\Operations\ReloadDocument;
 use Neos\Neos\Ui\Domain\Model\FeedbackCollection;
@@ -32,21 +30,23 @@ abstract class AbstractChange implements ChangeInterface
 
     /**
      * @Flow\Inject
+     *
      * @var FeedbackCollection
      */
     protected $feedbackCollection;
 
     /**
      * @Flow\Inject
+     *
      * @var WorkspaceFinder
      */
     protected $workspaceFinder;
 
-
     /**
-     * Set the subject
+     * Set the subject.
      *
      * @param NodeInterface $subject
+     *
      * @return void
      */
     public function setSubject(NodeInterface $subject)
@@ -55,7 +55,7 @@ abstract class AbstractChange implements ChangeInterface
     }
 
     /**
-     * Get the subject
+     * Get the subject.
      *
      * @return NodeInterface
      */
@@ -65,7 +65,7 @@ abstract class AbstractChange implements ChangeInterface
     }
 
     /**
-     * Helper method to inform the client, that new workspace information is available
+     * Helper method to inform the client, that new workspace information is available.
      *
      * @return void
      */
@@ -86,6 +86,7 @@ abstract class AbstractChange implements ChangeInterface
      * This method will be triggered if [nodeType].properties.[propertyName].ui.reloadIfChanged is TRUE.
      *
      * @param NodeInterface $node
+     *
      * @return void
      */
     protected function reloadDocument($node = null)
@@ -102,6 +103,7 @@ abstract class AbstractChange implements ChangeInterface
      * Inform the client that a node has been created, the client decides if and which tree should react to this change.
      *
      * @param NodeInterface $subject
+     *
      * @return void
      */
     protected function addNodeCreatedFeedback($subject = null)

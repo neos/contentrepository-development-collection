@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Fusion;
 
 /*
@@ -41,24 +42,28 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
 {
     /**
      * @Flow\Inject
+     *
      * @var ContentDimensionZookeeper
      */
     protected $contentDimensionZookeeper;
 
     /**
      * @Flow\Inject
+     *
      * @var ContentDimensionSourceInterface
      */
     protected $contentDimensionSource;
 
     /**
      * @Flow\Inject
+     *
      * @var InterDimensionalVariationGraph
      */
     protected $interDimensionalVariationGraph;
 
     /**
      * @Flow\Inject
+     *
      * @var ContentGraphInterface
      */
     protected $contentGraph;
@@ -68,9 +73,8 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
      */
     protected $currentNode;
 
-
     /**
-     * Builds the array of Menu items for this variant menu
+     * Builds the array of Menu items for this variant menu.
      */
     protected function buildItems()
     {
@@ -95,19 +99,18 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
                 $metadata = $this->determineMetadata($dimensionSpacePoint);
 
                 $menuItems[] = [
-                    'subgraph' => $subgraph,
-                    'node' => $variant,
-                    'state' => $this->calculateItemState($variant),
-                    'label' => $this->determineLabel($variant, $metadata),
-                    'targetDimensions' => $metadata
+                    'subgraph'         => $subgraph,
+                    'node'             => $variant,
+                    'state'            => $this->calculateItemState($variant),
+                    'label'            => $this->determineLabel($variant, $metadata),
+                    'targetDimensions' => $metadata,
                 ];
             }
         }
 
-
         if ($this->getContentDimensionIdentifierToLimitTo() && $this->getValuesToRestrictTo()) {
             $order = array_flip($this->getValuesToRestrictTo());
-            usort($menuItems, function(array $menuItemA, array $menuItemB) use ($order) {
+            usort($menuItems, function (array $menuItemA, array $menuItemB) use ($order) {
                 return $order[$menuItemA['subgraph']->getDimensionSpacePoint()->getCoordinate($this->getContentDimensionIdentifierToLimitTo())]
                     <=> $order[$menuItemB['subgraph']->getDimensionSpacePoint()->getCoordinate($this->getContentDimensionIdentifierToLimitTo())];
             });
@@ -118,6 +121,7 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
 
     /**
      * @param DimensionSpacePoint $dimensionSpacePoint
+     *
      * @return bool
      */
     protected function isDimensionSpacePointRelevant(DimensionSpacePoint $dimensionSpacePoint): bool
@@ -130,9 +134,10 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
     }
 
     /**
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param ContentDimensionIdentifier $contentDimensionIdentifier
+     * @param DimensionSpacePoint                             $dimensionSpacePoint
+     * @param ContentDimensionIdentifier                      $contentDimensionIdentifier
      * @param \Neos\ContentRepository\NodeAggregateIdentifier $nodeAggregateIdentifier
+     *
      * @return NodeInterface|null
      */
     protected function findClosestGeneralizationMatchingDimensionValue(
@@ -157,6 +162,7 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
 
     /**
      * @param DimensionSpacePoint $dimensionSpacePoint
+     *
      * @return array
      */
     protected function determineMetadata(DimensionSpacePoint $dimensionSpacePoint): array
@@ -165,9 +171,9 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
         array_walk($metadata, function (&$dimensionValue, $rawDimensionIdentifier) {
             $dimensionIdentifier = new ContentDimensionIdentifier($rawDimensionIdentifier);
             $dimensionValue = [
-                'value' => $dimensionValue,
-                'label' => $this->contentDimensionSource->getDimension($dimensionIdentifier)->getValue($dimensionValue)->getConfigurationValue('label'),
-                'isPinnedDimension' => (!$this->getContentDimensionIdentifierToLimitTo() || $dimensionIdentifier->equals($this->getContentDimensionIdentifierToLimitTo()))
+                'value'             => $dimensionValue,
+                'label'             => $this->contentDimensionSource->getDimension($dimensionIdentifier)->getValue($dimensionValue)->getConfigurationValue('label'),
+                'isPinnedDimension' => (!$this->getContentDimensionIdentifierToLimitTo() || $dimensionIdentifier->equals($this->getContentDimensionIdentifierToLimitTo())),
             ];
         });
 
@@ -176,19 +182,20 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
 
     /**
      * @param NodeInterface|null $variant
-     * @param array $metadata
+     * @param array              $metadata
+     *
      * @return string
      */
     protected function determineLabel(NodeInterface $variant = null, array $metadata): string
     {
         if ($this->getContentDimensionIdentifierToLimitTo()) {
-            return $metadata[(string)$this->getContentDimensionIdentifierToLimitTo()]['label'] ?: '';
+            return $metadata[(string) $this->getContentDimensionIdentifierToLimitTo()]['label'] ?: '';
         } else {
             if ($variant) {
                 return $variant->getLabel() ?: '';
             } else {
                 return array_reduce($metadata, function ($carry, $item) {
-                    return $carry . (empty($carry) ? '' : '-') . $item['label'];
+                    return $carry.(empty($carry) ? '' : '-').$item['label'];
                 }, '');
             }
         }
@@ -196,6 +203,7 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
 
     /**
      * @param NodeInterface|null $variant
+     *
      * @return string
      */
     protected function calculateItemState(NodeInterface $variant = null): string
@@ -221,7 +229,8 @@ class DimensionsMenuImplementation extends AbstractMenuImplementation
 
     /**
      * In some cases generalization of the other dimension values is feasible
-     * to find a dimension space point in which a variant can be resolved
+     * to find a dimension space point in which a variant can be resolved.
+     *
      * @return bool
      */
     protected function includeGeneralizations(): bool

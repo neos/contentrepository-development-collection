@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
 
 /*
@@ -25,7 +26,7 @@ use Neos\Utility\ObjectAccess;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * A trait with shared step definitions for common use by other contexts
+ * A trait with shared step definitions for common use by other contexts.
  *
  * Note that this trait requires that the Flow Object Manager must be available via $this->getObjectManager().
  *
@@ -33,11 +34,10 @@ use Symfony\Component\Yaml\Yaml;
  */
 trait NodeOperationsTrait
 {
-
     /**
      * @var array
      */
-    private $nodeTypesConfiguration = array();
+    private $nodeTypesConfiguration = [];
 
     /**
      * @return mixed
@@ -52,7 +52,7 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__);
         } else {
-            $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class)->overrideNodeTypes(array());
+            $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class)->overrideNodeTypes([]);
         }
     }
 
@@ -73,7 +73,6 @@ trait NodeOperationsTrait
             $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class)->overrideNodeTypes($configuration);
         }
     }
-
 
     /**
      * @Given /^I have the following content dimensions:$/
@@ -156,5 +155,4 @@ trait NodeOperationsTrait
         ObjectAccess::setProperty($interDimensionalVariationGraph, 'rootGeneralizations', null, true);
         ObjectAccess::setProperty($interDimensionalVariationGraph, 'weightNormalizationBase', null, true);
     }
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
 /*
@@ -11,18 +12,18 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\EventSourcing\Event\EventInterface;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifierAndDimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifierAndDimensionSpacePointSet;
+use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * Node was added to node aggregate event
+ * Node was added to node aggregate event.
  */
 final class NodeWasAddedToAggregate implements EventInterface, CopyableAcrossContentStreamsInterface
 {
@@ -42,14 +43,14 @@ final class NodeWasAddedToAggregate implements EventInterface, CopyableAcrossCon
     private $nodeTypeName;
 
     /**
-     * Location of the node in the dimension space
+     * Location of the node in the dimension space.
      *
      * @var DimensionSpacePoint
      */
     private $dimensionSpacePoint;
 
     /**
-     * Visibility of node in the dimension space
+     * Visibility of node in the dimension space.
      *
      * @var DimensionSpacePointSet
      */
@@ -71,7 +72,7 @@ final class NodeWasAddedToAggregate implements EventInterface, CopyableAcrossCon
     private $nodeName;
 
     /**
-     * (property name => PropertyValue)
+     * (property name => PropertyValue).
      *
      * @var array
      */
@@ -80,15 +81,15 @@ final class NodeWasAddedToAggregate implements EventInterface, CopyableAcrossCon
     /**
      * NodeWasAddedToAggregate constructor.
      *
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param NodeTypeName $nodeTypeName
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param DimensionSpacePointSet $visibleDimensionSpacePoints
-     * @param NodeIdentifier $nodeIdentifier
-     * @param NodeIdentifier $parentNodeIdentifier
-     * @param NodeName $nodeName
-     * @param array $propertyDefaultValuesAndTypes
+     * @param ContentStreamIdentifier                        $contentStreamIdentifier
+     * @param NodeAggregateIdentifier                        $nodeAggregateIdentifier
+     * @param NodeTypeName                                   $nodeTypeName
+     * @param DimensionSpacePoint                            $dimensionSpacePoint
+     * @param DimensionSpacePointSet                         $visibleDimensionSpacePoints
+     * @param NodeIdentifier                                 $nodeIdentifier
+     * @param NodeIdentifier                                 $parentNodeIdentifier
+     * @param NodeName                                       $nodeName
+     * @param array                                          $propertyDefaultValuesAndTypes
      * @param array<NodeIdentifierAndDimensionSpacePointSet> $nodeVisibilityChanges
      */
     public function __construct(
@@ -187,11 +188,12 @@ final class NodeWasAddedToAggregate implements EventInterface, CopyableAcrossCon
 
     /**
      * @param ContentStreamIdentifier $targetContentStream
+     *
      * @return NodeWasAddedToAggregate
      */
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
     {
-        return new NodeWasAddedToAggregate(
+        return new self(
             $targetContentStream,
             $this->nodeAggregateIdentifier,
             $this->nodeTypeName,

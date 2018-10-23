@@ -13,13 +13,12 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  */
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
-use Neos\Flow\Annotations as Flow;
 
 /**
- * The active record for reading and writing hierarchy relations from and to the database
+ * The active record for reading and writing hierarchy relations from and to the database.
  */
 class HierarchyRelation
 {
@@ -61,11 +60,11 @@ class HierarchyRelation
     /**
      * @param NodeRelationAnchorPoint $parentNodeAnchor
      * @param NodeRelationAnchorPoint $childNodeAnchor
-     * @param NodeName $name
+     * @param NodeName                $name
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param string $dimensionSpacePointHash
-     * @param int $position
+     * @param DimensionSpacePoint     $dimensionSpacePoint
+     * @param string                  $dimensionSpacePointHash
+     * @param int                     $position
      */
     public function __construct(
         NodeRelationAnchorPoint $parentNodeAnchor,
@@ -91,13 +90,13 @@ class HierarchyRelation
     public function addToDatabase(Connection $databaseConnection): void
     {
         $databaseConnection->insert('neos_contentgraph_hierarchyrelation', [
-            'parentnodeanchor' => $this->parentNodeAnchor,
-            'childnodeanchor' => $this->childNodeAnchor,
-            'name' => $this->name,
+            'parentnodeanchor'        => $this->parentNodeAnchor,
+            'childnodeanchor'         => $this->childNodeAnchor,
+            'name'                    => $this->name,
             'contentstreamidentifier' => $this->contentStreamIdentifier,
-            'dimensionspacepoint' => json_encode($this->dimensionSpacePoint),
+            'dimensionspacepoint'     => json_encode($this->dimensionSpacePoint),
             'dimensionspacepointhash' => $this->dimensionSpacePointHash,
-            'position' => $this->position
+            'position'                => $this->position,
         ]);
     }
 
@@ -111,14 +110,14 @@ class HierarchyRelation
 
     /**
      * @param NodeRelationAnchorPoint $childAnchorPoint
-     * @param Connection $databaseConnection
+     * @param Connection              $databaseConnection
      */
     public function assignNewChildNode(NodeRelationAnchorPoint $childAnchorPoint, Connection $databaseConnection): void
     {
         $databaseConnection->update(
             'neos_contentgraph_hierarchyrelation',
             [
-                'childnodeanchor' => $childAnchorPoint
+                'childnodeanchor' => $childAnchorPoint,
             ],
             $this->getDatabaseIdentifier()
         );
@@ -126,20 +125,21 @@ class HierarchyRelation
 
     /**
      * @param NodeRelationAnchorPoint $parentAnchorPoint
-     * @param Connection $databaseConnection
+     * @param Connection              $databaseConnection
      */
     public function assignNewParentNode(NodeRelationAnchorPoint $parentAnchorPoint, Connection $databaseConnection): void
     {
         $databaseConnection->update(
             'neos_contentgraph_hierarchyrelation',
             [
-                'parentnodeanchor' => $parentAnchorPoint
+                'parentnodeanchor' => $parentAnchorPoint,
             ],
             $this->getDatabaseIdentifier()
         );
     }
+
     /**
-     * @param int $position
+     * @param int        $position
      * @param Connection $databaseConnection
      */
     public function assignNewPosition(int $position, Connection $databaseConnection): void
@@ -147,7 +147,7 @@ class HierarchyRelation
         $databaseConnection->update(
             'neos_contentgraph_hierarchyrelation',
             [
-                'position' => $position
+                'position' => $position,
             ],
             $this->getDatabaseIdentifier()
         );
@@ -159,11 +159,10 @@ class HierarchyRelation
     public function getDatabaseIdentifier(): array
     {
         return [
-            'parentnodeanchor' => $this->parentNodeAnchor,
-            'childnodeanchor' => $this->childNodeAnchor,
+            'parentnodeanchor'        => $this->parentNodeAnchor,
+            'childnodeanchor'         => $this->childNodeAnchor,
             'contentstreamidentifier' => $this->contentStreamIdentifier,
-            'dimensionspacepointhash' => $this->dimensionSpacePointHash
+            'dimensionspacepointhash' => $this->dimensionSpacePointHash,
         ];
     }
-
 }

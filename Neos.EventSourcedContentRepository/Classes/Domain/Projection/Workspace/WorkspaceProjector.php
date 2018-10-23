@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Workspace;
 
 /*
@@ -10,25 +11,24 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Workspace;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Annotations as Flow;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasCreated;
 use Doctrine\Common\Persistence\ObjectManager as DoctrineObjectManager;
 use Doctrine\ORM\EntityManager as DoctrineEntityManager;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\RootWorkspaceWasCreated;
+use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasRebased;
 use Neos\EventSourcing\Projection\ProjectorInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
- * Workspace Projector
+ * Workspace Projector.
  */
 final class WorkspaceProjector implements ProjectorInterface
 {
-
     private const TABLE_NAME = 'neos_contentrepository_projection_workspace_v1';
 
     /**
      * @Flow\Inject
+     *
      * @var WorkspaceFinder
      */
     protected $workspaceFinder;
@@ -56,33 +56,34 @@ final class WorkspaceProjector implements ProjectorInterface
     public function whenWorkspaceWasCreated(WorkspaceWasCreated $event)
     {
         $this->dbal->insert(self::TABLE_NAME, [
-            'workspaceName' => $event->getWorkspaceName(),
-            'baseWorkspaceName' => $event->getBaseWorkspaceName(),
-            'workspaceTitle' => $event->getWorkspaceTitle(),
-            'workspaceDescription' => $event->getWorkspaceDescription(),
-            'workspaceOwner' => $event->getWorkspaceOwner(),
-            'currentContentStreamIdentifier' => $event->getCurrentContentStreamIdentifier()
+            'workspaceName'                  => $event->getWorkspaceName(),
+            'baseWorkspaceName'              => $event->getBaseWorkspaceName(),
+            'workspaceTitle'                 => $event->getWorkspaceTitle(),
+            'workspaceDescription'           => $event->getWorkspaceDescription(),
+            'workspaceOwner'                 => $event->getWorkspaceOwner(),
+            'currentContentStreamIdentifier' => $event->getCurrentContentStreamIdentifier(),
         ]);
     }
+
     /**
      * @param RootWorkspaceWasCreated $event
      */
     public function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event)
     {
-       $this->dbal->insert(self::TABLE_NAME, [
-            'workspaceName' => $event->getWorkspaceName(),
-            'workspaceTitle' => $event->getWorkspaceTitle(),
-            'workspaceDescription' => $event->getWorkspaceDescription(),
-            'currentContentStreamIdentifier' => $event->getCurrentContentStreamIdentifier()
+        $this->dbal->insert(self::TABLE_NAME, [
+            'workspaceName'                  => $event->getWorkspaceName(),
+            'workspaceTitle'                 => $event->getWorkspaceTitle(),
+            'workspaceDescription'           => $event->getWorkspaceDescription(),
+            'currentContentStreamIdentifier' => $event->getCurrentContentStreamIdentifier(),
         ]);
     }
 
     public function whenWorkspaceWasRebased(WorkspaceWasRebased $event)
     {
         $this->dbal->update(self::TABLE_NAME, [
-            'currentContentStreamIdentifier' => $event->getCurrentContentStreamIdentifier()
+            'currentContentStreamIdentifier' => $event->getCurrentContentStreamIdentifier(),
         ], [
-            'workspaceName' => $event->getWorkspaceName()
+            'workspaceName' => $event->getWorkspaceName(),
         ]);
 
         // TODO: HACK to update in-memory projection(!!!!!!) nasty!!!
@@ -91,8 +92,8 @@ final class WorkspaceProjector implements ProjectorInterface
 
     public function reset(): void
     {
-        $this->dbal->transactional(function() {
-            $this->dbal->exec('TRUNCATE ' . self::TABLE_NAME);
+        $this->dbal->transactional(function () {
+            $this->dbal->exec('TRUNCATE '.self::TABLE_NAME);
         });
     }
 }

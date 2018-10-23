@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Ui\TypeConverter;
 
 /*
@@ -42,60 +43,68 @@ class ChangeCollectionConverter extends AbstractTypeConverter
     protected $targetType = ChangeCollection::class;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $priority = 5;
 
     /**
      * @Flow\Inject
+     *
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
     protected $disallowedPayloadProperties = [
         'subject',
-        'reference'
+        'reference',
     ];
 
     /**
      * @Flow\InjectConfiguration(package="Neos.Neos.Ui", path="changes.types")
+     *
      * @var array
      */
     protected $typeMap;
 
     /**
      * @Flow\Inject
+     *
      * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
      * @Flow\Inject
+     *
      * @var NodeService
      */
     protected $nodeService;
 
     /**
      * @Flow\Inject
+     *
      * @var PropertyMapper
      */
     protected $propertyMapper;
 
     /**
      * @Flow\Inject
+     *
      * @var ReflectionService
      */
     protected $reflectionService;
 
     /**
-     * Converts a accordingly formatted, associative array to a change collection
+     * Converts a accordingly formatted, associative array to a change collection.
      *
-     * @param array $source
-     * @param string $targetType not used
-     * @param array $subProperties not used
+     * @param array                                                     $source
+     * @param string                                                    $targetType    not used
+     * @param array                                                     $subProperties not used
      * @param \Neos\Flow\Property\PropertyMappingConfigurationInterface $configuration not used
-     * @return mixed An object or \Neos\Error\Messages\Error if the input format is not supported or could not be converted for other reasons
+     *
      * @throws \Exception
+     *
+     * @return mixed An object or \Neos\Error\Messages\Error if the input format is not supported or could not be converted for other reasons
      */
     public function convertFrom($source, $targetType, array $subProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
@@ -118,9 +127,10 @@ class ChangeCollectionConverter extends AbstractTypeConverter
     }
 
     /**
-     * Convert array to change interface
+     * Convert array to change interface.
      *
      * @param array $changeData
+     *
      * @return ChangeInterface
      */
     protected function convertChangeData($changeData)

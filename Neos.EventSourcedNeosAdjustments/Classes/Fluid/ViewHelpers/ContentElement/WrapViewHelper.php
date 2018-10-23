@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\ContentElement;
 
 /*
@@ -39,12 +40,13 @@ use Neos\Fusion\FusionObjects\Helpers\FusionAwareViewInterface;
 class WrapViewHelper extends AbstractViewHelper
 {
     /**
-     * @var boolean
+     * @var bool
      */
     protected $escapeOutput = false;
 
     /**
      * @Flow\Inject
+     *
      * @var ContentElementWrappingService
      */
     protected $contentElementWrappingService;
@@ -54,9 +56,11 @@ class WrapViewHelper extends AbstractViewHelper
      * For logged in users with access to the Backend this also adds the attributes for the RTE to work.
      *
      * @param TraversableNodeInterface $node The node of the content element. Optional, will be resolved from the Fusion context by default.
-     * @return string The rendered property with a wrapping tag. In the user workspace this adds some required attributes for the RTE to work
+     *
      * @throws ViewHelperException
      * @throws \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\Exception\NodeAddressCannotBeSerializedException
+     *
+     * @return string The rendered property with a wrapping tag. In the user workspace this adds some required attributes for the RTE to work
      */
     public function render(TraversableNodeInterface $node = null)
     {
@@ -70,6 +74,7 @@ class WrapViewHelper extends AbstractViewHelper
         if ($node === null) {
             $node = $currentContext['node'];
         }
+
         return $this->contentElementWrappingService->wrapContentObject($node, $this->renderChildren(), $fusionObject->getPath());
     }
 }

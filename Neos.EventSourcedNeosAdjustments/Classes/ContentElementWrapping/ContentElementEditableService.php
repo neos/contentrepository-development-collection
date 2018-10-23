@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\ContentElementWrapping;
 
 /*
@@ -13,11 +14,11 @@ namespace Neos\EventSourcedNeosAdjustments\ContentElementWrapping;
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
 
 /**
@@ -29,35 +30,37 @@ use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
  */
 class ContentElementEditableService
 {
-
     /**
      * @Flow\Inject
+     *
      * @var PrivilegeManagerInterface
      */
     protected $privilegeManager;
 
     /**
      * @Flow\Inject
+     *
      * @var AuthorizationService
      */
     protected $nodeAuthorizationService;
 
     /**
      * @Flow\Inject
+     *
      * @var FusionHtmlAugmenter
      */
     protected $htmlAugmenter;
 
-
     /**
      * @Flow\Inject
+     *
      * @var WorkspaceFinder
      */
     protected $workspaceFinder;
 
-
     /**
      * @Flow\Inject
+     *
      * @var NodeAddressFactory
      */
     protected $nodeAddressFactory;
@@ -74,8 +77,8 @@ class ContentElementEditableService
         //}
 
         $attributes = [
-            'data-__neos-property' => $property,
-            'data-__neos-editable-node-contextpath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri()
+            'data-__neos-property'                  => $property,
+            'data-__neos-editable-node-contextpath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri(),
         ];
 
         return $this->htmlAugmenter->addAttributes($content, $attributes, 'span');

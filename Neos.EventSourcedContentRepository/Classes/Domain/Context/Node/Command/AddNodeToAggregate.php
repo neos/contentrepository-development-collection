@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
 
 /*
@@ -18,11 +19,10 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 
 /**
- * AddNodeToAggregate command
+ * AddNodeToAggregate command.
  */
 final class AddNodeToAggregate
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -34,14 +34,14 @@ final class AddNodeToAggregate
     private $nodeAggregateIdentifier;
 
     /**
-     * Location of the new node in the dimension space
+     * Location of the new node in the dimension space.
      *
      * @var DimensionSpacePoint
      */
     private $dimensionSpacePoint;
 
     /**
-     * Node identifier of the new node
+     * Node identifier of the new node.
      *
      * @var NodeIdentifier
      */
@@ -62,10 +62,10 @@ final class AddNodeToAggregate
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param NodeIdentifier $nodeIdentifier
-     * @param NodeIdentifier $parentNodeIdentifier
-     * @param NodeName $nodeName
+     * @param DimensionSpacePoint     $dimensionSpacePoint
+     * @param NodeIdentifier          $nodeIdentifier
+     * @param NodeIdentifier          $parentNodeIdentifier
+     * @param NodeName                $nodeName
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -130,5 +130,4 @@ final class AddNodeToAggregate
     {
         return $this->nodeName;
     }
-
 }

@@ -10,17 +10,20 @@
  * source code.
  */
 
-require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContext.php');
-require_once(__DIR__ . '/NodeOperationsTrait.php');
-require_once(__DIR__ . '/NodeAuthorizationTrait.php');
-require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
-require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
+require_once __DIR__.'/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContext.php';
+require_once __DIR__.'/NodeOperationsTrait.php';
+require_once __DIR__.'/NodeAuthorizationTrait.php';
+require_once __DIR__.'/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php';
+require_once __DIR__.'/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php';
 
 use Neos\Behat\Tests\Behat\FlowContext;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
 use Neos\EventSourcing\Event\EventPublisher;
 use Neos\EventSourcing\Event\EventTypeResolver;
 use Neos\EventSourcing\EventStore\EventStoreManager;
@@ -29,12 +32,9 @@ use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use Neos\Flow\Utility\Environment;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
-use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
 
 /**
- * Features context
+ * Features context.
  */
 class FeatureContext extends \Behat\Behat\Context\BehatContext
 {
@@ -50,7 +50,7 @@ class FeatureContext extends \Behat\Behat\Context\BehatContext
     protected $behatTestHelperObjectName = \Neos\EventSourcedContentRepository\Tests\Functional\Command\BehatTestHelper::class;
 
     /**
-     * Initializes the context
+     * Initializes the context.
      *
      * @param array $parameters Context parameters (configured through behat.yml)
      */

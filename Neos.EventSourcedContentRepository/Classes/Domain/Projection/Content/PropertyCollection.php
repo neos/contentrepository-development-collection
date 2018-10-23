@@ -13,17 +13,14 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  */
 
 use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
-use Neos\EventSourcedContentRepository\Domain;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
-use Neos\Flow\Annotations as Flow;
-
 
 final class PropertyCollection implements PropertyCollectionInterface
 {
-
     /**
-     * Properties from Nodes
+     * Properties from Nodes.
      *
      * @var array
      */
@@ -36,12 +33,14 @@ final class PropertyCollection implements PropertyCollectionInterface
 
     /**
      * @Flow\Inject
+     *
      * @var PropertyMapper
      */
     protected $propertyMapper;
 
     /**
      * @Flow\Inject
+     *
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
@@ -59,13 +58,14 @@ final class PropertyCollection implements PropertyCollectionInterface
     public function offsetGet($offset)
     {
         if (!isset($this->properties[$offset])) {
-            return null;
+            return;
         }
         $value = $this->properties[$offset];
         if (isset($value['__flow_object_type'])) {
             if (!isset($this->resolvedPropertyObjects[$offset])) {
                 $this->resolvedPropertyObjects[$offset] = $this->persistenceManager->getObjectByIdentifier($value['__identifier'], $value['__flow_object_type']);
             }
+
             return $this->resolvedPropertyObjects[$offset];
         }
 
@@ -74,11 +74,11 @@ final class PropertyCollection implements PropertyCollectionInterface
 
     public function offsetSet($offset, $value)
     {
-        throw new \RuntimeException("Do not use!");
+        throw new \RuntimeException('Do not use!');
     }
 
     public function offsetUnset($offset)
     {
-        throw new \RuntimeException("Do not use!");
+        throw new \RuntimeException('Do not use!');
     }
 }

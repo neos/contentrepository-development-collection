@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
 
 /*
@@ -13,7 +14,6 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
 
 final class PropertyValues implements \JsonSerializable
 {
-
     /**
      * @var PropertyValue[]
      */

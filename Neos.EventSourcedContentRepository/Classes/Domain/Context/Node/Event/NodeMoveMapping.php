@@ -6,7 +6,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 
 /**
- * Nodes were moved
+ * Nodes were moved.
  */
 final class NodeMoveMapping
 {
@@ -30,11 +30,10 @@ final class NodeMoveMapping
      */
     private $dimensionSpacePointSet;
 
-
     /**
-     * @param NodeIdentifier $nodeIdentifier
-     * @param NodeIdentifier|null $newParentNodeIdentifier
-     * @param NodeIdentifier|null $newSucceedingSiblingIdentifier
+     * @param NodeIdentifier         $nodeIdentifier
+     * @param NodeIdentifier|null    $newParentNodeIdentifier
+     * @param NodeIdentifier|null    $newSucceedingSiblingIdentifier
      * @param DimensionSpacePointSet $dimensionSpacePointSet
      */
     public function __construct(NodeIdentifier $nodeIdentifier, ?NodeIdentifier $newParentNodeIdentifier, ?NodeIdentifier $newSucceedingSiblingIdentifier, DimensionSpacePointSet $dimensionSpacePointSet)
@@ -44,7 +43,6 @@ final class NodeMoveMapping
         $this->newSucceedingSiblingIdentifier = $newSucceedingSiblingIdentifier;
         $this->dimensionSpacePointSet = $dimensionSpacePointSet;
     }
-
 
     /**
      * @return NodeIdentifier

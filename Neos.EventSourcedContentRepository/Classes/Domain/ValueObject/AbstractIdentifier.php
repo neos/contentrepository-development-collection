@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
 
 /*
@@ -15,7 +16,7 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 /**
- * Abstract class for an identifier value object
+ * Abstract class for an identifier value object.
  */
 abstract class AbstractIdentifier implements \JsonSerializable
 {
@@ -40,12 +41,14 @@ abstract class AbstractIdentifier implements \JsonSerializable
 
     /**
      * @param string $string
+     *
      * @return static
      */
     public static function fromString(string $string)
     {
         $instance = new static();
         $instance->uuid = Uuid::fromString($string);
+
         return $instance;
     }
 

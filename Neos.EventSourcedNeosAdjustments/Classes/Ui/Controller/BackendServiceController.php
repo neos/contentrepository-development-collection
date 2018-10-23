@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Ui\Controller;
 
 /*
@@ -11,42 +12,43 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Controller;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
-use Neos\EventSourcedNeosAdjustments\Ui\Service\PublishingService;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\ChangeCollection;
-use Neos\Flow\Mvc\View\JsonView;
-use Neos\Neos\Ui\Fusion\Helper\NodeInfoHelper;
-use Neos\Neos\Ui\Fusion\Helper\WorkspaceHelper;
+use Neos\EventSourcedNeosAdjustments\Ui\Service\PublishingService;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\RequestInterface;
 use Neos\Flow\Mvc\ResponseInterface;
+use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Service\ContentContextFactory;
 use Neos\Neos\Service\UserService;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\Neos\Ui\Domain\Model\FeedbackCollection;
+use Neos\Neos\Ui\ContentRepository\Service\NodeService;
+use Neos\Neos\Ui\ContentRepository\Service\WorkspaceService;
 use Neos\Neos\Ui\Domain\Model\Feedback\Messages\Error;
 use Neos\Neos\Ui\Domain\Model\Feedback\Messages\Info;
 use Neos\Neos\Ui\Domain\Model\Feedback\Messages\Success;
 use Neos\Neos\Ui\Domain\Model\Feedback\Operations\Redirect;
 use Neos\Neos\Ui\Domain\Model\Feedback\Operations\ReloadDocument;
 use Neos\Neos\Ui\Domain\Model\Feedback\Operations\RemoveNode;
-use Neos\Neos\Ui\Domain\Model\Feedback\Operations\UpdateWorkspaceInfo;
 use Neos\Neos\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
+use Neos\Neos\Ui\Domain\Model\Feedback\Operations\UpdateWorkspaceInfo;
+use Neos\Neos\Ui\Domain\Model\FeedbackCollection;
 use Neos\Neos\Ui\Domain\Service\NodeTreeBuilder;
-use Neos\Neos\Ui\ContentRepository\Service\NodeService;
-use Neos\Neos\Ui\ContentRepository\Service\WorkspaceService;
-use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\Neos\Ui\Fusion\Helper\NodeInfoHelper;
+use Neos\Neos\Ui\Fusion\Helper\WorkspaceHelper;
 use Neos\Neos\Ui\Service\NodePolicyService;
 
 class BackendServiceController extends ActionController
 {
     /**
      * @Flow\Inject
+     *
      * @var ContentContextFactory
      */
     protected $contextFactory;
@@ -63,58 +65,67 @@ class BackendServiceController extends ActionController
 
     /**
      * @Flow\Inject
+     *
      * @var FeedbackCollection
      */
     protected $feedbackCollection;
 
     /**
      * @Flow\Inject
+     *
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
     /**
      * @Flow\Inject
+     *
      * @var PublishingService
      */
     protected $publishingService;
 
     /**
      * @Flow\Inject
+     *
      * @var NodeService
      */
     protected $nodeService;
 
     /**
      * @Flow\Inject
+     *
      * @var WorkspaceRepository
      */
     protected $workspaceRepository;
 
     /**
      * @Flow\Inject
+     *
      * @var WorkspaceService
      */
     protected $workspaceService;
 
     /**
      * @Flow\Inject
+     *
      * @var UserService
      */
     protected $userService;
 
     /**
      * @Flow\Inject
+     *
      * @var NodePolicyService
      */
     protected $nodePolicyService;
 
     /**
      * Set the controller context on the feedback collection after the controller
-     * has been initialized
+     * has been initialized.
      *
-     * @param RequestInterface $request
+     * @param RequestInterface  $request
      * @param ResponseInterface $response
+     *
      * @return void
      */
     public function initializeController(RequestInterface $request, ResponseInterface $response)
@@ -124,9 +135,10 @@ class BackendServiceController extends ActionController
     }
 
     /**
-     * Helper method to inform the client, that new workspace information is available
+     * Helper method to inform the client, that new workspace information is available.
      *
      * @param string $documentNodeContextPath
+     *
      * @return void
      */
     protected function updateWorkspaceInfo(string $documentNodeContextPath)
@@ -141,9 +153,10 @@ class BackendServiceController extends ActionController
     }
 
     /**
-     * Apply a set of changes to the system
+     * Apply a set of changes to the system.
      *
      * @param ChangeCollection $changes
+     *
      * @return void
      */
     public function changeAction(ChangeCollection $changes)
@@ -167,9 +180,10 @@ class BackendServiceController extends ActionController
     }
 
     /**
-     * Publish all nodes
+     * Publish all nodes.
      *
      * @param WorkspaceName $workspaceName
+     *
      * @return void
      */
     public function publishAllAction()
@@ -187,10 +201,11 @@ class BackendServiceController extends ActionController
     }
 
     /**
-     * Publish nodes
+     * Publish nodes.
      *
-     * @param array $nodeContextPaths
+     * @param array  $nodeContextPaths
      * @param string $targetWorkspaceName
+     *
      * @return void
      */
     public function publishAction(array $nodeContextPaths, string $targetWorkspaceName)
@@ -223,9 +238,10 @@ class BackendServiceController extends ActionController
     }
 
     /**
-     * Discard nodes
+     * Discard nodes.
      *
      * @param array $nodeContextPaths
+     *
      * @return void
      */
     public function discardAction(array $nodeContextPaths)
@@ -279,12 +295,14 @@ class BackendServiceController extends ActionController
     }
 
     /**
-     * Change base workspace of current user workspace
+     * Change base workspace of current user workspace.
      *
-     * @param string $targetWorkspaceName,
+     * @param string        $targetWorkspaceName,
      * @param NodeInterface $documentNode
-     * @return void
+     *
      * @throws \Exception
+     *
+     * @return void
      */
     public function changeBaseWorkspaceAction(string $targetWorkspaceName, NodeInterface $documentNode)
     {
@@ -363,10 +381,11 @@ class BackendServiceController extends ActionController
     }
 
     /**
-     * Load the nodetree
+     * Load the nodetree.
      *
      * @param NodeTreeBuilder $nodeTreeArguments
-     * @param boolean $includeRoot
+     * @param bool            $includeRoot
+     *
      * @return void
      */
     public function loadTreeAction(NodeTreeBuilder $nodeTreeArguments, $includeRoot = false)
@@ -377,6 +396,7 @@ class BackendServiceController extends ActionController
 
     /**
      * @Flow\Inject
+     *
      * @var ContentGraphInterface
      */
     protected $contentGraph;
@@ -404,9 +424,10 @@ class BackendServiceController extends ActionController
     }
 
     /**
-     * Build and execute a flow query chain
+     * Build and execute a flow query chain.
      *
      * @param array $chain
+     *
      * @return string
      */
     public function flowQueryAction(array $chain)

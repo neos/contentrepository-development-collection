@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
 
 /*
@@ -17,7 +18,6 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 
 final class SetNodeProperty
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -42,9 +42,9 @@ final class SetNodeProperty
      * SetNodeProperty constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
-     * @param string $propertyName
-     * @param PropertyValue $value
+     * @param NodeIdentifier          $nodeIdentifier
+     * @param string                  $propertyName
+     * @param PropertyValue           $value
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -89,5 +89,4 @@ final class SetNodeProperty
     {
         return $this->value;
     }
-
 }

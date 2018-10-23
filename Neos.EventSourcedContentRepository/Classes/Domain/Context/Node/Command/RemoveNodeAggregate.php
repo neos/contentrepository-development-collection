@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
 
 /*
@@ -16,7 +17,6 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 
 final class RemoveNodeAggregate
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -29,6 +29,7 @@ final class RemoveNodeAggregate
 
     /**
      * RemoveNodeAggregate constructor.
+     *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      */

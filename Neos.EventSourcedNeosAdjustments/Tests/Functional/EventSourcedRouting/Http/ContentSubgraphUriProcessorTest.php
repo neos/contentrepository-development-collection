@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Tests\Functional\EventSourcedRouting\Http;
 
 /*
@@ -22,13 +23,12 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
-use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException;
-use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\BasicContentDimensionResolutionMode;
+use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentSubgraphUriProcessor;
+use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Utility\Exception\PropertyNotAccessibleException;
 use Neos\Utility\ObjectAccess;
-
 
 class ContentSubgraphUriProcessorTest extends FunctionalTestCase
 {
@@ -53,76 +53,76 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
             'market' => new ContentDimension(
                 new ContentDimensionIdentifier('market'),
                 [
-                    $world->getValue() => $world,
+                    $world->getValue()        => $world,
                     $greatBritain->getValue() => $greatBritain,
-                    $germany->getValue() => $germany
+                    $germany->getValue()      => $germany,
                 ],
                 $world,
                 [
                     new ContentDimensionValueVariationEdge($greatBritain, $world),
-                    new ContentDimensionValueVariationEdge($germany, $world)
+                    new ContentDimensionValueVariationEdge($germany, $world),
                 ],
                 [
                     'resolution' => [
-                        'mode' => BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTSUFFIX
-                    ]
+                        'mode' => BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTSUFFIX,
+                    ],
                 ]
             ),
             'seller' => new ContentDimension(
                 new ContentDimensionIdentifier('seller'),
                 [
                     $defaultSeller->getValue() => $defaultSeller,
-                    $sellerA->getValue() => $sellerA
+                    $sellerA->getValue()       => $sellerA,
                 ],
                 $defaultSeller,
                 [
-                    new ContentDimensionValueVariationEdge($sellerA, $defaultSeller)
+                    new ContentDimensionValueVariationEdge($sellerA, $defaultSeller),
                 ],
                 [
                     'resolution' => [
-                        'mode' => BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT,
+                        'mode'    => BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT,
                         'options' => [
-                            'allowEmptyValue' => true
-                        ]
-                    ]
+                            'allowEmptyValue' => true,
+                        ],
+                    ],
                 ]
             ),
             'channel' => new ContentDimension(
                 new ContentDimensionIdentifier('channel'),
                 [
                     $defaultChannel->getValue() => $defaultChannel,
-                    $channelA->getValue() => $channelA
+                    $channelA->getValue()       => $channelA,
                 ],
                 $defaultChannel,
                 [
-                    new ContentDimensionValueVariationEdge($channelA, $defaultChannel)
+                    new ContentDimensionValueVariationEdge($channelA, $defaultChannel),
                 ],
                 [
                     'resolution' => [
-                        'mode' => BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT,
+                        'mode'    => BasicContentDimensionResolutionMode::RESOLUTION_MODE_URIPATHSEGMENT,
                         'options' => [
-                            'allowEmptyValue' => true
-                        ]
-                    ]
+                            'allowEmptyValue' => true,
+                        ],
+                    ],
                 ]
             ),
             'language' => new ContentDimension(
                 new ContentDimensionIdentifier('language'),
                 [
                     $english->getValue() => $english,
-                    $german->getValue() => $german
+                    $german->getValue()  => $german,
                 ],
                 $english,
                 [],
                 [
                     'resolution' => [
-                        'mode' => BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTPREFIX,
+                        'mode'    => BasicContentDimensionResolutionMode::RESOLUTION_MODE_HOSTPREFIX,
                         'options' => [
-                            'allowEmptyValue' => true
-                        ]
-                    ]
+                            'allowEmptyValue' => true,
+                        ],
+                    ],
                 ]
-            )
+            ),
         ];
 
         $dimensionPresetSource = $this->objectManager->get(ContentDimensionSourceInterface::class);
@@ -131,6 +131,7 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
 
     /**
      * @test
+     *
      * @throws PropertyNotAccessibleException
      * @throws InvalidContentDimensionValueUriProcessorException
      * @throws \Exception
@@ -142,10 +143,10 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
         $contentQuery = new NodeAddress(
             new ContentStreamIdentifier(),
             new DimensionSpacePoint([
-                'market' => 'GB',
-                'seller' => 'sellerA',
-                'channel' => 'channelA',
-                'language' => 'en'
+                'market'   => 'GB',
+                'seller'   => 'sellerA',
+                'channel'  => 'channelA',
+                'language' => 'en',
             ]),
             new NodeAggregateIdentifier(),
             WorkspaceName::forLive()
@@ -155,15 +156,15 @@ class ContentSubgraphUriProcessorTest extends FunctionalTestCase
 
         $this->assertSame(
             [
-                'prefix' => '',
-                'replacePrefixes' => ['de.']
+                'prefix'          => '',
+                'replacePrefixes' => ['de.'],
             ],
             $constraints['hostPrefix']
         );
         $this->assertSame(
             [
-                'suffix' => '.co.uk',
-                'replaceSuffixes' => ['.com', '.co.uk', '.de']
+                'suffix'          => '.co.uk',
+                'replaceSuffixes' => ['.com', '.co.uk', '.de'],
             ],
             $constraints['hostSuffix']
         );

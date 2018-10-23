@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 
 /*
@@ -11,23 +12,21 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
-
 
 /**
  * The "new" Event-Sourced Node. Does NOT contain tree traversal logic; this is implemented in TraversableNode.
  */
 class Node implements NodeInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -75,15 +74,16 @@ class Node implements NodeInterface
 
     /**
      * Node constructor.
+     *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param DimensionSpacePoint     $dimensionSpacePoint
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param NodeIdentifier $nodeIdentifier
-     * @param NodeTypeName $nodeTypeName
-     * @param NodeType $nodeType
-     * @param NodeName $nodeName
-     * @param bool $hidden
-     * @param PropertyCollection $properties
+     * @param NodeIdentifier          $nodeIdentifier
+     * @param NodeTypeName            $nodeTypeName
+     * @param NodeType                $nodeType
+     * @param NodeName                $nodeName
+     * @param bool                    $hidden
+     * @param PropertyCollection      $properties
      */
     public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, NodeAggregateIdentifier $nodeAggregateIdentifier, NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, NodeType $nodeType, NodeName $nodeName, bool $hidden, PropertyCollection $properties)
     {
@@ -170,12 +170,13 @@ class Node implements NodeInterface
         return $this->properties;
     }
 
-
     /**
      * Returns the specified property.
      *
      * @param string $propertyName Name of the property
+     *
      * @return mixed value of the property
+     *
      * @api
      */
     public function getProperty($propertyName)
@@ -187,6 +188,7 @@ class Node implements NodeInterface
     {
         return isset($this->properties[$propertyName]);
     }
+
     /**
      * Returns a string which distinctly identifies this object and thus can be used as an identifier for cache entries
      * related to this object.
@@ -195,9 +197,8 @@ class Node implements NodeInterface
      */
     public function getCacheEntryIdentifier():string
     {
-        return (string)$this->getNodeIdentifier() . '@' . (string)$this->getContentStreamIdentifier() . '@' . $this->getDimensionSpacePoint()->serializeForUri();
+        return (string) $this->getNodeIdentifier().'@'.(string) $this->getContentStreamIdentifier().'@'.$this->getDimensionSpacePoint()->serializeForUri();
     }
-
 
     public function getLabel(): ?string
     {

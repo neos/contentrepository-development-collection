@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionDetection;
 
 /*
@@ -15,7 +16,7 @@ use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\Flow\Http;
 
 /**
- * A content dimension preset detector evaluating the host suffix
+ * A content dimension preset detector evaluating the host suffix.
  */
 final class HostSuffixContentDimensionValueDetector implements ContentDimensionValueDetectorInterface
 {
@@ -24,11 +25,11 @@ final class HostSuffixContentDimensionValueDetector implements ContentDimensionV
      */
     protected $defaultOptions = [];
 
-
     /**
-     * @param Dimension\ContentDimension $contentDimension
+     * @param Dimension\ContentDimension      $contentDimension
      * @param Http\Component\ComponentContext $componentContext
-     * @param array|null $overrideOptions
+     * @param array|null                      $overrideOptions
+     *
      * @return Dimension\ContentDimensionValue|null
      */
     public function detectValue(Dimension\ContentDimension $contentDimension, Http\Component\ComponentContext $componentContext, array $overrideOptions = null): ?Dimension\ContentDimensionValue

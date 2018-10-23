@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Workspace;
 
 /*
@@ -18,7 +19,7 @@ use Neos\EventSourcing\Annotations as CQRS;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Workspace Read Model
+ * Workspace Read Model.
  *
  * @Flow\Entity
  * @CQRS\ReadModel
@@ -26,9 +27,9 @@ use Neos\Flow\Annotations as Flow;
  */
 final class Workspace
 {
-
     /**
      * @ORM\Id
+     *
      * @var string
      */
     public $workspaceName;
@@ -62,9 +63,9 @@ final class Workspace
     public $currentContentStreamIdentifier;
 
     /**
-     * Checks if this workspace is shared across all editors
+     * Checks if this workspace is shared across all editors.
      *
-     * @return boolean
+     * @return bool
      */
     public function isInternalWorkspace()
     {
@@ -72,9 +73,9 @@ final class Workspace
     }
 
     /**
-     * Checks if this workspace is public to everyone, even without authentication
+     * Checks if this workspace is public to everyone, even without authentication.
      *
-     * @return boolean
+     * @return bool
      */
     public function isPublicWorkspace()
     {
@@ -82,9 +83,9 @@ final class Workspace
     }
 
     /**
-     * Checks if the workspace is the root workspace
+     * Checks if the workspace is the root workspace.
      *
-     * @return boolean
+     * @return bool
      */
     public function isRootWorkspace()
     {
@@ -116,9 +117,10 @@ final class Workspace
     }
 
     /**
-     * Checks if this workspace is a user's personal workspace
+     * Checks if this workspace is a user's personal workspace.
      *
-     * @return boolean
+     * @return bool
+     *
      * @api
      */
     public function isPersonalWorkspace()

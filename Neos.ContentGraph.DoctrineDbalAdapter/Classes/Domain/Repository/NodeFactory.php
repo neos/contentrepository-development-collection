@@ -19,18 +19,16 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
-use Neos\ContentRepository\Exception\NodeConfigurationException;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Exception\NodeConfigurationException;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 
-
 /**
- * Implementation detail of ContentGraph and ContentSubgraph
+ * Implementation detail of ContentGraph and ContentSubgraph.
  *
  * @Flow\Scope("singleton")
  */
@@ -38,29 +36,33 @@ final class NodeFactory
 {
     /**
      * @Flow\Inject
+     *
      * @var NodeTypeManager
      */
     protected $nodeTypeManager;
 
     /**
      * @Flow\Inject
+     *
      * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
      * @Flow\Inject
+     *
      * @var ReflectionService
      */
     protected $reflectionService;
 
-
     /**
      * @param array $nodeRow Node Row from projection (neos_contentgraph_node table)
-     * @return NodeInterface
+     *
      * @throws \Exception
      * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
      * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
+     *
+     * @return NodeInterface
      */
     public function mapNodeRowToNode(array $nodeRow): NodeInterface
     {
@@ -87,8 +89,9 @@ final class NodeFactory
 
         // Reference and References "are no properties" anymore by definition; so Node does not know
         // anything about it.
-        $properties = array_filter($properties, function($propertyName) use ($nodeType) {
+        $properties = array_filter($properties, function ($propertyName) use ($nodeType) {
             $propertyType = $nodeType->getPropertyType($propertyName);
+
             return $propertyType !== 'reference' && $propertyType !== 'references';
         }, ARRAY_FILTER_USE_KEY);
 
@@ -106,27 +109,29 @@ final class NodeFactory
             $nodeRow['hidden'],
             $propertyCollection
         );
-            //new ContentProjection\PropertyCollection(, $referenceProperties, $referencesProperties, $nodeIdentifier, $contentSubgraph),
+        //new ContentProjection\PropertyCollection(, $referenceProperties, $referencesProperties, $nodeIdentifier, $contentSubgraph),
 
         if (!array_key_exists('name', $nodeRow)) {
             throw new \Exception('The "name" property was not found in the $nodeRow; you need to include the "name" field in the SQL result.');
         }
+
         return $node;
     }
-
 
     protected function getNodeInterfaceImplementationClassName(NodeType $nodeType): string
     {
         $customClassName = $nodeType->getConfiguration('class');
         if (!empty($customClassName)) {
             if (!class_exists($customClassName)) {
-                throw new NodeConfigurationException('The configured implementation class name "' . $customClassName . '" for NodeType "' . $nodeType . '" does not exist.', 1505805774);
+                throw new NodeConfigurationException('The configured implementation class name "'.$customClassName.'" for NodeType "'.$nodeType.'" does not exist.', 1505805774);
             } elseif (!$this->reflectionService->isClassImplementationOf($customClassName, NodeInterface::class)) {
                 if ($this->reflectionService->isClassImplementationOf($customClassName, \Neos\ContentRepository\Domain\Model\NodeInterface::class)) {
-                    throw new NodeConfigurationException('The configured implementation class name "' . $customClassName . '" for NodeType "' . $nodeType. '" inherits from the OLD (pre-event-sourced) NodeInterface; which is not supported anymore. Your custom Node class now needs to implement ' . NodeInterface::class . '.', 1520069750);
+                    throw new NodeConfigurationException('The configured implementation class name "'.$customClassName.'" for NodeType "'.$nodeType.'" inherits from the OLD (pre-event-sourced) NodeInterface; which is not supported anymore. Your custom Node class now needs to implement '.NodeInterface::class.'.', 1520069750);
                 }
-                throw new NodeConfigurationException('The configured implementation class name "' . $customClassName . '" for NodeType "' . $nodeType. '" does not inherit from ' . NodeInterface::class . '.', 1406884014);
+
+                throw new NodeConfigurationException('The configured implementation class name "'.$customClassName.'" for NodeType "'.$nodeType.'" does not inherit from '.NodeInterface::class.'.', 1406884014);
             }
+
             return $customClassName;
         } else {
             return $this->objectManager->getClassNameByObjectName(NodeInterface::class);

@@ -26,7 +26,6 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode
  */
 final class TraversableNode implements TraversableNodeInterface, ProtectedContextAwareInterface
 {
-
     use NodeInterfaceProxy;
 
     /**
@@ -46,7 +45,6 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
         $this->contextParameters = $contextParameters;
     }
 
-
     public function getSubgraph(): ContentSubgraphInterface
     {
         return $this->subgraph;
@@ -60,19 +58,22 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
     public function findParentNode(): ?TraversableNodeInterface
     {
         $node = $this->subgraph->findParentNode($this->node->getNodeIdentifier());
-        return $node ? new TraversableNode($node, $this->subgraph, $this->contextParameters) : null;
+
+        return $node ? new self($node, $this->subgraph, $this->contextParameters) : null;
     }
 
     public function findNamedChildNode(NodeName $nodeName): ?TraversableNodeInterface
     {
         $node = $this->subgraph->findChildNodeConnectedThroughEdgeName($this->node->getNodeIdentifier(), $nodeName);
-        return $node ? new TraversableNode($node, $this->subgraph, $this->contextParameters) : null;
+
+        return $node ? new self($node, $this->subgraph, $this->contextParameters) : null;
     }
 
     /**
      * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
+     * @param int|null                 $limit
+     * @param int|null                 $offset
+     *
      * @return array|TraversableNodeInterface[]
      */
     public function findChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null)
@@ -81,8 +82,9 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
 
         $traversableChildNodes = [];
         foreach ($childNodes as $node) {
-            $traversableChildNodes[] = new TraversableNode($node, $this->subgraph, $this->contextParameters);
+            $traversableChildNodes[] = new self($node, $this->subgraph, $this->contextParameters);
         }
+
         return $traversableChildNodes;
     }
 
@@ -94,19 +96,22 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
     /**
      * @return TraversableNode[]
      */
-    public function findReferencingNodes(): array {
+    public function findReferencingNodes(): array
+    {
         $nodes = $this->subgraph->findReferencingNodes($this->node->getNodeIdentifier());
 
         $traversableNodes = [];
         foreach ($nodes as $node) {
-            $traversableNodes[] = new TraversableNode($node, $this->subgraph, $this->contextParameters);
+            $traversableNodes[] = new self($node, $this->subgraph, $this->contextParameters);
         }
+
         return $traversableNodes;
     }
 
     /**
      * @param string $methodName
-     * @return boolean
+     *
+     * @return bool
      */
     public function allowsCallOfMethod($methodName)
     {

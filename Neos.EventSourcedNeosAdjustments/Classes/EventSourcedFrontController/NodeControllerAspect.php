@@ -21,13 +21,14 @@ use Neos\Flow\Aop\JoinPointInterface;
  */
 class NodeControllerAspect
 {
-
     /**
      * Hooks into standard content element wrapping to render those attributes needed for the package to identify
-     * nodes and Fusion paths
+     * nodes and Fusion paths.
      *
      * @Flow\Around("method(Neos\Neos\Controller\Frontend\NodeController->processRequest())")
+     *
      * @param JoinPointInterface $joinPoint the join point
+     *
      * @return mixed
      */
     public function replaceNodeController(JoinPointInterface $joinPoint)

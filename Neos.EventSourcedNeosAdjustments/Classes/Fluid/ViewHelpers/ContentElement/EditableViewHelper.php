@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\ContentElement;
 
 /*
@@ -12,12 +13,12 @@ namespace Neos\EventSourcedNeosAdjustments\Fluid\ViewHelpers\ContentElement;
  */
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\EventSourcedNeosAdjustments\ContentElementWrapping\ContentElementEditableService;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
-use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
 
 /**
@@ -38,18 +39,21 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
 
     /**
      * @Flow\Inject
+     *
      * @var PrivilegeManagerInterface
      */
     protected $privilegeManager;
 
     /**
      * @Flow\Inject
+     *
      * @var AuthorizationService
      */
     protected $nodeAuthorizationService;
 
     /**
      * @Flow\Inject
+     *
      * @var ContentElementEditableService
      */
     protected $contentElementEditableService;
@@ -67,11 +71,13 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
      * In live workspace this just renders a tag; for logged in users with access to the Backend this also adds required
      * attributes for the editing.
      *
-     * @param string $property Name of the property to render. Note: If this tag has child nodes, they overrule this argument!
-     * @param string $tag The name of the tag that should be wrapped around the property. By default this is a <div>
-     * @param TraversableNodeInterface $node The node of the content element. Optional, will be resolved from the Fusion context by default.
-     * @return string The rendered property with a wrapping tag. In the user workspace this adds some required attributes for the RTE to work
+     * @param string                   $property Name of the property to render. Note: If this tag has child nodes, they overrule this argument!
+     * @param string                   $tag      The name of the tag that should be wrapped around the property. By default this is a <div>
+     * @param TraversableNodeInterface $node     The node of the content element. Optional, will be resolved from the Fusion context by default.
+     *
      * @throws ViewHelperException
+     *
+     * @return string The rendered property with a wrapping tag. In the user workspace this adds some required attributes for the RTE to work
      */
     public function render($property, $tag = 'div', TraversableNodeInterface $node = null)
     {
@@ -99,8 +105,9 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
     }
 
     /**
-     * @return TraversableNodeInterface
      * @throws ViewHelperException
+     *
+     * @return TraversableNodeInterface
      */
     protected function getNodeFromFusionContext()
     {

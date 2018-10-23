@@ -17,7 +17,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * The content subgraph backend route suffix
+ * The content subgraph backend route suffix.
  */
 final class WorkspaceNameAndDimensionSpacePointForUriSerialization
 {
@@ -49,7 +49,8 @@ final class WorkspaceNameAndDimensionSpacePointForUriSerialization
 
     /**
      * WorkspaceNameAndDimensionSpacePointForUriSerialization constructor.
-     * @param WorkspaceName $workspaceName
+     *
+     * @param WorkspaceName       $workspaceName
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @Flow\Autowiring(false)
      */
@@ -63,30 +64,30 @@ final class WorkspaceNameAndDimensionSpacePointForUriSerialization
      * Determine if the given node path is a context path.
      *
      * @param string $contextPath
-     * @return boolean
+     *
+     * @return bool
      */
     public static function isParseablebackendUri($contextPath)
     {
-        return (strpos($contextPath, '@') !== false);
+        return strpos($contextPath, '@') !== false;
     }
-
-
 
     /**
-     * @param WorkspaceName $workspaceName
+     * @param WorkspaceName       $workspaceName
      * @param DimensionSpacePoint $dimensionSpacePoint
+     *
      * @return WorkspaceNameAndDimensionSpacePointForUriSerialization
      */
-    public static function fromWorkspaceAndDimensionSpacePoint(WorkspaceName $workspaceName, DimensionSpacePoint $dimensionSpacePoint): WorkspaceNameAndDimensionSpacePointForUriSerialization
+    public static function fromWorkspaceAndDimensionSpacePoint(WorkspaceName $workspaceName, DimensionSpacePoint $dimensionSpacePoint): self
     {
-        return new WorkspaceNameAndDimensionSpacePointForUriSerialization($workspaceName, $dimensionSpacePoint);
+        return new self($workspaceName, $dimensionSpacePoint);
     }
 
-    public static function fromBackendUri(string $backendUri): WorkspaceNameAndDimensionSpacePointForUriSerialization
+    public static function fromBackendUri(string $backendUri): self
     {
         $matches = [];
         if (!preg_match(self::FROM_BACKEND_URI_PATTERN, $backendUri, $matches)) {
-            throw new \RuntimeException('TODO: Backend URI ' . $backendUri . ' could not be parsed.', 1519746339);
+            throw new \RuntimeException('TODO: Backend URI '.$backendUri.' could not be parsed.', 1519746339);
         }
 
         $workspaceName = new WorkspaceName($matches['WorkspaceName']);
@@ -97,25 +98,27 @@ final class WorkspaceNameAndDimensionSpacePointForUriSerialization
 
         $dimensionSpacePoint = new DimensionSpacePoint($coordinates);
 
-        return new WorkspaceNameAndDimensionSpacePointForUriSerialization($workspaceName, $dimensionSpacePoint);
+        return new self($workspaceName, $dimensionSpacePoint);
     }
 
     /**
      * convert the WorkspaceName and DimensionSpacePoint to a string which is the postfix of the backend URI (after
-     * the uriPath of the nodes)
+     * the uriPath of the nodes).
+     *
      * @return string
      */
     public function toBackendUriSuffix(): string
     {
         $dimensionComponents = [];
         foreach ($this->dimensionSpacePoint->getCoordinates() as $dimensionName => $dimensionValue) {
-            $dimensionComponents[] = $dimensionName . '=' . $dimensionValue;
+            $dimensionComponents[] = $dimensionName.'='.$dimensionValue;
         }
         $dimensionSuffix = '';
         if (!empty($dimensionComponents)) {
-            $dimensionSuffix = ';' . implode('&', $dimensionComponents);
+            $dimensionSuffix = ';'.implode('&', $dimensionComponents);
         }
-        return '@' . $this->workspaceName . $dimensionSuffix;
+
+        return '@'.$this->workspaceName.$dimensionSuffix;
     }
 
     /**
@@ -141,6 +144,4 @@ final class WorkspaceNameAndDimensionSpacePointForUriSerialization
     {
         return $this->dimensionSpacePoint;
     }
-
-
 }

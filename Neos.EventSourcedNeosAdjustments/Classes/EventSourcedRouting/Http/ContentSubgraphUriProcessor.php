@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http;
 
 /*
@@ -13,46 +14,52 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http;
 
 use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionLinking\ContentDimensionValueUriProcessorResolver;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 
 /**
- * The default content subgraph URI processor
+ * The default content subgraph URI processor.
  */
 final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorInterface
 {
     /**
      * @Flow\Inject
+     *
      * @var ContentDimensionSourceInterface
      */
     protected $contentDimensionSource;
 
     /**
      * @Flow\Inject
+     *
      * @var ContentDimensionValueUriProcessorResolver
      */
     protected $contentDimensionValueUriProcessorResolver;
 
     /**
      * @Flow\Inject
+     *
      * @var NodeAddressFactory
      */
     protected $nodeAddressService;
 
     /**
      * @Flow\InjectConfiguration("routing.supportEmptySegmentForDimensions")
-     * @var boolean
+     *
+     * @var bool
      */
     protected $supportEmptySegmentForDimensions;
 
     /**
      * @param NodeAddress $nodeAddress
-     * @param bool $currentNodeIsSiteNode
-     * @return UriConstraints
+     * @param bool        $currentNodeIsSiteNode
+     *
      * @throws ContentDimensionLinking\Exception\InvalidContentDimensionValueUriProcessorException
+     *
+     * @return UriConstraints
      */
     public function resolveDimensionUriConstraints(NodeAddress $nodeAddress, bool $currentNodeIsSiteNode = false): UriConstraints
     {
@@ -99,9 +106,10 @@ final class ContentSubgraphUriProcessor implements ContentSubgraphUriProcessorIn
 
     /**
      * @param array|Dimension\ContentDimension[] $dimensions
+     *
      * @return void
      */
-    protected function sortDimensionsByOffset(array & $dimensions)
+    protected function sortDimensionsByOffset(array &$dimensions)
     {
         uasort($dimensions, function (Dimension\ContentDimension $dimensionA, Dimension\ContentDimension $dimensionB) {
             return ($dimensionA->getConfigurationValue('resolution.options.offset') ?: 0)

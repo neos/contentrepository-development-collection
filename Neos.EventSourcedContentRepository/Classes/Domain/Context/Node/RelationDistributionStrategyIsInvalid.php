@@ -15,7 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
 use Neos\Flow\Exception;
 
 /**
- * The exception to be thrown if an invalid relation distribution strategy was tried to be initialized
+ * The exception to be thrown if an invalid relation distribution strategy was tried to be initialized.
  */
 class RelationDistributionStrategyIsInvalid extends Exception
 {

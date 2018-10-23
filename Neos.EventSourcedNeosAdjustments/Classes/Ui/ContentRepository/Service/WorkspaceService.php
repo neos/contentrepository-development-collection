@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service;
 
 /*
@@ -11,15 +12,15 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\PublishingService;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\Neos\Service\UserService;
 use Neos\Neos\Domain\Service\UserService as DomainUserService;
+use Neos\Neos\Service\UserService;
 
 /**
  * @Flow\Scope("singleton")
@@ -28,38 +29,44 @@ class WorkspaceService
 {
     /**
      * @Flow\Inject
+     *
      * @var PublishingService
      */
     protected $publishingService;
 
     /**
      * @Flow\Inject
+     *
      * @var WorkspaceRepository
      */
     protected $workspaceRepository;
 
     /**
      * @Flow\Inject
+     *
      * @var UserService
      */
     protected $userService;
 
     /**
      * @Flow\Inject
+     *
      * @var DomainUserService
      */
     protected $domainUserService;
 
     /**
      * @Flow\Inject
+     *
      * @var NodeAddressFactory
      */
     protected $nodeAddressFactory;
 
     /**
-     * Get all publishable node context paths for a workspace
+     * Get all publishable node context paths for a workspace.
      *
      * @param Workspace $workspaceName
+     *
      * @return array
      */
     public function getPublishableNodeInfo(WorkspaceName $workspaceName)
@@ -70,19 +77,19 @@ class WorkspaceService
             $documentNode = (new FlowQuery([$node]))->closest('[instanceof Neos.Neos:Document]')->get(0);
             if ($documentNode) {
                 return [
-                    'contextPath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri(),
-                    'documentContextPath' => $this->nodeAddressFactory->createFromNode($documentNode)->serializeForUri()
+                    'contextPath'         => $this->nodeAddressFactory->createFromNode($node)->serializeForUri(),
+                    'documentContextPath' => $this->nodeAddressFactory->createFromNode($documentNode)->serializeForUri(),
                 ];
             }
         }, $publishableNodes);
 
         return array_values(array_filter($publishableNodes, function ($item) {
-            return (bool)$item;
+            return (bool) $item;
         }));
     }
 
     /**
-     * Get allowed target workspaces for current user
+     * Get allowed target workspaces for current user.
      *
      * @return array
      */
@@ -109,10 +116,10 @@ class WorkspaceService
             }
 
             $workspaceArray = [
-                'name' => $workspace->getName(),
-                'title' => $workspace->getTitle(),
+                'name'        => $workspace->getName(),
+                'title'       => $workspace->getTitle(),
                 'description' => $workspace->getDescription(),
-                'readonly' => !$this->domainUserService->currentUserCanPublishToWorkspace($workspace)
+                'readonly'    => !$this->domainUserService->currentUserCanPublishToWorkspace($workspace),
             ];
             $workspacesArray[$workspace->getName()] = $workspaceArray;
         }
@@ -121,9 +128,10 @@ class WorkspaceService
     }
 
     /**
-     * Sets base workspace of current user workspace
+     * Sets base workspace of current user workspace.
      *
      * @param Workspace $workspace
+     *
      * @return void
      */
     public function setBaseWorkspace(Workspace $workspace)

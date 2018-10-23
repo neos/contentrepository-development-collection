@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionDetection;
 
 /*
@@ -16,7 +17,7 @@ use Neos\Flow\Http;
 use Neos\Utility\Arrays;
 
 /**
- * URI path segment based dimension value detector
+ * URI path segment based dimension value detector.
  */
 final class UriPathSegmentContentDimensionValueDetector implements ContentDimensionValueDetectorInterface
 {
@@ -25,13 +26,14 @@ final class UriPathSegmentContentDimensionValueDetector implements ContentDimens
      */
     protected $defaultOptions = [
         'delimiter' => '_',
-        'offset' => 0
+        'offset'    => 0,
     ];
 
     /**
-     * @param Dimension\ContentDimension $contentDimension
+     * @param Dimension\ContentDimension      $contentDimension
      * @param Http\Component\ComponentContext $componentContext
-     * @param array|null $overrideOptions
+     * @param array|null                      $overrideOptions
+     *
      * @return Dimension\ContentDimensionValue|null
      */
     public function detectValue(Dimension\ContentDimension $contentDimension, Http\Component\ComponentContext $componentContext, array $overrideOptions = null): ?Dimension\ContentDimensionValue

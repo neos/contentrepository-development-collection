@@ -14,26 +14,26 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
-use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
-use Neos\EventSourcedContentRepository\Domain as ContentRepository;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasHidden;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasShown;
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\ContentRepository\Domain\ValueObject\RootNodeIdentifiers;
+use Neos\EventSourcedContentRepository\Domain as ContentRepository;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeReferencesWereSet;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasHidden;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasShown;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * The alternate reality-aware graph projector for the Doctrine backend
+ * The alternate reality-aware graph projector for the Doctrine backend.
  *
  * @Flow\Scope("singleton")
  */
@@ -43,12 +43,14 @@ class GraphProjector implements ProjectorInterface
 
     /**
      * @Flow\Inject
+     *
      * @var ProjectionContentGraph
      */
     protected $projectionContentGraph;
 
     /**
      * @Flow\Inject
+     *
      * @var DbalClient
      */
     protected $client;
@@ -82,6 +84,7 @@ class GraphProjector implements ProjectorInterface
 
     /**
      * @param Event\RootNodeWasCreated $event
+     *
      * @throws \Exception
      */
     final public function whenRootNodeWasCreated(Event\RootNodeWasCreated $event)
@@ -112,6 +115,7 @@ class GraphProjector implements ProjectorInterface
 
     /**
      * @param Event\NodeAggregateWithNodeWasCreated $event
+     *
      * @throws \Exception
      */
     final public function whenNodeAggregateWithNodeWasCreated(Event\NodeAggregateWithNodeWasCreated $event)
@@ -133,6 +137,7 @@ class GraphProjector implements ProjectorInterface
 
     /**
      * @param Event\NodeWasAddedToAggregate $event
+     *
      * @throws \Exception
      */
     final public function whenNodeWasAddedToAggregate(Event\NodeWasAddedToAggregate $event)
@@ -158,13 +163,14 @@ class GraphProjector implements ProjectorInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param NodeTypeName $nodeTypeName
-     * @param NodeIdentifier $nodeIdentifier
-     * @param NodeIdentifier $parentNodeIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param DimensionSpacePointSet $visibleDimensionSpacePoints
-     * @param array $propertyDefaultValuesAndTypes
-     * @param NodeName $nodeName
+     * @param NodeTypeName            $nodeTypeName
+     * @param NodeIdentifier          $nodeIdentifier
+     * @param NodeIdentifier          $parentNodeIdentifier
+     * @param DimensionSpacePoint     $dimensionSpacePoint
+     * @param DimensionSpacePointSet  $visibleDimensionSpacePoints
+     * @param array                   $propertyDefaultValuesAndTypes
+     * @param NodeName                $nodeName
+     *
      * @throws \Doctrine\DBAL\DBALException
      */
     private function createNodeWithHierarchy(
@@ -177,8 +183,7 @@ class GraphProjector implements ProjectorInterface
         DimensionSpacePointSet $visibleDimensionSpacePoints,
         array $propertyDefaultValuesAndTypes,
         NodeName $nodeName
-    )
-    {
+    ) {
         $nodeRelationAnchorPoint = new NodeRelationAnchorPoint();
         $node = new Node(
             $nodeRelationAnchorPoint,
@@ -239,12 +244,13 @@ class GraphProjector implements ProjectorInterface
     }
 
     /**
-     * @param NodeRelationAnchorPoint $parentNodeAnchorPoint
-     * @param NodeRelationAnchorPoint $childNodeAnchorPoint
+     * @param NodeRelationAnchorPoint      $parentNodeAnchorPoint
+     * @param NodeRelationAnchorPoint      $childNodeAnchorPoint
      * @param NodeRelationAnchorPoint|null $succeedingSiblingNodeAnchorPoint
-     * @param NodeName|null $relationName
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePointSet $dimensionSpacePointSet
+     * @param NodeName|null                $relationName
+     * @param ContentStreamIdentifier      $contentStreamIdentifier
+     * @param DimensionSpacePointSet       $dimensionSpacePointSet
+     *
      * @throws \Doctrine\DBAL\DBALException
      */
     protected function connectHierarchy(
@@ -254,8 +260,7 @@ class GraphProjector implements ProjectorInterface
         NodeName $relationName = null,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePointSet $dimensionSpacePointSet
-    ): void
-    {
+    ): void {
         foreach ($dimensionSpacePointSet->getPoints() as $dimensionSpacePoint) {
             $position = $this->getRelationPosition(
                 $parentNodeAnchorPoint,
@@ -283,10 +288,12 @@ class GraphProjector implements ProjectorInterface
      * @param NodeRelationAnchorPoint|null $parentAnchorPoint
      * @param NodeRelationAnchorPoint|null $childAnchorPoint
      * @param NodeRelationAnchorPoint|null $succeedingSiblingAnchorPoint
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @return int
+     * @param ContentStreamIdentifier      $contentStreamIdentifier
+     * @param DimensionSpacePoint          $dimensionSpacePoint
+     *
      * @throws \Doctrine\DBAL\DBALException
+     *
+     * @return int
      */
     protected function getRelationPosition(
         ?NodeRelationAnchorPoint $parentAnchorPoint,
@@ -294,8 +301,7 @@ class GraphProjector implements ProjectorInterface
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
-    ): int
-    {
+    ): int {
         $position = $this->projectionContentGraph->determineHierarchyRelationPosition($parentAnchorPoint, $childAnchorPoint, $succeedingSiblingAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint);
 
         if ($position % 2 !== 0) {
@@ -309,10 +315,12 @@ class GraphProjector implements ProjectorInterface
      * @param NodeRelationAnchorPoint|null $parentAnchorPoint
      * @param NodeRelationAnchorPoint|null $childAnchorPoint
      * @param NodeRelationAnchorPoint|null $succeedingSiblingAnchorPoint
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @return int
+     * @param ContentStreamIdentifier      $contentStreamIdentifier
+     * @param DimensionSpacePoint          $dimensionSpacePoint
+     *
      * @throws \Doctrine\DBAL\DBALException
+     *
+     * @return int
      */
     protected function getRelationPositionAfterRecalculation(
         ?NodeRelationAnchorPoint $parentAnchorPoint,
@@ -320,8 +328,7 @@ class GraphProjector implements ProjectorInterface
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
-    ): int
-    {
+    ): int {
         if (!$childAnchorPoint && !$parentAnchorPoint) {
             throw new \InvalidArgumentException('You must either specify a parent or child node anchor to get relation positions after recalculation.', 1519847858);
         }
@@ -333,7 +340,7 @@ class GraphProjector implements ProjectorInterface
 
         foreach ($hierarchyRelations as $relation) {
             $offset += self::RELATION_DEFAULT_OFFSET;
-            if ($succeedingSiblingAnchorPoint && $relation->childNodeAnchor === (string)$succeedingSiblingAnchorPoint) {
+            if ($succeedingSiblingAnchorPoint && $relation->childNodeAnchor === (string) $succeedingSiblingAnchorPoint) {
                 $position = $offset;
                 $offset += self::RELATION_DEFAULT_OFFSET;
             }
@@ -345,6 +352,7 @@ class GraphProjector implements ProjectorInterface
 
     /**
      * @param ContentRepository\Context\ContentStream\Event\ContentStreamWasForked $event
+     *
      * @throws \Exception
      */
     public function whenContentStreamWasForked(ContentRepository\Context\ContentStream\Event\ContentStreamWasForked $event)
@@ -367,18 +375,19 @@ class GraphProjector implements ProjectorInterface
                   h.position,
                   h.dimensionspacepoint,
                   h.dimensionspacepointhash, 
-                  "' . (string)$event->getContentStreamIdentifier() . '" AS contentstreamidentifier
+                  "'.(string) $event->getContentStreamIdentifier().'" AS contentstreamidentifier
                 FROM
                     neos_contentgraph_hierarchyrelation h
                     WHERE h.contentstreamidentifier = :sourceContentStreamIdentifier
             ', [
-                'sourceContentStreamIdentifier' => (string)$event->getSourceContentStreamIdentifier()
+                'sourceContentStreamIdentifier' => (string) $event->getSourceContentStreamIdentifier(),
             ]);
         });
     }
 
     /**
      * @param NodePropertyWasSet $event
+     *
      * @throws \Exception
      */
     public function whenNodePropertyWasSet(NodePropertyWasSet $event)
@@ -400,15 +409,15 @@ class GraphProjector implements ProjectorInterface
             // remove old
             $this->getDatabaseConnection()->delete('neos_contentgraph_referencerelation', [
                 'nodeanchorpoint' => $nodeAnchorPoint,
-                'name' => $event->getPropertyName()
+                'name'            => $event->getPropertyName(),
             ]);
 
             // set new
             foreach ($event->getDestinationNodeAggregateIdentifiers() as $position => $destinationNodeIdentifier) {
                 $this->getDatabaseConnection()->insert('neos_contentgraph_referencerelation', [
-                    'name' => $event->getPropertyName(),
-                    'position' => $position,
-                    'nodeanchorpoint' => $nodeAnchorPoint,
+                    'name'                               => $event->getPropertyName(),
+                    'position'                           => $position,
+                    'nodeanchorpoint'                    => $nodeAnchorPoint,
                     'destinationnodeaggregateidentifier' => $destinationNodeIdentifier,
                 ]);
             }
@@ -417,6 +426,7 @@ class GraphProjector implements ProjectorInterface
 
     /**
      * @param NodeWasHidden $event
+     *
      * @throws \Exception
      */
     public function whenNodeWasHidden(NodeWasHidden $event)
@@ -430,6 +440,7 @@ class GraphProjector implements ProjectorInterface
 
     /**
      * @param NodeWasShown $event
+     *
      * @throws \Exception
      */
     public function whenNodeWasShown(NodeWasShown $event)
@@ -443,6 +454,7 @@ class GraphProjector implements ProjectorInterface
 
     /**
      * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeSpecializationWasCreated $event
+     *
      * @throws \Exception
      */
     public function whenNodeSpecializationWasCreated(ContentRepository\Context\NodeAggregate\Event\NodeSpecializationWasCreated $event): void
@@ -481,6 +493,7 @@ class GraphProjector implements ProjectorInterface
 
     /**
      * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeGeneralizationWasCreated $event
+     *
      * @throws \Exception
      */
     public function whenNodeGeneralizationWasCreated(ContentRepository\Context\NodeAggregate\Event\NodeGeneralizationWasCreated $event): void
@@ -570,6 +583,7 @@ class GraphProjector implements ProjectorInterface
 
     /**
      * @param Event\NodesWereMoved $event
+     *
      * @throws \Exception
      */
     public function whenNodesWereMoved(Event\NodesWereMoved $event)
@@ -611,6 +625,7 @@ class GraphProjector implements ProjectorInterface
 
     /**
      * @param Event\NodesWereRemovedFromAggregate $event
+     *
      * @throws \Exception
      */
     public function whenNodesWereRemovedFromAggregate(Event\NodesWereRemovedFromAggregate $event)
@@ -627,6 +642,7 @@ class GraphProjector implements ProjectorInterface
 
     /**
      * @param Event\NodeAggregateWasRemoved $event
+     *
      * @throws \Exception
      */
     public function whenNodeAggregateWasRemoved(Event\NodeAggregateWasRemoved $event)
@@ -659,16 +675,17 @@ class GraphProjector implements ProjectorInterface
                     AND h.contentstreamidentifier IS NULL
                 ',
             [
-                'anchorPointForNode' => (string)$inboundRelation->childNodeAnchor,
+                'anchorPointForNode' => (string) $inboundRelation->childNodeAnchor,
             ]
         );
     }
 
     /**
-     * @param HierarchyRelation $hierarchyRelation
-     * @param NodeIdentifier $newParentNodeIdentifier
+     * @param HierarchyRelation       $hierarchyRelation
+     * @param NodeIdentifier          $newParentNodeIdentifier
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param int $position
+     * @param int                     $position
+     *
      * @throws \Exception
      */
     protected function assignHierarchyRelationToNewParent(HierarchyRelation $hierarchyRelation, NodeIdentifier $newParentNodeIdentifier, ContentStreamIdentifier $contentStreamIdentifier, int $position)
@@ -692,6 +709,7 @@ class GraphProjector implements ProjectorInterface
 
     /**
      * @param callable $operations
+     *
      * @throws \Exception
      */
     protected function transactional(callable $operations): void
@@ -736,9 +754,9 @@ class GraphProjector implements ProjectorInterface
                       :originalNodeAnchor IN (h.childnodeanchor, h.parentnodeanchor)
                       AND h.contentstreamidentifier = :contentStreamIdentifier',
                 [
-                    'newNodeAnchor' => (string)$copiedNode->relationAnchorPoint,
-                    'originalNodeAnchor' => (string)$anchorPointForNode,
-                    'contentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+                    'newNodeAnchor'           => (string) $copiedNode->relationAnchorPoint,
+                    'originalNodeAnchor'      => (string) $anchorPointForNode,
+                    'contentStreamIdentifier' => (string) $event->getContentStreamIdentifier(),
                 ]
             );
         } else {
@@ -747,12 +765,13 @@ class GraphProjector implements ProjectorInterface
             $node = $this->projectionContentGraph->getNodeByNodeIdentifierAndContentStream($event->getNodeIdentifier(), $event->getContentStreamIdentifier());
             if (!$node) {
                 // TODO: ignore the ShowNode (if all other logic is correct)
-                throw new \Exception("TODO NODE NOT FOUND");
+                throw new \Exception('TODO NODE NOT FOUND');
             }
 
             $result = $operations($node);
             $node->updateToDatabase($this->getDatabaseConnection());
         }
+
         return $result;
     }
 
@@ -763,5 +782,4 @@ class GraphProjector implements ProjectorInterface
     {
         return $this->client->getConnection();
     }
-
 }

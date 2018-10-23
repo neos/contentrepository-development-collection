@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service;
 
 /*
@@ -24,22 +25,25 @@ use Neos\Flow\Aop\JoinPointInterface;
  */
 class NodeServiceAspect
 {
-
     /**
      * @Flow\Inject
+     *
      * @var NodeAddressFactory
      */
     protected $nodeAddressFactory;
 
     /**
      * @Flow\Inject
+     *
      * @var ContentGraphInterface
      */
     protected $contentGraph;
 
     /**
      * @Flow\Around("method(Neos\Neos\Ui\ContentRepository\Service\NodeService->getNodeFromContextPath())")
+     *
      * @param JoinPointInterface $joinPoint the join point
+     *
      * @return mixed
      */
     public function getNodeFromContextPath(JoinPointInterface $joinPoint)
@@ -53,5 +57,4 @@ class NodeServiceAspect
         // TODO: Context Parameter Handling
         return new TraversableNode($node, $subgraph, new ContextParameters(new \DateTimeImmutable(), [], true, false));
     }
-
 }

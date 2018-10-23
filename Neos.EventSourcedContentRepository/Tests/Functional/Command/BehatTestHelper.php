@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Tests\Functional\Command;
 
 /*
@@ -11,20 +12,18 @@ namespace Neos\EventSourcedContentRepository\Tests\Functional\Command;
  * source code.
  */
 
-require_once(FLOW_PATH_PACKAGES . '/Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
-require_once(FLOW_PATH_PACKAGES . '/Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
-if (file_exists(FLOW_PATH_PACKAGES . '/Neos')) {
-    require_once(FLOW_PATH_PACKAGES . '/Neos/Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
-    require_once(FLOW_PATH_PACKAGES . '/Neos/Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
+require_once FLOW_PATH_PACKAGES.'/Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php';
+require_once FLOW_PATH_PACKAGES.'/Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php';
+if (file_exists(FLOW_PATH_PACKAGES.'/Neos')) {
+    require_once FLOW_PATH_PACKAGES.'/Neos/Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php';
+    require_once FLOW_PATH_PACKAGES.'/Neos/Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php';
 } else {
-    require_once(FLOW_PATH_PACKAGES . '/Application/Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
-    require_once(FLOW_PATH_PACKAGES . '/Application/Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
+    require_once FLOW_PATH_PACKAGES.'/Application/Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php';
+    require_once FLOW_PATH_PACKAGES.'/Application/Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php';
 }
 
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
-use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
-use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Mvc\ActionRequest;
@@ -34,6 +33,8 @@ use Neos\Flow\Security\Authentication\Provider\TestingProvider;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Policy\PolicyService;
+use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
+use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use Neos\Flow\Utility\Environment;
 
 /**

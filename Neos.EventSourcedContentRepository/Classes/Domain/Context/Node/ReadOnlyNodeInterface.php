@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
 
 /*
@@ -11,29 +12,19 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\CopyableAcrossContentStreamsInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodePropertyCollection;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
-use Neos\EventSourcing\Event\Decorator\EventWithMetadata;
-use Neos\EventSourcing\Event\EventInterface;
-use Neos\EventSourcing\Event\EventPublisher;
-use Neos\EventSourcing\EventStore\ExpectedVersion;
-use Neos\EventSourcing\TypeConverter\EventToArrayConverter;
-use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Property\PropertyMapper;
-use Neos\Flow\Property\PropertyMappingConfiguration;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodePropertyCollection;
 
 /**
  * The "new" Event-Sourced NodeInterface. Supersedes the old Neos\EventSourcedContentRepository\Domain\Model\NodeInterface.
  */
 interface ReadOnlyNodeInterface
 {
-
     public function getContentStreamIdentifier(): ContentStreamIdentifier;
 
     public function getNodeIdentifier(): NodeIdentifier;
@@ -53,10 +44,10 @@ interface ReadOnlyNodeInterface
      * there.
      *
      * @return NodePropertyCollection Property values, indexed by their name
+     *
      * @api
      */
     public function getProperties(): NodePropertyCollection;
-
 
     /**
      * Returns the specified property.
@@ -65,16 +56,20 @@ interface ReadOnlyNodeInterface
      * there if it is gettable.
      *
      * @param string $propertyName Name of the property
-     * @return mixed value of the property
+     *
      * @throws NodeException if the node does not contain the specified property
+     *
+     * @return mixed value of the property
+     *
      * @api
      */
     public function getProperty($propertyName);
 
     /**
-     * Returns the current state of the hidden flag
+     * Returns the current state of the hidden flag.
      *
-     * @return boolean
+     * @return bool
+     *
      * @api
      */
     public function isHidden();

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Fusion\Helper;
 
 /*
@@ -18,18 +19,20 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFind
 use Neos\Flow\Annotations as Flow;
 
 /**
- * The Workspace helper for EEL contexts
+ * The Workspace helper for EEL contexts.
  */
 class WorkspaceHelper implements ProtectedContextAwareInterface
 {
     /**
      * @Flow\Inject
+     *
      * @var WorkspaceFinder
      */
     protected $workspaceFinder;
 
     /**
      * @param ContentSubgraphInterface $contentSubgraph
+     *
      * @return array|Workspace[]
      */
     public function getWorkspaceChain(ContentSubgraphInterface $contentSubgraph): array
@@ -39,7 +42,7 @@ class WorkspaceHelper implements ProtectedContextAwareInterface
         $workspaceChain = [];
         // TODO: Maybe write CTE here
         while ($currentWorkspace instanceof Workspace) {
-            $workspaceChain[(string)$currentWorkspace->getWorkspaceName()] = $currentWorkspace;
+            $workspaceChain[(string) $currentWorkspace->getWorkspaceName()] = $currentWorkspace;
             $currentWorkspace = $currentWorkspace->getBaseWorkspaceName() ? $this->workspaceFinder->findOneByName($currentWorkspace->getBaseWorkspaceName()) : null;
         }
 
@@ -47,9 +50,10 @@ class WorkspaceHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * All methods are considered safe
+     * All methods are considered safe.
      *
      * @param string $methodName
+     *
      * @return bool
      */
     public function allowsCallOfMethod($methodName)

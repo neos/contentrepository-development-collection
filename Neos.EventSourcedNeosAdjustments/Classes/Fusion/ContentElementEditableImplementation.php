@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Fusion;
 
 /*
@@ -18,24 +19,26 @@ use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 
 /**
- * Adds meta data attributes to the processed Property to enable in place editing
+ * Adds meta data attributes to the processed Property to enable in place editing.
  */
 class ContentElementEditableImplementation extends AbstractFusionObject
 {
     /**
      * @Flow\Inject
+     *
      * @var PrivilegeManagerInterface
      */
     protected $privilegeManager;
 
     /**
      * @Flow\Inject
+     *
      * @var ContentElementEditableService
      */
     protected $contentElementEditableService;
 
     /**
-     * The string to be processed
+     * The string to be processed.
      *
      * @return string
      */
@@ -45,7 +48,7 @@ class ContentElementEditableImplementation extends AbstractFusionObject
     }
 
     /**
-     * Evaluate this Fusion object and return the result
+     * Evaluate this Fusion object and return the result.
      *
      * @return mixed
      */

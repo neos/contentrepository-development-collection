@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event;
 
 /*
@@ -12,10 +13,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event;
  */
 
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
 use Neos\EventSourcing\Event\EventInterface;
 
 class WorkspaceWasRebased implements EventInterface
@@ -26,7 +24,7 @@ class WorkspaceWasRebased implements EventInterface
     private $workspaceName;
 
     /**
-     * The new content stream identifier (after the rebase was successful)
+     * The new content stream identifier (after the rebase was successful).
      *
      * @var ContentStreamIdentifier
      */
@@ -34,7 +32,8 @@ class WorkspaceWasRebased implements EventInterface
 
     /**
      * WorkspaceWasRebased constructor.
-     * @param WorkspaceName $workspaceName
+     *
+     * @param WorkspaceName           $workspaceName
      * @param ContentStreamIdentifier $currentContentStreamIdentifier
      */
     public function __construct(WorkspaceName $workspaceName, ContentStreamIdentifier $currentContentStreamIdentifier)

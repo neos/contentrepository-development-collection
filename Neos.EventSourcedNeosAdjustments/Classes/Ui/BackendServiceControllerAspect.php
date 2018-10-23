@@ -12,7 +12,6 @@ namespace Neos\EventSourcedNeosAdjustments\Ui;
  * source code.
  */
 
-use Neos\EventSourcedNeosAdjustments\Ui\Controller\BackendController;
 use Neos\EventSourcedNeosAdjustments\Ui\Controller\BackendServiceController;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
@@ -23,15 +22,17 @@ use Neos\Flow\Aop\JoinPointInterface;
  */
 class BackendServiceControllerAspect
 {
-
-     /**
+    /**
      * @Flow\Around("method(Neos\Neos\Ui\Controller\BackendServiceController->processRequest())")
+     *
      * @param JoinPointInterface $joinPoint the join point
+     *
      * @return mixed
      */
     public function replaceBackendServiceController(JoinPointInterface $joinPoint)
     {
         $controller = new BackendServiceController();
+
         return $controller->processRequest($joinPoint->getMethodArgument('request'), $joinPoint->getMethodArgument('response'));
     }
 }

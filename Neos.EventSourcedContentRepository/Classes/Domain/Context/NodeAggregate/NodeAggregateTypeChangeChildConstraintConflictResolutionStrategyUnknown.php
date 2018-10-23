@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
 /*
@@ -15,7 +16,7 @@ use Neos\Flow\Exception;
 
 /**
  * The exception to be thrown when trying to initialize an unknown
- * NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
+ * NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy.
  */
 final class NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyUnknown extends Exception
 {

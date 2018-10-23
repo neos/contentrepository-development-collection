@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\ContentElementWrapping;
 
 /*
@@ -13,16 +14,16 @@ namespace Neos\EventSourcedNeosAdjustments\ContentElementWrapping;
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Session\SessionInterface;
-use Neos\Neos\Ui\Domain\Service\UserLocaleService;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\Neos\Service\Mapping\NodePropertyConverterService;
-use Neos\ContentRepository\Service\AuthorizationService;
+use Neos\Flow\Session\SessionInterface;
 use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
+use Neos\Neos\Service\Mapping\NodePropertyConverterService;
+use Neos\Neos\Ui\Domain\Service\UserLocaleService;
 
 /**
  * The content element wrapping service adds the necessary markup around
@@ -35,64 +36,69 @@ class ContentElementWrappingService
 {
     /**
      * @Flow\Inject
+     *
      * @var PrivilegeManagerInterface
      */
     protected $privilegeManager;
 
     /**
      * @Flow\Inject
+     *
      * @var AuthorizationService
      */
     protected $nodeAuthorizationService;
 
     /**
      * @Flow\Inject
+     *
      * @var FusionHtmlAugmenter
      */
     protected $htmlAugmenter;
 
     /**
      * @Flow\Inject
+     *
      * @var NodePropertyConverterService
      */
     protected $nodePropertyConverterService;
 
-
     /**
      * @Flow\Inject
+     *
      * @var SessionInterface
      */
     protected $session;
 
     /**
      * @Flow\Inject
+     *
      * @var WorkspaceFinder
      */
     protected $workspaceFinder;
 
     /**
      * @Flow\Inject
+     *
      * @var UserLocaleService
      */
     protected $userLocaleService;
 
     /**
      * @Flow\Inject
+     *
      * @var NodeInfoHelper
      */
     protected $nodeInfoHelper;
 
-
     /**
-     * All editable nodes rendered in the document
+     * All editable nodes rendered in the document.
      *
      * @var array
      */
     protected $renderedNodes = [];
 
-
     /**
-     * String containing `<script>` tags for non rendered nodes
+     * String containing `<script>` tags for non rendered nodes.
      *
      * @var string
      */
@@ -100,6 +106,7 @@ class ContentElementWrappingService
 
     /**
      * @Flow\Inject
+     *
      * @var NodeAddressFactory
      */
     protected $nodeAddressFactory;
@@ -108,10 +115,12 @@ class ContentElementWrappingService
      * Wrap the $content identified by $node with the needed markup for the backend.
      *
      * @param TraversableNodeInterface $node
-     * @param string $content
-     * @param string $fusionPath
-     * @return string
+     * @param string                   $content
+     * @param string                   $fusionPath
+     *
      * @throws \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\Exception\NodeAddressCannotBeSerializedException
+     *
+     * @return string
      */
     public function wrapContentObject(TraversableNodeInterface $node, $content, $fusionPath): string
     {
@@ -120,7 +129,6 @@ class ContentElementWrappingService
             return $content;
         }
 
-
         // TODO: reenable permissions
         //if ($this->nodeAuthorizationService->isGrantedToEditNode($node) === false) {
         //    return $content;
@@ -128,10 +136,10 @@ class ContentElementWrappingService
 
         $attributes = [
             'data-__neos-node-contextpath' => $this->nodeAddressFactory->createFromNode($node)->serializeForUri(),
-            'data-__neos-fusion-path' => $fusionPath
+            'data-__neos-fusion-path'      => $fusionPath,
         ];
 
-        $this->renderedNodes[(string)$node->getNodeIdentifier()] = $node;
+        $this->renderedNodes[(string) $node->getNodeIdentifier()] = $node;
 
         $this->userLocaleService->switchToUILocale();
 
@@ -152,9 +160,11 @@ class ContentElementWrappingService
      * within the structure tree which are not actually rendered.
      *
      * @param TraversableNodeInterface $documentNode
-     * @return mixed
+     *
      * @throws \Neos\Eel\Exception
      * @throws \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\Exception\NodeAddressCannotBeSerializedException
+     *
+     * @return mixed
      */
     protected function appendNonRenderedContentNodeMetadata(TraversableNodeInterface $documentNode)
     {
@@ -162,13 +172,12 @@ class ContentElementWrappingService
             return '';
         }
 
-
         foreach ($documentNode->findChildNodes() as $node) {
             if ($node->getNodeType()->isOfType('Neos.Neos:Document') === true) {
                 continue;
             }
 
-            if (isset($this->renderedNodes[(string)$node->getNodeIdentifier()]) === false) {
+            if (isset($this->renderedNodes[(string) $node->getNodeIdentifier()]) === false) {
                 $serializedNode = json_encode($this->nodeInfoHelper->renderNode($node));
                 $nodeContextPath = $this->nodeAddressFactory->createFromNode($node)->serializeForUri();
                 $this->nonRenderedContentNodeMetadata .= "<script>(function(){(this['@Neos.Neos.Ui:Nodes'] = this['@Neos.Neos.Ui:Nodes'] || {})['{$nodeContextPath}'] = {$serializedNode}})()</script>";
@@ -198,9 +207,11 @@ class ContentElementWrappingService
 
     /**
      * @param TraversableNodeInterface $documentNode
-     * @return string
+     *
      * @throws \Neos\Eel\Exception
      * @throws \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\Exception\NodeAddressCannotBeSerializedException
+     *
+     * @return string
      */
     public function getNonRenderedContentNodeMetadata(TraversableNodeInterface $documentNode)
     {
@@ -221,4 +232,3 @@ class ContentElementWrappingService
         return $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)->getWorkspaceName()->isLive();
     }
 }
-

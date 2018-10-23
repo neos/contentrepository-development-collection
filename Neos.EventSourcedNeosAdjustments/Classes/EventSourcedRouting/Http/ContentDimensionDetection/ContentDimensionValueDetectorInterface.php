@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionDetection;
 
 /*
@@ -15,14 +16,15 @@ use Neos\ContentRepository\DimensionSpace\Dimension;
 use Neos\Flow\Http;
 
 /**
- * Interface to detect the current request's dimension value
+ * Interface to detect the current request's dimension value.
  */
 interface ContentDimensionValueDetectorInterface
 {
     /**
-     * @param Dimension\ContentDimension $contentDimension
+     * @param Dimension\ContentDimension      $contentDimension
      * @param Http\Component\ComponentContext $componentContext
-     * @param array $overrideOptions
+     * @param array                           $overrideOptions
+     *
      * @return Dimension\ContentDimensionValue|null
      */
     public function detectValue(Dimension\ContentDimension $contentDimension, Http\Component\ComponentContext $componentContext, array $overrideOptions = null): ?Dimension\ContentDimensionValue;

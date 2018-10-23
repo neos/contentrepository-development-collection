@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace;
 
 /*
@@ -11,6 +12,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\CreateContentStream;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
@@ -39,7 +41,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWo
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceAlreadyExists;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceDoesNotExist;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcing\Event\EventPublisher;
 use Neos\EventSourcing\EventStore\EventAndRawEvent;
 use Neos\EventSourcing\EventStore\EventStoreManager;
@@ -50,49 +51,55 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMapper;
 
 /**
- * WorkspaceCommandHandler
+ * WorkspaceCommandHandler.
  */
 final class WorkspaceCommandHandler
 {
     /**
      * @Flow\Inject
+     *
      * @var WorkspaceFinder
      */
     protected $workspaceFinder;
 
     /**
      * @Flow\Inject
+     *
      * @var NodeCommandHandler
      */
     protected $nodeCommandHandler;
 
     /**
      * @Flow\Inject
+     *
      * @var ContentStreamCommandHandler
      */
     protected $contentStreamCommandHandler;
 
     /**
      * @Flow\Inject
+     *
      * @var EventPublisher
      */
     protected $eventPublisher;
 
     /**
      * @Flow\Inject
+     *
      * @var EventStoreManager
      */
     protected $eventStoreManager;
 
     /**
      * @Flow\Inject
+     *
      * @var PropertyMapper
      */
     protected $propertyMapper;
 
-
     /**
      * @param CreateWorkspace $command
+     *
      * @throws WorkspaceAlreadyExists
      * @throws BaseWorkspaceDoesNotExist
      */
@@ -118,7 +125,7 @@ final class WorkspaceCommandHandler
         );
 
         $this->eventPublisher->publish(
-            'Neos.ContentRepository:Workspace:' . $command->getWorkspaceName(),
+            'Neos.ContentRepository:Workspace:'.$command->getWorkspaceName(),
             new WorkspaceWasCreated(
                 $command->getWorkspaceName(),
                 $command->getBaseWorkspaceName(),
@@ -133,6 +140,7 @@ final class WorkspaceCommandHandler
 
     /**
      * @param CreateRootWorkspace $command
+     *
      * @throws WorkspaceAlreadyExists
      */
     public function handleCreateRootWorkspace(CreateRootWorkspace $command)
@@ -150,9 +158,8 @@ final class WorkspaceCommandHandler
             )
         );
 
-
         $this->eventPublisher->publish(
-            'Neos.ContentRepository:Workspace:' . $command->getWorkspaceName(),
+            'Neos.ContentRepository:Workspace:'.$command->getWorkspaceName(),
             new RootWorkspaceWasCreated(
                 $command->getWorkspaceName(),
                 $command->getWorkspaceTitle(),
@@ -174,6 +181,7 @@ final class WorkspaceCommandHandler
 
     /**
      * @param PublishWorkspace $command
+     *
      * @throws BaseWorkspaceDoesNotExist
      * @throws WorkspaceDoesNotExist
      * @throws \Neos\EventSourcing\EventStore\Exception\EventStreamNotFoundException
@@ -190,7 +198,6 @@ final class WorkspaceCommandHandler
         if ($baseWorkspace === null) {
             throw new BaseWorkspaceDoesNotExist(sprintf('The workspace %s (base workspace of %s) does not exist', $command->getBaseWorkspaceName(), $command->getWorkspaceName()), 1513924882);
         }
-
 
         // TODO: please check the code below in-depth. it does:
         // - copy all events from the "user" content stream which implement "CopyableAcrossContentStreamsInterface"
@@ -213,6 +220,7 @@ final class WorkspaceCommandHandler
         // TODO: maybe we should also emit a "WorkspaceWasPublished" event? But on which content stream?
 
         $contentStreamWasForked = $this->extractSingleForkedContentStreamEvent($workspaceContentStream);
+
         try {
             $baseWorkspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($baseWorkspace->getCurrentContentStreamIdentifier());
             $this->eventPublisher->publishMany($baseWorkspaceContentStreamName, $events, $contentStreamWasForked->getVersionOfSourceContentStream());
@@ -223,12 +231,14 @@ final class WorkspaceCommandHandler
 
     /**
      * @param array $stream
-     * @return ContentStreamWasForked
+     *
      * @throws \Exception
+     *
+     * @return ContentStreamWasForked
      */
     protected static function extractSingleForkedContentStreamEvent(array $stream) : ContentStreamWasForked
     {
-        $contentStreamWasForkedEvents = array_filter($stream, function(EventAndRawEvent $eventAndRawEvent) {
+        $contentStreamWasForkedEvents = array_filter($stream, function (EventAndRawEvent $eventAndRawEvent) {
             return $eventAndRawEvent->getEvent() instanceof ContentStreamWasForked;
         });
 
@@ -245,6 +255,7 @@ final class WorkspaceCommandHandler
 
     /**
      * @param RebaseWorkspace $command
+     *
      * @throws BaseWorkspaceDoesNotExist
      * @throws WorkspaceDoesNotExist
      * @throws \Exception
@@ -265,7 +276,6 @@ final class WorkspaceCommandHandler
         if ($baseWorkspace === null) {
             throw new BaseWorkspaceDoesNotExist(sprintf('The workspace %s (base workspace of %s) does not exist', $command->getBaseWorkspaceName(), $command->getWorkspaceName()), 1513924882);
         }
-
 
         // TODO: please check the code below in-depth. it does:
         // - fork a new content stream
@@ -289,7 +299,7 @@ final class WorkspaceCommandHandler
                 $commandToRebasePayload = $metadata['commandPayload'];
 
                 // try to apply the command on the rebased content stream
-                $commandToRebasePayload['contentStreamIdentifier'] = (string)$rebasedContentStream;
+                $commandToRebasePayload['contentStreamIdentifier'] = (string) $rebasedContentStream;
 
                 $commandToRebase = $this->propertyMapper->convert($commandToRebasePayload, $commandToRebaseClass, new AllowAllPropertiesPropertyMappingConfiguration());
 
@@ -325,13 +335,12 @@ final class WorkspaceCommandHandler
                     default:
                         throw new \Exception(sprintf('TODO: Command %s is not supported by handleRebaseWorkspace() currently... Please implement it there.', get_class($commandToRebase)));
                 }
-
             }
         }
 
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
         $this->eventPublisher->publish(
-            'Neos.ContentRepository:Workspace:' . $command->getWorkspaceName(),
+            'Neos.ContentRepository:Workspace:'.$command->getWorkspaceName(),
             new WorkspaceWasRebased(
                 $command->getWorkspaceName(),
                 $rebasedContentStream

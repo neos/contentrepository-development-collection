@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Fusion;
 
 /*
@@ -19,22 +20,23 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\ContextParametersFactory;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\HierarchyTraversalDirection;
-use Neos\Fusion\Exception as FusionException;
 use Neos\Flow\Annotations as Flow;
+use Neos\Fusion\Exception as FusionException;
 
 /**
- * A Fusion Menu object
+ * A Fusion Menu object.
  */
 class MenuImplementation extends AbstractMenuImplementation
 {
     /**
      * @Flow\Inject
+     *
      * @var NodeTypeConstraintFactory
      */
     protected $nodeTypeConstraintFactory;
 
     /**
-     * Hard limit for the maximum number of levels supported by this menu
+     * Hard limit for the maximum number of levels supported by this menu.
      */
     const MAXIMUM_LEVELS_LIMIT = 100;
 
@@ -48,19 +50,19 @@ class MenuImplementation extends AbstractMenuImplementation
     /**
      * Internal cache for the lastLevel value.
      *
-     * @var integer
+     * @var int
      */
     protected $lastLevel;
 
     /**
      * Internal cache for the maximumLevels tsValue.
      *
-     * @var integer
+     * @var int
      */
     protected $maximumLevels;
 
     /**
-     * Runtime cache for the node type constraints to be applied
+     * Runtime cache for the node type constraints to be applied.
      *
      * @var NodeTypeConstraints
      */
@@ -68,6 +70,7 @@ class MenuImplementation extends AbstractMenuImplementation
 
     /**
      * @Flow\Inject
+     *
      * @var ContextParametersFactory
      */
     protected $contextParametersFactory;
@@ -83,7 +86,7 @@ class MenuImplementation extends AbstractMenuImplementation
      * -2 = two levels above the current page
      * ...
      *
-     * @return integer
+     * @return int
      */
     public function getEntryLevel()
     {
@@ -91,7 +94,7 @@ class MenuImplementation extends AbstractMenuImplementation
     }
 
     /**
-     * NodeType filter for nodes displayed in menu
+     * NodeType filter for nodes displayed in menu.
      *
      * @return string
      */
@@ -108,7 +111,7 @@ class MenuImplementation extends AbstractMenuImplementation
     /**
      * Maximum number of levels which should be rendered in this menu.
      *
-     * @return integer
+     * @return int
      */
     public function getMaximumLevels()
     {
@@ -122,7 +125,7 @@ class MenuImplementation extends AbstractMenuImplementation
     /**
      * Return evaluated lastLevel value.
      *
-     * @return integer
+     * @return int
      */
     public function getLastLevel(): int
     {
@@ -158,16 +161,18 @@ class MenuImplementation extends AbstractMenuImplementation
      * configuration set for this Menu object.
      *
      * @throws FusionException
+     *
      * @return array An array of menu items and further information
      */
     protected function buildItems()
     {
         if (!is_null($this->getItemCollection())) {
             $menuLevelCollection = $this->getItemCollection();
-            $entryNodeAggregateIdentifiers = array_map(function(NodeInterface $node) { return $node->getNodeAggregateIdentifier(); }, $menuLevelCollection);
+            $entryNodeAggregateIdentifiers = array_map(function (NodeInterface $node) {
+                return $node->getNodeAggregateIdentifier();
+            }, $menuLevelCollection);
 
             $subtree = $this->getSubgraph()->findSubtrees($entryNodeAggregateIdentifiers, $this->getMaximumLevels(), $this->contextParametersFactory->createDefaultParameters(), $this->getNodeTypeConstraints());
-
         } else {
             $entryParentNode = $this->findMenuStartingPoint();
             if (!$entryParentNode) {
@@ -190,6 +195,7 @@ class MenuImplementation extends AbstractMenuImplementation
 
     /**
      * @param SubtreeInterface $subtree
+     *
      * @return MenuItem
      */
     protected function traverseChildren(SubtreeInterface $subtree): MenuItem
@@ -203,7 +209,6 @@ class MenuImplementation extends AbstractMenuImplementation
         return new MenuItem($subtree->getNode(), MenuItemState::normal(), $subtree->getNode()->getLabel(), $subtree->getLevel(), $children);
     }
 
-
     /**
      * Find the starting point for this menu. depending on given startingPoint
      * If startingPoint is given, this is taken as starting point for this menu level,
@@ -211,8 +216,9 @@ class MenuImplementation extends AbstractMenuImplementation
      *
      * If entryLevel is configured this will be taken into account as well.
      *
-     * @return NodeInterface|null
      * @throws FusionException
+     *
+     * @return NodeInterface|null
      */
     protected function findMenuStartingPoint(): ?NodeInterface
     {
@@ -246,6 +252,7 @@ class MenuImplementation extends AbstractMenuImplementation
             $this->getSubgraph()->traverseHierarchy($traversalStartingPoint, HierarchyTraversalDirection::up(), $this->getNodeTypeConstraints()->withExplicitlyDisallowedNodeType(new NodeTypeName('Neos.Neos:Sites')),
                 function (NodeInterface $traversedNode) use (&$traversedHierarchy) {
                     $traversedHierarchy[] = $traversedNode;
+
                     return true;
                 });
             $traversedHierarchy = array_reverse($traversedHierarchy);

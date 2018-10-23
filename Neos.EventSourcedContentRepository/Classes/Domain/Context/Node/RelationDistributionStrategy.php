@@ -14,7 +14,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
 
 /**
  * The relation distribution strategy for node aggregates as defined in the NodeType declaration
- * Used for building relations to other node aggregates
+ * Used for building relations to other node aggregates.
  *
  * - `scatter` means that different nodes within the aggregate may be related to different other aggregates (e.g. parent).
  *      Still, specializations pointing to the same node using the fallback mechanism will be kept gathered.
@@ -33,7 +33,6 @@ final class RelationDistributionStrategy implements \JsonSerializable
      */
     protected $strategy;
 
-
     protected function __construct(string $strategy)
     {
         $this->strategy = $strategy;
@@ -42,7 +41,7 @@ final class RelationDistributionStrategy implements \JsonSerializable
     /**
      * @return RelationDistributionStrategy
      */
-    public static function scatter(): RelationDistributionStrategy
+    public static function scatter(): self
     {
         return new static(static::STRATEGY_SCATTER);
     }
@@ -50,7 +49,7 @@ final class RelationDistributionStrategy implements \JsonSerializable
     /**
      * @return RelationDistributionStrategy
      */
-    public static function gatherAll(): RelationDistributionStrategy
+    public static function gatherAll(): self
     {
         return new static(static::STRATEGY_GATHER_ALL);
     }
@@ -58,17 +57,19 @@ final class RelationDistributionStrategy implements \JsonSerializable
     /**
      * @return RelationDistributionStrategy
      */
-    public static function gatherSpecializations(): RelationDistributionStrategy
+    public static function gatherSpecializations(): self
     {
         return new static(static::STRATEGY_GATHER_SPECIALIZATIONS);
     }
 
     /**
      * @param null|string $configurationValue
-     * @return RelationDistributionStrategy
+     *
      * @throws RelationDistributionStrategyIsInvalid
+     *
+     * @return RelationDistributionStrategy
      */
-    public static function fromConfigurationValue(?string $configurationValue): RelationDistributionStrategy
+    public static function fromConfigurationValue(?string $configurationValue): self
     {
         switch ($configurationValue) {
             case self::STRATEGY_SCATTER:
@@ -79,10 +80,9 @@ final class RelationDistributionStrategy implements \JsonSerializable
             case null:
                 return static::gatherAll();
             default:
-                throw new RelationDistributionStrategyIsInvalid('Given relation distribution strategy ' . $configurationValue . ' is invalid', 1519761485);
+                throw new RelationDistributionStrategyIsInvalid('Given relation distribution strategy '.$configurationValue.' is invalid', 1519761485);
         }
     }
-
 
     /**
      * @return string

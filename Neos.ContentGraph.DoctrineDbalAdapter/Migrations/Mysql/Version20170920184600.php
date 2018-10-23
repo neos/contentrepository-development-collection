@@ -6,7 +6,7 @@ use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 /**
- * Make nodeaggregateidentifier nullable
+ * Make nodeaggregateidentifier nullable.
  */
 class Version20170920184600 extends AbstractMigration
 {

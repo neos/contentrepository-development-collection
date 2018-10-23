@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 
 /*
@@ -14,7 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 
 /**
- * A content stream's event stream name
+ * A content stream's event stream name.
  */
 final class ContentStreamEventStreamName
 {
@@ -23,17 +24,15 @@ final class ContentStreamEventStreamName
      */
     protected $eventStreamName;
 
-
     public function __construct(string $eventStreamName)
     {
         $this->eventStreamName = $eventStreamName;
     }
 
-    public static function fromContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier): ContentStreamEventStreamName
+    public static function fromContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier): self
     {
-        return new ContentStreamEventStreamName('Neos.ContentRepository:ContentStream:' . $contentStreamIdentifier);
+        return new self('Neos.ContentRepository:ContentStream:'.$contentStreamIdentifier);
     }
-
 
     public function getEventStreamName(): string
     {

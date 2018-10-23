@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 
 /*
@@ -11,23 +12,24 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain;
 
 /**
- * The interface to be implemented by content graphs
+ * The interface to be implemented by content graphs.
  */
 interface ContentGraphInterface
 {
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param DimensionSpacePoint     $dimensionSpacePoint
+     *
      * @return ContentSubgraphInterface|null
      */
     public function getSubgraphByIdentifier(
@@ -42,13 +44,15 @@ interface ContentGraphInterface
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
+     * @param NodeIdentifier          $nodeIdentifier
+     *
      * @return NodeInterface|null
      */
     public function findNodeByIdentifierInContentStream(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier): ?NodeInterface;
 
     /**
      * @param NodeTypeName $nodeTypeName
+     *
      * @return NodeInterface|null
      */
     public function findRootNodeByType(NodeTypeName $nodeTypeName): ?NodeInterface;
@@ -56,7 +60,8 @@ interface ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePointSet $dimensionSpacePointSet
+     * @param DimensionSpacePointSet  $dimensionSpacePointSet
+     *
      * @return array|NodeInterface[]
      */
     public function findNodesByNodeAggregateIdentifier(
@@ -68,14 +73,17 @@ interface ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return NodeAggregate|null
+     *
      * @throws Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
+     *
+     * @return NodeAggregate|null
      */
     public function findNodeAggregateByIdentifier(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeAggregate;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     *
      * @return array|NodeAggregate[]
      */
     public function findParentAggregates(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array;
@@ -83,12 +91,14 @@ interface ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     *
      * @return array|NodeAggregate[]
      */
     public function findChildAggregates(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array;
 
     /**
      * @param Domain\Context\Node\ReadOnlyNodeInterface $node
+     *
      * @return DimensionSpacePointSet
      */
     public function findVisibleDimensionSpacePointsOfNode(Domain\Context\Node\ReadOnlyNodeInterface $node): DimensionSpacePointSet;
@@ -96,6 +106,7 @@ interface ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     *
      * @return DimensionSpacePointSet
      */
     public function findVisibleDimensionSpacePointsOfNodeAggregate(

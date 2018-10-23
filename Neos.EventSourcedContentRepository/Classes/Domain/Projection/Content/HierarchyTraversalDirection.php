@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
 
 /*
@@ -11,10 +12,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-
 /**
- * The hierarchy traversal direction value object
+ * The hierarchy traversal direction value object.
  */
 final class HierarchyTraversalDirection
 {
@@ -26,15 +25,15 @@ final class HierarchyTraversalDirection
      */
     protected $direction;
 
-
     /**
      * @param string $direction
+     *
      * @throws Exception\InvalidHierarchyTraversalDirectionException
      */
     public function __construct(string $direction)
     {
         if ($direction !== self::DIRECTION_UP && $direction !== self::DIRECTION_DOWN) {
-            throw new Exception\InvalidHierarchyTraversalDirectionException('The given hierarchy traversal direction "' . $direction . '" is neither up nor down.', 1519225166);
+            throw new Exception\InvalidHierarchyTraversalDirectionException('The given hierarchy traversal direction "'.$direction.'" is neither up nor down.', 1519225166);
         }
         $this->direction = $direction;
     }
@@ -42,17 +41,17 @@ final class HierarchyTraversalDirection
     /**
      * @return HierarchyTraversalDirection
      */
-    public static function up(): HierarchyTraversalDirection
+    public static function up(): self
     {
-        return new HierarchyTraversalDirection(self::DIRECTION_UP);
+        return new self(self::DIRECTION_UP);
     }
 
     /**
      * @return HierarchyTraversalDirection
      */
-    public static function down(): HierarchyTraversalDirection
+    public static function down(): self
     {
-        return new HierarchyTraversalDirection(self::DIRECTION_DOWN);
+        return new self(self::DIRECTION_DOWN);
     }
 
     /**

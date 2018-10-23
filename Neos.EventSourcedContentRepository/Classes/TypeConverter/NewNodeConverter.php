@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\TypeConverter;
 
 /*
@@ -11,39 +12,20 @@ namespace Neos\EventSourcedContentRepository\TypeConverter;
  * source code.
  */
 
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\Flow\Annotations as Flow;
-use Neos\Error\Messages\Error;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Property\Exception\TypeConverterException;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
-use Neos\Utility\ObjectAccess;
 use Neos\Flow\Security\Context;
-use Neos\Utility\Exception\InvalidTypeException;
-use Neos\Utility\TypeHandling;
-use Neos\EventSourcedContentRepository\Domain\Factory\NodeFactory;
-use Neos\EventSourcedContentRepository\Domain\Model\NodeInterface;
-use Neos\EventSourcedContentRepository\Domain\Model\NodeType;
-use Neos\EventSourcedContentRepository\Domain\Service\Context as TYPO3CRContext;
-use Neos\EventSourcedContentRepository\Domain\Service\ContextFactoryInterface;
-use Neos\EventSourcedContentRepository\Domain\Service\NodeServiceInterface;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\EventSourcedContentRepository\Domain\Utility\NodePaths;
-use Neos\EventSourcedContentRepository\Exception\NodeException;
 
 /**
  * !!! Only needed for uncached Fusion segments; as in Fusion ContentCache, the PropertyMapper is used to serialize
  * and deserialize the context.
  *
  * @Flow\Scope("singleton")
+ *
  * @deprecated
  */
 class NewNodeConverter extends AbstractTypeConverter
@@ -51,7 +33,7 @@ class NewNodeConverter extends AbstractTypeConverter
     /**
      * @var array
      */
-    protected $sourceTypes = array('string');
+    protected $sourceTypes = ['string'];
 
     /**
      * @var string
@@ -59,12 +41,13 @@ class NewNodeConverter extends AbstractTypeConverter
     protected $targetType = \Neos\ContentRepository\Domain\Projection\Content\NodeInterface::class;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $priority = 1;
 
     /**
      * @Flow\Inject
+     *
      * @var ContentGraphInterface
      */
     protected $contentGraph;
@@ -73,19 +56,17 @@ class NewNodeConverter extends AbstractTypeConverter
      * TODO: Dependency to Neos; get rid of this!
      *
      * @Flow\Inject
+     *
      * @var NodeAddressFactory
      */
     protected $nodeAddressFactory;
 
-    /**
-     *
-     */
-    public function convertFrom($source, $targetType = null, array $subProperties = array(), PropertyMappingConfigurationInterface $configuration = null)
+    public function convertFrom($source, $targetType = null, array $subProperties = [], PropertyMappingConfigurationInterface $configuration = null)
     {
         $nodeAddress = $this->nodeAddressFactory->createFromUriString($source);
 
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint());
+
         return $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
     }
-
 }

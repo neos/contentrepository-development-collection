@@ -20,11 +20,10 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache\N
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache\ParentNodeIdentifierByChildNodeIdentifierCache;
 
 /**
- * Accessors to In Memory Cache
+ * Accessors to In Memory Cache.
  */
 final class InMemoryCache
 {
-
     /**
      * @var NodePathCache
      */
@@ -104,7 +103,6 @@ final class InMemoryCache
     {
         return $this->parentNodeIdentifierByChildNodeIdentifierCache;
     }
-
 
     public function reset()
     {

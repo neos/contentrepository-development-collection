@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
 
 /*
@@ -12,11 +13,10 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  */
 
 /**
- * Property value with type
+ * Property value with type.
  */
 final class PropertyValue implements \JsonSerializable
 {
-
     /**
      * @var mixed
      */
@@ -28,7 +28,7 @@ final class PropertyValue implements \JsonSerializable
     private $type;
 
     /**
-     * @param mixed $value
+     * @param mixed  $value
      * @param string $type
      */
     public function __construct($value, string $type)
@@ -57,12 +57,12 @@ final class PropertyValue implements \JsonSerializable
     {
         return [
             'value' => $this->value,
-            'type' => $this->type
+            'type'  => $this->type,
         ];
     }
 
     public function __toString()
     {
-        return $this->value . ' (' . $this->type . ')';
+        return $this->value.' ('.$this->type.')';
     }
 }

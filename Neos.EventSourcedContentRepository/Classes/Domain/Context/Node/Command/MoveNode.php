@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
 
 /*
@@ -11,14 +12,13 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\Node\RelationDistributionStrategy;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\Flow\Annotations as Flow;
+use Neos\EventSourcedContentRepository\Domain\Context\Node\RelationDistributionStrategy;
 
 /**
- * Move node command
+ * Move node command.
  *
  * In `contentStreamIdentifier`
  * and `dimensionSpacePoint`,
@@ -61,11 +61,10 @@ final class MoveNode
      */
     private $relationDistributionStrategy;
 
-
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param ContentStreamIdentifier      $contentStreamIdentifier
+     * @param DimensionSpacePoint          $dimensionSpacePoint
+     * @param NodeAggregateIdentifier      $nodeAggregateIdentifier
      * @param NodeAggregateIdentifier|null $newParentNodeAggregateIdentifier
      * @param NodeAggregateIdentifier|null $newSucceedingSiblingNodeAggregateIdentifier
      * @param RelationDistributionStrategy $relationDistributionStrategy
@@ -85,7 +84,6 @@ final class MoveNode
         $this->newSucceedingSiblingNodeAggregateIdentifier = $newSucceedingSiblingNodeAggregateIdentifier;
         $this->relationDistributionStrategy = $relationDistributionStrategy;
     }
-
 
     /**
      * @return ContentStreamIdentifier

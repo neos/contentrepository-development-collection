@@ -12,16 +12,15 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\Traversab
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\ContentRepository\Domain\ValueObject\PropertyCollectionInterface;
-use Neos\EventSourcedContentRepository\Domain;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 
 /**
  * This class is purely for code organization of TraversableNode.
@@ -34,7 +33,6 @@ trait NodeInterfaceProxy
      * @var NodeInterface
      */
     protected $node;
-
 
     public function getCacheEntryIdentifier():string
     {

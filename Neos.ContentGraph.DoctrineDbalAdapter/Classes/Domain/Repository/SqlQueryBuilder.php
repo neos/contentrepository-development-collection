@@ -14,10 +14,9 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Statement;
-use Neos\EventSourcedContentRepository\Domain;
 
 /**
- * The Doctrine DBAL adapter content graph
+ * The Doctrine DBAL adapter content graph.
  *
  * To be used as a read-only source of nodes
  *
@@ -25,7 +24,6 @@ use Neos\EventSourcedContentRepository\Domain;
  */
 final class SqlQueryBuilder
 {
-
     /**
      * @var string
      */
@@ -34,16 +32,19 @@ final class SqlQueryBuilder
     protected $parameters = [];
     protected $types = [];
 
-    public function addToQuery($queryPart, string $markerToReplaceInQuery = null) {
+    public function addToQuery($queryPart, string $markerToReplaceInQuery = null)
+    {
         if ($markerToReplaceInQuery !== null) {
             $this->query = str_replace($markerToReplaceInQuery, $queryPart, $this->query);
         } else {
-            $this->query .= ' ' . $queryPart;
+            $this->query .= ' '.$queryPart;
         }
+
         return $this;
     }
 
-    public function parameter($parameterName, $parameterValue, $parameterType = null) {
+    public function parameter($parameterName, $parameterValue, $parameterType = null)
+    {
         $this->parameters[$parameterName] = $parameterValue;
 
         if ($parameterType !== null) {
@@ -55,8 +56,10 @@ final class SqlQueryBuilder
 
     /**
      * @param Connection $connection
-     * @return Statement
+     *
      * @throws \Doctrine\DBAL\DBALException
+     *
+     * @return Statement
      */
     public function execute(Connection $connection): Statement
     {

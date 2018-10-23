@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
 /*
@@ -17,7 +18,6 @@ use Neos\EventSourcing\Event\EventInterface;
 
 final class NodeAggregateWasRemoved implements EventInterface, CopyableAcrossContentStreamsInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -30,6 +30,7 @@ final class NodeAggregateWasRemoved implements EventInterface, CopyableAcrossCon
 
     /**
      * RemoveNodeAggregate constructor.
+     *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      */
@@ -57,7 +58,7 @@ final class NodeAggregateWasRemoved implements EventInterface, CopyableAcrossCon
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
     {
-        return new NodeAggregateWasRemoved(
+        return new self(
             $targetContentStream,
             $this->nodeAggregateIdentifier
         );

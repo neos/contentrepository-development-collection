@@ -13,8 +13,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryC
  */
 
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
-
 
 /**
  * NOTE: we do NOT directly cache the Parent Node; but only the Parent Node Identifier; as then, the NodeByNodeIdentifierCache can be used properly - thus
@@ -27,26 +25,27 @@ final class ParentNodeIdentifierByChildNodeIdentifierCache
 
     public function add(NodeIdentifier $childNodeIdentifier, NodeIdentifier $parentNodeIdentifier): void
     {
-        $key = (string)$childNodeIdentifier;
+        $key = (string) $childNodeIdentifier;
         $this->parentNodeIdentifiers[$key] = $parentNodeIdentifier;
     }
 
     public function knowsAbout(NodeIdentifier $childNodeIdentifier): bool
     {
-        $key = (string)$childNodeIdentifier;
-        return isset($this->parentNodeIdentifiers[$key])  || isset($this->nodesWithoutParentNode[$key]);;
+        $key = (string) $childNodeIdentifier;
+
+        return isset($this->parentNodeIdentifiers[$key]) || isset($this->nodesWithoutParentNode[$key]);
     }
 
     public function rememberNonExistingParentNode(NodeIdentifier $nodeIdentifier): void
     {
-        $key = (string)$nodeIdentifier;
+        $key = (string) $nodeIdentifier;
         $this->nodesWithoutParentNode[$key] = true;
     }
 
-
     public function get(NodeIdentifier $childNodeIdentifier): ?NodeIdentifier
     {
-        $key = (string)$childNodeIdentifier;
+        $key = (string) $childNodeIdentifier;
+
         return $this->parentNodeIdentifiers[$key] ?? null;
     }
 }

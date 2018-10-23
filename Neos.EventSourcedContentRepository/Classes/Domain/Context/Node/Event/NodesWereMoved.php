@@ -6,7 +6,7 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * Nodes were moved in a content stream as defined in the node move mappings
+ * Nodes were moved in a content stream as defined in the node move mappings.
  */
 final class NodesWereMoved implements EventInterface, CopyableAcrossContentStreamsInterface
 {
@@ -20,7 +20,6 @@ final class NodesWereMoved implements EventInterface, CopyableAcrossContentStrea
      */
     private $nodeMoveMappings;
 
-
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param array|NodeMoveMapping[] $nodeMoveMappings
@@ -32,7 +31,6 @@ final class NodesWereMoved implements EventInterface, CopyableAcrossContentStrea
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeMoveMappings = $nodeMoveMappings;
     }
-
 
     /**
      * @return ContentStreamIdentifier
@@ -52,11 +50,12 @@ final class NodesWereMoved implements EventInterface, CopyableAcrossContentStrea
 
     /**
      * @param ContentStreamIdentifier $targetContentStream
+     *
      * @return NodesWereMoved
      */
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): NodesWereMoved
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream): self
     {
-        return new NodesWereMoved(
+        return new self(
             $targetContentStream,
             $this->nodeMoveMappings
         );

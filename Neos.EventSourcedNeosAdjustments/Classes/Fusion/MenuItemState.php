@@ -1,11 +1,9 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Fusion;
 
-use Neos\ContentRepository\Domain;
-use Neos\Flow\Annotations as Flow;
-
 /**
- * The menu item state value object
+ * The menu item state value object.
  */
 final class MenuItemState
 {
@@ -21,6 +19,7 @@ final class MenuItemState
 
     /**
      * @param string $state
+     *
      * @throws Exception\InvalidMenuItemStateException
      */
     public function __construct(string $state)
@@ -29,19 +28,18 @@ final class MenuItemState
             && $state !== self::STATE_CURRENT
             && $state !== self::STATE_ACTIVE
             && $state !== self::STATE_ABSENT) {
-            throw new Exception\InvalidMenuItemStateException('"' . $state . '" is no valid menu item state', 1519668881);
+            throw new Exception\InvalidMenuItemStateException('"'.$state.'" is no valid menu item state', 1519668881);
         }
 
         $this->state = $state;
     }
 
-
     /**
      * @return MenuItemState
      */
-    public static function normal(): MenuItemState
+    public static function normal(): self
     {
-        return new MenuItemState(self::STATE_NORMAL);
+        return new self(self::STATE_NORMAL);
     }
 
     /**

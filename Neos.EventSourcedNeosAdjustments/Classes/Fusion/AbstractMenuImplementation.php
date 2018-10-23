@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Fusion;
 
 /*
@@ -16,7 +17,7 @@ use Neos\Fusion\Exception as FusionException;
 use Neos\Fusion\FusionObjects\TemplateImplementation;
 
 /**
- * Base class for Menu and DimensionsMenu
+ * Base class for Menu and DimensionsMenu.
  *
  * Main Options:
  *  - renderHiddenInIndex: if TRUE, hidden-in-index nodes will be shown in the menu. FALSE by default.
@@ -43,14 +44,14 @@ abstract class AbstractMenuImplementation extends TemplateImplementation
     /**
      * Internal cache for the currentLevel tsValue.
      *
-     * @var integer
+     * @var int
      */
     protected $currentLevel;
 
     /**
      * Internal cache for the renderHiddenInIndex property.
      *
-     * @var boolean
+     * @var bool
      */
     protected $renderHiddenInIndex;
 
@@ -64,19 +65,19 @@ abstract class AbstractMenuImplementation extends TemplateImplementation
     /**
      * Should nodes that have "hiddenInIndex" set still be visible in this menu.
      *
-     * @return boolean
+     * @return bool
      */
     public function getRenderHiddenInIndex()
     {
         if ($this->renderHiddenInIndex === null) {
-            $this->renderHiddenInIndex = (boolean)$this->fusionValue('renderHiddenInIndex');
+            $this->renderHiddenInIndex = (bool) $this->fusionValue('renderHiddenInIndex');
         }
 
         return $this->renderHiddenInIndex;
     }
 
     /**
-     * Main API method which sends the to-be-rendered data to Fluid
+     * Main API method which sends the to-be-rendered data to Fluid.
      *
      * @return array
      */
@@ -99,6 +100,7 @@ abstract class AbstractMenuImplementation extends TemplateImplementation
      * Must be overridden in subclasses.
      *
      * @throws FusionException
+     *
      * @return array An array of menu items and further information
      */
     abstract protected function buildItems();
@@ -110,11 +112,12 @@ abstract class AbstractMenuImplementation extends TemplateImplementation
      * This method needs to be called inside buildItems() in the subclasses.
      *
      * @param NodeInterface $node
-     * @return boolean
+     *
+     * @return bool
      */
     protected function isNodeHidden(NodeInterface $node)
     {
-        return ($node->isVisible() === false || ($this->getRenderHiddenInIndex() === false && $node->isHiddenInIndex() === true) || $node->isAccessible() === false);
+        return $node->isVisible() === false || ($this->getRenderHiddenInIndex() === false && $node->isHiddenInIndex() === true) || $node->isAccessible() === false;
     }
 
     /**
@@ -127,7 +130,7 @@ abstract class AbstractMenuImplementation extends TemplateImplementation
         if ($this->currentNodeRootline === null) {
             /** @todo replace this */
             $nodeRootline = $this->currentNode->getContext()->getNodesOnPath($this->runtime->getCurrentContext()['site']->getPath(), $this->currentNode->getPath());
-            $this->currentNodeRootline = array();
+            $this->currentNodeRootline = [];
 
             foreach ($nodeRootline as $rootlineElement) {
                 $this->currentNodeRootline[$this->getNodeLevelInSite($rootlineElement)] = $rootlineElement;
@@ -139,14 +142,16 @@ abstract class AbstractMenuImplementation extends TemplateImplementation
 
     /**
      * Node Level relative to site root node.
-     * 0 = Site root node
+     * 0 = Site root node.
      *
      * @param NodeInterface $node
-     * @return integer
+     *
+     * @return int
      */
     protected function getNodeLevelInSite(NodeInterface $node)
     {
         $siteNode = $this->currentNode->getContext()->getCurrentSiteNode();
+
         return $node->getDepth() - $siteNode->getDepth();
     }
 }

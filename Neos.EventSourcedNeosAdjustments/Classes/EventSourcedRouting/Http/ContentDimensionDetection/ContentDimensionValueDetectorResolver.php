@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionDetection;
 
 /*
@@ -12,11 +13,11 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimen
  */
 
 use Neos\ContentRepository\DimensionSpace\Dimension;
-use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\BasicContentDimensionResolutionMode;
+use Neos\Flow\Annotations as Flow;
 
 /**
- * The resolver for content dimension value detectors
+ * The resolver for content dimension value detectors.
  *
  * @Flow\Scope("singleton")
  */
@@ -24,8 +25,10 @@ final class ContentDimensionValueDetectorResolver
 {
     /**
      * @param Dimension\ContentDimension $contentDimension
-     * @return ContentDimensionValueDetectorInterface
+     *
      * @throws Exception\InvalidContentDimensionValueDetectorException
+     *
+     * @return ContentDimensionValueDetectorInterface
      */
     public function resolveContentDimensionValueDetector(Dimension\ContentDimension $contentDimension): ContentDimensionValueDetectorInterface
     {
@@ -35,14 +38,15 @@ final class ContentDimensionValueDetectorResolver
                 $detector = new $detectorClassName();
                 if (!$detector instanceof ContentDimensionValueDetectorInterface) {
                     throw new Exception\InvalidContentDimensionValueDetectorException(
-                        '"' . $detectorClassName . '", configured as content dimension value detector for content dimension "' . $contentDimension->getIdentifier() . '", does not implement ' . ContentDimensionValueDetectorInterface::class . '. Please check your dimension configuration.',
+                        '"'.$detectorClassName.'", configured as content dimension value detector for content dimension "'.$contentDimension->getIdentifier().'", does not implement '.ContentDimensionValueDetectorInterface::class.'. Please check your dimension configuration.',
                         1510826082
                     );
                 }
+
                 return $detector;
             } else {
                 throw new Exception\InvalidContentDimensionValueDetectorException(
-                    'Could not resolve dimension preset detection component for dimension "' . $contentDimension->getIdentifier() . '". Please check your dimension configuration.',
+                    'Could not resolve dimension preset detection component for dimension "'.$contentDimension->getIdentifier().'". Please check your dimension configuration.',
                     1510750184
                 );
             }

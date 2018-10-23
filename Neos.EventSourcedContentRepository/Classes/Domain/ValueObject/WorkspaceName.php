@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
 
 /*
@@ -51,9 +52,9 @@ final class WorkspaceName implements \JsonSerializable, CacheAwareInterface
     /**
      * @return WorkspaceName
      */
-    public static function forLive(): WorkspaceName
+    public static function forLive(): self
     {
-        return new WorkspaceName(self::WORKSPACE_NAME_LIVE);
+        return new self(self::WORKSPACE_NAME_LIVE);
     }
 
     /**

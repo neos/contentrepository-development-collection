@@ -16,35 +16,32 @@ use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 
-
 /**
- * Parent Node Identifier + Node Name => Child Node
+ * Parent Node Identifier + Node Name => Child Node.
  */
 final class NamedChildNodeByNodeIdentifierCache
 {
-
     /**
      * first level: Parent Node Identifier
      * Second Level: Node Name
-     * Value: Node
+     * Value: Node.
+     *
      * @var array
      */
     protected $nodes = [];
 
     public function add(NodeIdentifier $parentNodeIdentifier, NodeName $nodeName, NodeInterface $node): void
     {
-        $this->nodes[(string)$parentNodeIdentifier][(string)$nodeName] = $node;
+        $this->nodes[(string) $parentNodeIdentifier][(string) $nodeName] = $node;
     }
 
     public function contains(NodeIdentifier $parentNodeIdentifier, NodeName $nodeName): bool
     {
-        return isset($this->nodes[(string)$parentNodeIdentifier][(string)$nodeName]);
+        return isset($this->nodes[(string) $parentNodeIdentifier][(string) $nodeName]);
     }
 
     public function get(NodeIdentifier $parentNodeIdentifier, NodeName $nodeName): ?NodeInterface
     {
-        return $this->nodes[(string)$parentNodeIdentifier][(string)$nodeName] ?? null;
+        return $this->nodes[(string) $parentNodeIdentifier][(string) $nodeName] ?? null;
     }
-
-
 }

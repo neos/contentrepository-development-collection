@@ -6,7 +6,7 @@ use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 /**
- * The migration for providing nodes and hierarchy edges
+ * The migration for providing nodes and hierarchy edges.
  */
 class Version20170919234100 extends AbstractMigration
 {

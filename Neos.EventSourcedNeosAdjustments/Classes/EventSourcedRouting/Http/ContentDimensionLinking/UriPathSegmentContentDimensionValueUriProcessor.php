@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionLinking;
 
 /*
@@ -16,7 +17,7 @@ use Neos\Flow\Mvc\Routing;
 use Neos\Utility\Arrays;
 
 /**
- * URI path segment based content dimension value uri processor
+ * URI path segment based content dimension value uri processor.
  */
 final class UriPathSegmentContentDimensionValueUriProcessor implements ContentDimensionValueUriProcessorInterface
 {
@@ -24,15 +25,16 @@ final class UriPathSegmentContentDimensionValueUriProcessor implements ContentDi
      * @var array
      */
     protected $defaultOptions = [
-        'offset' => 0,
-        'delimiter' => '_'
+        'offset'    => 0,
+        'delimiter' => '_',
     ];
 
     /**
-     * @param Routing\Dto\UriConstraints $uriConstraints
-     * @param Dimension\ContentDimension $contentDimension
+     * @param Routing\Dto\UriConstraints      $uriConstraints
+     * @param Dimension\ContentDimension      $contentDimension
      * @param Dimension\ContentDimensionValue $contentDimensionValue
-     * @param array|null $overrideOptions
+     * @param array|null                      $overrideOptions
+     *
      * @return Routing\Dto\UriConstraints
      */
     public function processUriConstraints(

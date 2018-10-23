@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http;
 
 /*
@@ -12,7 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http;
  */
 
 /**
- * The basic content dimension resolution mode value object
+ * The basic content dimension resolution mode value object.
  */
 final class BasicContentDimensionResolutionMode implements \JsonSerializable
 {
@@ -36,7 +37,7 @@ final class BasicContentDimensionResolutionMode implements \JsonSerializable
             && $mode !== self::RESOLUTION_MODE_URIPATHSEGMENT
             && $mode !== self::RESOLUTION_MODE_NULL
         ) {
-            throw new \InvalidArgumentException('Invalid basic content dimension resolution mode "' . $mode . '", must be one of the defined constants.', 1510778102);
+            throw new \InvalidArgumentException('Invalid basic content dimension resolution mode "'.$mode.'", must be one of the defined constants.', 1510778102);
         }
 
         $this->mode = $mode;

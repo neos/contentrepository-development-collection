@@ -13,11 +13,10 @@ namespace Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace;
  */
 
 use Neos\EventSourcedContentRepository\Domain as ContentRepository;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The workspace name value for Neos contexts
- * Directly translatable to CR workspace names
+ * Directly translatable to CR workspace names.
  */
 final class WorkspaceName implements \JsonSerializable
 {
@@ -29,7 +28,6 @@ final class WorkspaceName implements \JsonSerializable
      */
     protected $name;
 
-
     /**
      * @param string $name
      */
@@ -40,28 +38,30 @@ final class WorkspaceName implements \JsonSerializable
 
     /**
      * @param string $accountIdentifier
+     *
      * @return WorkspaceName
      */
-    public static function fromAccountIdentifier(string $accountIdentifier): WorkspaceName
+    public static function fromAccountIdentifier(string $accountIdentifier): self
     {
-        return new WorkspaceName(preg_replace('/[^A-Za-z0-9\-]/', '-', self::PREFIX . $accountIdentifier));
+        return new self(preg_replace('/[^A-Za-z0-9\-]/', '-', self::PREFIX.$accountIdentifier));
     }
 
     /**
      * @param array $takenWorkspaceNames
+     *
      * @return WorkspaceName
      */
-    public function increment(array $takenWorkspaceNames): WorkspaceName
+    public function increment(array $takenWorkspaceNames): self
     {
         $name = $this->name;
         $i = 1;
         while (array_key_exists($name, $takenWorkspaceNames)) {
-            $name = $this->name . self::SUFFIX_DELIMITER . $i;
+            $name = $this->name.self::SUFFIX_DELIMITER.$i;
             $i++;
         }
 
         if ($i > 1) {
-            return new WorkspaceName($name);
+            return new self($name);
         } else {
             return $this;
         }

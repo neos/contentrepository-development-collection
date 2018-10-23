@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 
 /*
@@ -14,7 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 use Neos\Flow\Exception;
 
 /**
- * The exception to be thrown if a content stream does not exists yet but is expected to
+ * The exception to be thrown if a content stream does not exists yet but is expected to.
  */
 final class ContentStreamDoesNotExistYet extends Exception
 {

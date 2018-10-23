@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionLinking\Exception;
 
 /*
@@ -14,7 +15,7 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimen
 use Neos\Neos\Exception;
 
 /**
- * An exception to be thrown if an invalid content dimension value uri processor has been configured
+ * An exception to be thrown if an invalid content dimension value uri processor has been configured.
  */
 class InvalidContentDimensionValueUriProcessorException extends Exception
 {

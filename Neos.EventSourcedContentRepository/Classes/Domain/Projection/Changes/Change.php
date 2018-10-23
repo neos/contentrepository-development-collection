@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Changes;
 
 /*
@@ -14,10 +15,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Changes;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\Flow\Annotations as Flow;
 
 /**
- * Change Read Model
+ * Change Read Model.
  */
 class Change
 {
@@ -45,17 +45,16 @@ class Change
      * Change constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
-     * @param bool $changed
-     * @param bool $moved
+     * @param NodeIdentifier          $nodeIdentifier
+     * @param bool                    $changed
+     * @param bool                    $moved
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeIdentifier $nodeIdentifier,
         bool $changed = false,
         bool $moved = false
-    )
-    {
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeIdentifier = $nodeIdentifier;
         $this->changed = $changed;
@@ -68,27 +67,28 @@ class Change
     public function addToDatabase(Connection $databaseConnection): void
     {
         $databaseConnection->insert('neos_contentrepository_projection_change', [
-            'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
-            'nodeIdentifier' => (string)$this->nodeIdentifier,
-            'changed' => (int)$this->changed,
-            'moved' => (int)$this->moved
+            'contentStreamIdentifier' => (string) $this->contentStreamIdentifier,
+            'nodeIdentifier'          => (string) $this->nodeIdentifier,
+            'changed'                 => (int) $this->changed,
+            'moved'                   => (int) $this->moved,
         ]);
     }
 
     public function updateToDatabase(Connection $databaseConnection): void
     {
         $databaseConnection->update('neos_contentrepository_projection_change', [
-            'changed' => (int)$this->changed,
-            'moved' => (int)$this->moved
+            'changed' => (int) $this->changed,
+            'moved'   => (int) $this->moved,
         ],
         [
-            'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
-            'nodeIdentifier' => (string)$this->nodeIdentifier,
+            'contentStreamIdentifier' => (string) $this->contentStreamIdentifier,
+            'nodeIdentifier'          => (string) $this->nodeIdentifier,
         ]);
     }
 
     /**
      * @param array $databaseRow
+     *
      * @return static
      */
     public static function fromDatabaseRow(array $databaseRow)
@@ -96,8 +96,8 @@ class Change
         return new static(
             new ContentStreamIdentifier($databaseRow['contentStreamIdentifier']),
             new NodeIdentifier($databaseRow['nodeIdentifier']),
-            (bool)$databaseRow['changed'],
-            (bool)$databaseRow['moved']
+            (bool) $databaseRow['changed'],
+            (bool) $databaseRow['moved']
         );
     }
 }

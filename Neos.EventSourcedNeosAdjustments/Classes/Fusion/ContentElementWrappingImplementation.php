@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Fusion;
 
 /*
@@ -18,24 +19,26 @@ use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 
 /**
- * Adds meta data attributes to the processed Content Element
+ * Adds meta data attributes to the processed Content Element.
  */
 class ContentElementWrappingImplementation extends AbstractFusionObject
 {
     /**
      * @Flow\Inject
+     *
      * @var PrivilegeManagerInterface
      */
     protected $privilegeManager;
 
     /**
      * @Flow\Inject
+     *
      * @var ContentElementWrappingService
      */
     protected $contentElementWrappingService;
 
     /**
-     * The string to be processed
+     * The string to be processed.
      *
      * @return string
      */
@@ -45,7 +48,7 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
     }
 
     /**
-     * Additional attributes to be rendered in the ContentElementWrapping
+     * Additional attributes to be rendered in the ContentElementWrapping.
      *
      * @return array
      */
@@ -55,7 +58,7 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
     }
 
     /**
-     * Evaluate this Fusion object and return the result
+     * Evaluate this Fusion object and return the result.
      *
      * @return mixed
      */
@@ -81,7 +84,7 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
     }
 
     /**
-     * Returns the Fusion path to the wrapped Content Element
+     * Returns the Fusion path to the wrapped Content Element.
      *
      * @return string
      */
@@ -106,6 +109,7 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
             // cut off the LONG processing syntax "__meta/process/contentElementWrapping/expression<Neos.Neos:ContentElementWrapping>"
             return implode('/', array_slice($fusionPathSegments, 0, -4));
         }
+
         return $this->path;
     }
 }

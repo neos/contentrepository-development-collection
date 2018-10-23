@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Ui\Controller;
 
 /*
@@ -15,7 +16,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\ContextParameters;
@@ -25,22 +26,20 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\View\ViewInterface;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Session\SessionInterface;
-use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\Fusion\View\FusionView;
 use Neos\Neos\Controller\Backend\MenuHelper;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Service\BackendRedirectionService;
 use Neos\Neos\Service\UserService;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Fusion\View\FusionView;
-use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Neos\Ui\Domain\Service\StyleAndJavascriptInclusionService;
 
 class BackendController extends ActionController
 {
-
     /**
      * @var string
      */
@@ -53,80 +52,91 @@ class BackendController extends ActionController
 
     /**
      * @Flow\Inject
+     *
      * @var UserService
      */
     protected $userService;
 
     /**
      * @Flow\Inject
+     *
      * @var ContextFactoryInterface
      */
     protected $contextFactory;
 
     /**
      * @Flow\Inject
+     *
      * @var DomainRepository
      */
     protected $domainRepository;
 
     /**
      * @Flow\Inject
+     *
      * @var SiteRepository
      */
     protected $siteRepository;
 
     /**
      * @Flow\Inject
+     *
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
     /**
      * @Flow\Inject
+     *
      * @var SessionInterface
      */
     protected $session;
 
     /**
      * @Flow\Inject
+     *
      * @var ResourceManager
      */
     protected $resourceManager;
 
     /**
      * @Flow\Inject
+     *
      * @var MenuHelper
      */
     protected $menuHelper;
 
     /**
      * @Flow\Inject(lazy=false)
+     *
      * @var BackendRedirectionService
      */
     protected $backendRedirectionService;
 
     /**
      * @Flow\Inject
+     *
      * @var ContentGraph
      */
     protected $contentGraph;
 
-
     /**
      * @Flow\Inject
+     *
      * @var NodeFactory
      */
     protected $nodeFactory;
 
-
     /**
      * @Flow\Inject
+     *
      * @var WorkspaceFinder
      */
     protected $workspaceFinder;
 
     /**
      * @Flow\Inject
+     *
      * @var StyleAndJavascriptInclusionService
      */
     protected $styleAndJavascriptInclusionService;
@@ -137,9 +147,10 @@ class BackendController extends ActionController
     }
 
     /**
-     * Displays the backend interface
+     * Displays the backend interface.
      *
      * @param NodeAddress $node The node that will be displayed on the first tab
+     *
      * @return void
      */
     public function indexAction(NodeAddress $node = null)
@@ -176,8 +187,8 @@ class BackendController extends ActionController
         $this->view->assign('sitesForMenu', $this->menuHelper->buildSiteList($this->getControllerContext()));
 
         $this->view->assignMultiple([
-            'subgraph' => $subgraph,
-            'contextParameters' => new ContextParameters(new \DateTimeImmutable(), [], true, true)
+            'subgraph'          => $subgraph,
+            'contextParameters' => new ContextParameters(new \DateTimeImmutable(), [], true, true),
         ]);
 
         $this->view->assign('interfaceLanguage', $this->userService->getInterfaceLanguage());
@@ -185,6 +196,7 @@ class BackendController extends ActionController
 
     /**
      * @param NodeAddress $node
+     *
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      */
     public function redirectToAction(NodeAddress $node)
@@ -196,23 +208,26 @@ class BackendController extends ActionController
 
     /**
      * @Flow\Inject
+     *
      * @var ContentDimensionSourceInterface
      */
     protected $contentDimensionSource;
 
-    protected function findDefaultDimensionSpacePoint(): DimensionSpacePoint {
+    protected function findDefaultDimensionSpacePoint(): DimensionSpacePoint
+    {
         $coordinates = [];
         foreach ($this->contentDimensionSource->getContentDimensionsOrderedByPriority() as $dimension) {
-            $coordinates[(string)$dimension->getIdentifier()] = (string)$dimension->getDefaultValue();
+            $coordinates[(string) $dimension->getIdentifier()] = (string) $dimension->getDefaultValue();
         }
 
         return new DimensionSpacePoint($coordinates);
     }
 
     /**
-     * @return \Neos\ContentRepository\Domain\ValueObject\NodeIdentifier
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
+     *
+     * @return \Neos\ContentRepository\Domain\ValueObject\NodeIdentifier
      */
     protected function getRootNodeIdentifier(): \Neos\ContentRepository\Domain\ValueObject\NodeIdentifier
     {

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command;
 
 /*
@@ -16,9 +17,8 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 
-
 /**
- * Create a generalization of a node in a content stream
+ * Create a generalization of a node in a content stream.
  *
  * Copy a node to a generalized dimension space point respecting further generalization mechanisms
  */
@@ -49,13 +49,12 @@ final class CreateNodeGeneralization
      */
     protected $generalizationIdentifier;
 
-
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $sourceDimensionSpacePoint
-     * @param DimensionSpacePoint $targetDimensionSpacePoint
-     * @param NodeIdentifier $generalizationIdentifier
+     * @param DimensionSpacePoint     $sourceDimensionSpacePoint
+     * @param DimensionSpacePoint     $targetDimensionSpacePoint
+     * @param NodeIdentifier          $generalizationIdentifier
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,

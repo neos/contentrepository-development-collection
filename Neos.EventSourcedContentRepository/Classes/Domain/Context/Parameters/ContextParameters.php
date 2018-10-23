@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Parameters;
 
 /*
@@ -11,11 +12,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Parameters;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Policy\Role;
 
 /**
- * The context parameters value object
+ * The context parameters value object.
  */
 final class ContextParameters
 {
@@ -30,17 +30,18 @@ final class ContextParameters
     protected $roles = [];
 
     /**
-     * @var boolean
+     * @var bool
+     *
      * @deprecated use roles instead
      */
     protected $invisibleContentShown = false;
 
     /**
-     * @var boolean
+     * @var bool
+     *
      * @deprecated evaluate roles instead
      */
     protected $inaccessibleContentShown = false;
-
 
     public function __construct(\DateTimeImmutable $currentDateTime, array $roles, bool $invisibleContentShown, bool $inaccessibleContentShown)
     {
@@ -49,7 +50,6 @@ final class ContextParameters
         $this->invisibleContentShown = $invisibleContentShown;
         $this->inaccessibleContentShown = $invisibleContentShown;
     }
-
 
     /**
      * @return \DateTimeImmutable
@@ -69,6 +69,7 @@ final class ContextParameters
 
     /**
      * @return bool
+     *
      * @deprecated evaluate roles instead
      */
     public function isInvisibleContentShown(): bool
@@ -78,6 +79,7 @@ final class ContextParameters
 
     /**
      * @return bool
+     *
      * @deprecated evaluate roles instead
      */
     public function isInaccessibleContentShown(): bool

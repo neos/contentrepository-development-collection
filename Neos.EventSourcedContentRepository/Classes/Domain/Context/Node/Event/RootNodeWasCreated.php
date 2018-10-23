@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
 /*
@@ -19,7 +20,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * Root node was created event
+ * Root node was created event.
  */
 final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentStreamsInterface
 {
@@ -54,10 +55,10 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
      * RootNodeWasCreated constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
-     * @param NodeTypeName $nodeTypeName
-     * @param DimensionSpacePointSet $visibleDimensionSpacePoints
-     * @param UserIdentifier $initiatingUserIdentifier
+     * @param NodeIdentifier          $nodeIdentifier
+     * @param NodeTypeName            $nodeTypeName
+     * @param DimensionSpacePointSet  $visibleDimensionSpacePoints
+     * @param UserIdentifier          $initiatingUserIdentifier
      */
     public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, DimensionSpacePointSet $visibleDimensionSpacePoints, UserIdentifier $initiatingUserIdentifier)
     {
@@ -67,7 +68,6 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
         $this->visibleDimensionSpacePoints = $visibleDimensionSpacePoints;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
-
 
     /**
      * @return ContentStreamIdentifier
@@ -86,7 +86,7 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
     }
 
     /**
-     * Getter for NodeTypeName
+     * Getter for NodeTypeName.
      *
      * @return NodeTypeName
      */
@@ -113,11 +113,12 @@ final class RootNodeWasCreated implements EventInterface, CopyableAcrossContentS
 
     /**
      * @param ContentStreamIdentifier $targetContentStream
+     *
      * @return RootNodeWasCreated
      */
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
     {
-        return new RootNodeWasCreated(
+        return new self(
             $targetContentStream,
             $this->nodeIdentifier,
             $this->nodeTypeName,

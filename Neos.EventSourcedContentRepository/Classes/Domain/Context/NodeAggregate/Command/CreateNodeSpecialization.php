@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command;
 
 /*
@@ -17,7 +18,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 
 /**
- * Create a specialization of a node in a content stream
+ * Create a specialization of a node in a content stream.
  *
  * Copy a node identified by node aggregate identifier and source dimension space point to a specialized dimension space point in a content stream
  * respecting further specialization mechanisms.
@@ -49,13 +50,12 @@ final class CreateNodeSpecialization
      */
     protected $specializationIdentifier;
 
-
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $sourceDimensionSpacePoint
-     * @param DimensionSpacePoint $targetDimensionSpacePoint
-     * @param NodeIdentifier $specializationIdentifier
+     * @param DimensionSpacePoint     $sourceDimensionSpacePoint
+     * @param DimensionSpacePoint     $targetDimensionSpacePoint
+     * @param NodeIdentifier          $specializationIdentifier
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,

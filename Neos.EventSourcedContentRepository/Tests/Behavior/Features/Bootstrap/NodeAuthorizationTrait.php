@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
 
 /*
@@ -18,7 +19,7 @@ use Neos\Flow\Security\Exception\AccessDeniedException;
 use PHPUnit\Framework\Assert as Assert;
 
 /**
- * A trait with shared step definitions for common use by other contexts
+ * A trait with shared step definitions for common use by other contexts.
  *
  * Note that this trait requires the following properties to be available:
  * * $this->nodeAuthorizationService
@@ -30,12 +31,14 @@ trait NodeAuthorizationTrait
 {
     /**
      * @Flow\Inject
+     *
      * @var \Neos\ContentRepository\Service\AuthorizationService
      */
     protected $nodeAuthorizationService;
 
     /**
      * @Flow\Inject
+     *
      * @var \Neos\ContentRepository\Domain\Service\NodeTypeManager
      */
     protected $nodeTypeManager;
@@ -94,12 +97,12 @@ trait NodeAuthorizationTrait
             $deniedPropertyNames = $this->nodeAuthorizationService->getDeniedNodePropertiesForEditing($this->currentNodes[0]);
 
             if (count($rows) !== count($deniedPropertyNames)) {
-                Assert::fail('The node authorization service did not return the expected amount of node property names! Got: ' . implode(', ', $deniedPropertyNames));
+                Assert::fail('The node authorization service did not return the expected amount of node property names! Got: '.implode(', ', $deniedPropertyNames));
             }
 
             foreach ($rows as $row) {
                 if (in_array($row['propertyName'], $deniedPropertyNames) === false) {
-                    Assert::fail('The following property name has not been returned by the node authorization service: ' . $row['propertyName']);
+                    Assert::fail('The following property name has not been returned by the node authorization service: '.$row['propertyName']);
                 }
             }
         }
@@ -107,6 +110,7 @@ trait NodeAuthorizationTrait
 
     /**
      * @param string $not
+     *
      * @throws AccessDeniedException
      * @Then /^I should (not )?be granted to set any of the node's attributes$/
      */
@@ -216,7 +220,7 @@ trait NodeAuthorizationTrait
             }
 
             try {
-                $this->currentNodes[0]->setAccessRoles(array());
+                $this->currentNodes[0]->setAccessRoles([]);
                 if ($not === 'not') {
                     Assert::fail('Access roles in index should not be settable on the current node!');
                 }
@@ -232,6 +236,7 @@ trait NodeAuthorizationTrait
      * @param string $not
      * @param string $nodeName
      * @param string $nodeType
+     *
      * @throws \Exception
      * @Then /^I should (not )?be granted to create a new "([^"]*)" child node of type "([^"]*)"$/
      */
@@ -246,7 +251,7 @@ trait NodeAuthorizationTrait
             try {
                 $this->currentNodes[0]->createNode($nodeName, $nodeTypeManager->getNodeType($nodeType));
                 if ($not === 'not') {
-                    Assert::fail('Should not be able to create a child node of type "' . $nodeType . '"!');
+                    Assert::fail('Should not be able to create a child node of type "'.$nodeType.'"!');
                 }
             } catch (AccessDeniedException $exception) {
                 if ($not !== 'not') {
@@ -260,6 +265,7 @@ trait NodeAuthorizationTrait
      * @param string $expectedResult
      * @param string $nodeName
      * @param string $nodeTypeName
+     *
      * @throws NodeTypeNotFoundException
      * @Given /^I should get (TRUE|FALSE) when asking the node authorization service if creating a new "([^"]*)" child node of type "([^"]*)" is granted$/
      */
@@ -296,12 +302,12 @@ trait NodeAuthorizationTrait
             $deniedNodeTypeNames = $this->nodeAuthorizationService->getNodeTypeNamesDeniedForCreation($this->currentNodes[0]);
 
             if (count($rows) !== count($deniedNodeTypeNames)) {
-                Assert::fail('The node authorization service did not return the expected amount of node type names! Got: ' . implode(', ', $deniedNodeTypeNames));
+                Assert::fail('The node authorization service did not return the expected amount of node type names! Got: '.implode(', ', $deniedNodeTypeNames));
             }
 
             foreach ($rows as $row) {
                 if (in_array($row['nodeTypeName'], $deniedNodeTypeNames) === false) {
-                    Assert::fail('The following node type name has not been returned by the node authorization service: ' . $row['nodeTypeName']);
+                    Assert::fail('The following node type name has not been returned by the node authorization service: '.$row['nodeTypeName']);
                 }
             }
         }
@@ -319,17 +325,16 @@ trait NodeAuthorizationTrait
             $deniedNodeTypeNames = $this->nodeAuthorizationService->getNodeTypeNamesDeniedForCreation($this->currentNodes[0]);
 
             if (count($availableNodeTypes) !== count($deniedNodeTypeNames)) {
-                Assert::fail('The node authorization service did not return the expected amount of node type names! Got: ' . implode(', ', $deniedNodeTypeNames));
+                Assert::fail('The node authorization service did not return the expected amount of node type names! Got: '.implode(', ', $deniedNodeTypeNames));
             }
 
             foreach ($availableNodeTypes as $nodeType) {
                 if (in_array($nodeType, $deniedNodeTypeNames) === false) {
-                    Assert::fail('The following node type name has not been returned by the node authorization service: ' . $nodeType);
+                    Assert::fail('The following node type name has not been returned by the node authorization service: '.$nodeType);
                 }
             }
         }
     }
-
 
     /**
      * @param string $not
@@ -384,6 +389,7 @@ trait NodeAuthorizationTrait
         } else {
             /** @var NodeInterface $currentNode */
             $currentNode = $this->currentNodes[0];
+
             try {
                 switch ($propertyName) {
                     case 'name':
@@ -409,7 +415,7 @@ trait NodeAuthorizationTrait
                         break;
                 }
                 if ($not === 'not') {
-                    Assert::fail('Property should not be gettable on the current node! But we could read the value: "' . $propertyValue . '"');
+                    Assert::fail('Property should not be gettable on the current node! But we could read the value: "'.$propertyValue.'"');
                 }
             } catch (\Neos\Flow\Security\Exception\AccessDeniedException $exception) {
                 if ($not !== 'not') {
@@ -449,6 +455,7 @@ trait NodeAuthorizationTrait
         } else {
             /** @var NodeInterface $currentNode */
             $currentNode = $this->currentNodes[0];
+
             try {
                 switch ($propertyName) {
                     case 'name':
@@ -467,14 +474,14 @@ trait NodeAuthorizationTrait
                         $currentNode->setHiddenInIndex($value);
                         break;
                     case 'accessRoles':
-                        $currentNode->setAccessRoles(array($value));
+                        $currentNode->setAccessRoles([$value]);
                         break;
                     default:
                         $currentNode->setProperty($propertyName, $value);
                         break;
                 }
                 if ($not === 'not') {
-                    Assert::fail('Property should not be settable on the current node! But we could set the value of "' . $propertyName . '" to "' . $value . '"');
+                    Assert::fail('Property should not be settable on the current node! But we could set the value of "'.$propertyName.'" to "'.$value.'"');
                 }
             } catch (\Neos\Flow\Security\Exception\AccessDeniedException $exception) {
                 if ($not !== 'not') {

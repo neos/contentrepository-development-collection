@@ -15,30 +15,29 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryC
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodePath;
 
-
 /**
- * Node Identifier -> Node Path cache
+ * Node Identifier -> Node Path cache.
  */
 final class NodePathCache
 {
-
     protected $nodePaths = [];
 
     public function contains(NodeIdentifier $nodeIdentifier): bool
     {
-        $key = (string)$nodeIdentifier;
+        $key = (string) $nodeIdentifier;
+
         return isset($this->nodePaths[$key]);
     }
 
     public function add(NodeIdentifier $nodeIdentifier, NodePath $nodePath): void
     {
-        $key = (string)$nodeIdentifier;
+        $key = (string) $nodeIdentifier;
         $this->nodePaths[$key] = $nodePath;
     }
 
     public function get(NodeIdentifier $nodeIdentifier): ?NodePath
     {
-        $key = (string)$nodeIdentifier;
+        $key = (string) $nodeIdentifier;
 
         return $this->nodePaths[$key] ?? null;
     }

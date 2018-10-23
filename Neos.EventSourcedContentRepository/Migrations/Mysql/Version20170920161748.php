@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
@@ -9,7 +10,6 @@ use Doctrine\DBAL\Schema\Schema;
  */
 class Version20170920161748 extends AbstractMigration
 {
-
     /**
      * @return string
      */
@@ -20,6 +20,7 @@ class Version20170920161748 extends AbstractMigration
 
     /**
      * @param Schema $schema
+     *
      * @return void
      */
     public function up(Schema $schema)
@@ -31,6 +32,7 @@ class Version20170920161748 extends AbstractMigration
 
     /**
      * @param Schema $schema
+     *
      * @return void
      */
     public function down(Schema $schema)

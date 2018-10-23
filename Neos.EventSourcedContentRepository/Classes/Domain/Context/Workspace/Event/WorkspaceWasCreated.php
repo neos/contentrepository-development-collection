@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event;
 
 /*
@@ -19,7 +20,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
 use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * WorkspaceWasCreated
+ * WorkspaceWasCreated.
  */
 class WorkspaceWasCreated implements EventInterface
 {
@@ -60,13 +61,14 @@ class WorkspaceWasCreated implements EventInterface
 
     /**
      * WorkspaceWasCreated constructor.
-     * @param WorkspaceName $workspaceName
-     * @param WorkspaceName $baseWorkspaceName
-     * @param WorkspaceTitle $workspaceTitle
-     * @param WorkspaceDescription $workspaceDescription
-     * @param UserIdentifier $initiatingUserIdentifier
+     *
+     * @param WorkspaceName           $workspaceName
+     * @param WorkspaceName           $baseWorkspaceName
+     * @param WorkspaceTitle          $workspaceTitle
+     * @param WorkspaceDescription    $workspaceDescription
+     * @param UserIdentifier          $initiatingUserIdentifier
      * @param ContentStreamIdentifier $currentContentStreamIdentifier
-     * @param UserIdentifier $workspaceOwner
+     * @param UserIdentifier          $workspaceOwner
      */
     public function __construct(WorkspaceName $workspaceName, WorkspaceName $baseWorkspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $currentContentStreamIdentifier, UserIdentifier $workspaceOwner = null)
     {

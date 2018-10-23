@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Parameters;
 
 /*
@@ -23,16 +24,17 @@ final class ContextParametersFactory
 {
     /**
      * @Flow\Inject(lazy=false)
+     *
      * @var Now
      */
     protected $now;
 
     /**
      * @Flow\Inject
+     *
      * @var SecurityContext
      */
     protected $securityContext;
-
 
     /**
      * @return ContextParameters

@@ -5,7 +5,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 use Neos\EventSourcedContentRepository\Domain;
 
 /**
- * The mapping for a node to be reassigned to a new parent or succeeding sibling in a given dimension space point
+ * The mapping for a node to be reassigned to a new parent or succeeding sibling in a given dimension space point.
  */
 final class NodeReassignmentMapping
 {
@@ -16,7 +16,7 @@ final class NodeReassignmentMapping
 
     /**
      * The node's new parent node.
-     * If null, the node is to be kept assigned to its current parent
+     * If null, the node is to be kept assigned to its current parent.
      *
      * @var Domain\ValueObject\NodeIdentifier
      */
@@ -35,9 +35,8 @@ final class NodeReassignmentMapping
      */
     private $dimensionSpacePoint;
 
-
     /**
-     * @param Domain\ValueObject\NodeIdentifier $nodeIdentifier
+     * @param Domain\ValueObject\NodeIdentifier      $nodeIdentifier
      * @param Domain\ValueObject\NodeIdentifier|null $newParentNodeIdentifier
      * @param Domain\ValueObject\NodeIdentifier|null $newSucceedingSiblingIdentifier
      * @param Domain\ValueObject\DimensionSpacePoint $dimensionSpacePoint
@@ -53,7 +52,6 @@ final class NodeReassignmentMapping
         $this->newSucceedingSiblingIdentifier = $newSucceedingSiblingIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
     }
-
 
     /**
      * @return Domain\ValueObject\NodeIdentifier

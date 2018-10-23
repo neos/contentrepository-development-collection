@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event;
 
 /*
@@ -31,7 +32,7 @@ final class ContentStreamWasCreated implements EventInterface
      * ContentStreamWasCreated constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param UserIdentifier $initiatingUserIdentifier
+     * @param UserIdentifier          $initiatingUserIdentifier
      */
     public function __construct(ContentStreamIdentifier $contentStreamIdentifier, UserIdentifier $initiatingUserIdentifier)
     {

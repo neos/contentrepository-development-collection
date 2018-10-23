@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model;
 
 /*
@@ -12,21 +13,22 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model;
  */
 
 /**
- * A collection of changes
+ * A collection of changes.
  */
 class ChangeCollection
 {
     /**
-     * Changes in this collection
+     * Changes in this collection.
      *
      * @var array
      */
     protected $changes = [];
 
     /**
-     * Add a change to this collection
+     * Add a change to this collection.
      *
      * @param ChangeInterface $change
+     *
      * @return void
      */
     public function add(ChangeInterface $change)
@@ -35,7 +37,7 @@ class ChangeCollection
     }
 
     /**
-     * Apply all changes
+     * Apply all changes.
      *
      * @return void
      */
@@ -49,9 +51,9 @@ class ChangeCollection
     }
 
     /**
-     * Get the number of changes in this collection
+     * Get the number of changes in this collection.
      *
-     * @return integer
+     * @return int
      */
     public function count()
     {

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\TypeConverter;
 
 /*
@@ -39,12 +40,12 @@ class NodeAddressToStringConverter extends AbstractTypeConverter
      */
     protected $priority = 1;
 
-
     /**
-     * @param NodeAddress $source
-     * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param NodeAddress                                $source
+     * @param string                                     $targetType
+     * @param array                                      $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
+     *
      * @return string
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null): string

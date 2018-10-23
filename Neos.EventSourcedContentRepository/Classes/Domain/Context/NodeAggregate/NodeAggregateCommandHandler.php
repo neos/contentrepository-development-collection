@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
 
 /*
@@ -11,20 +12,20 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoGeneralization;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoSpecialization;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\ParentsNodeAggregateNotVisibleInDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Exception\DimensionSpacePointNotFound;
 
 final class NodeAggregateCommandHandler
@@ -35,40 +36,39 @@ final class NodeAggregateCommandHandler
     protected $contentStreamRepository;
 
     /**
-     * Used for constraint checks against the current outside configuration state of node types
+     * Used for constraint checks against the current outside configuration state of node types.
      *
      * @var NodeTypeManager
      */
     protected $nodeTypeManager;
 
     /**
-     * Used for constraint checks against the current outside configuration state of content dimensions
+     * Used for constraint checks against the current outside configuration state of content dimensions.
      *
      * @var DimensionSpacePointSet
      */
     protected $allowedDimensionSubspace;
 
     /**
-     * The graph projection used for soft constraint checks
+     * The graph projection used for soft constraint checks.
      *
      * @var ContentGraphInterface
      */
     protected $contentGraph;
 
     /**
-     * Used for variation resolution from the current outside state of content dimensions
+     * Used for variation resolution from the current outside state of content dimensions.
      *
      * @var DimensionSpace\InterDimensionalVariationGraph
      */
     protected $interDimensionalVariationGraph;
 
     /**
-     * Used for publishing events
+     * Used for publishing events.
      *
      * @var NodeEventPublisher
      */
     protected $nodeEventPublisher;
-
 
     public function __construct(
         ContentStream\ContentStreamRepository $contentStreamRepository,
@@ -86,9 +86,9 @@ final class NodeAggregateCommandHandler
         $this->nodeEventPublisher = $nodeEventPublisher;
     }
 
-
     /**
      * @param Command\ChangeNodeAggregateType $command
+     *
      * @throws NodeTypeNotFound
      * @throws NodeConstraintException
      * @throws NodeTypeNotFoundException
@@ -96,8 +96,8 @@ final class NodeAggregateCommandHandler
      */
     public function handleChangeNodeAggregateType(Command\ChangeNodeAggregateType $command)
     {
-        if (!$this->nodeTypeManager->hasNodeType((string)$command->getNewNodeTypeName())) {
-            throw new NodeTypeNotFound('The given node type "' . $command->getNewNodeTypeName() . '" is unknown to the node type manager', 1520009174);
+        if (!$this->nodeTypeManager->hasNodeType((string) $command->getNewNodeTypeName())) {
+            throw new NodeTypeNotFound('The given node type "'.$command->getNewNodeTypeName().'" is unknown to the node type manager', 1520009174);
         }
 
         $this->checkConstraintsImposedByAncestors($command);
@@ -106,30 +106,32 @@ final class NodeAggregateCommandHandler
 
     /**
      * @param Command\ChangeNodeAggregateType $command
+     *
      * @throws NodeConstraintException
      * @throws NodeTypeNotFoundException
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
+     *
      * @return void
      */
     protected function checkConstraintsImposedByAncestors(Command\ChangeNodeAggregateType $command): void
     {
         $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
-        $newNodeType = $this->nodeTypeManager->getNodeType((string)$command->getNewNodeTypeName());
+        $newNodeType = $this->nodeTypeManager->getNodeType((string) $command->getNewNodeTypeName());
         foreach ($this->contentGraph->findParentAggregates($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier()) as $parentAggregate) {
-            $parentsNodeType = $this->nodeTypeManager->getNodeType((string)$parentAggregate->getNodeTypeName());
+            $parentsNodeType = $this->nodeTypeManager->getNodeType((string) $parentAggregate->getNodeTypeName());
             if (!$parentsNodeType->allowsChildNodeType($newNodeType)) {
-                throw new NodeConstraintException('Node type ' . $command->getNewNodeTypeName() . ' is not allowed below nodes of type ' . $parentAggregate->getNodeTypeName());
+                throw new NodeConstraintException('Node type '.$command->getNewNodeTypeName().' is not allowed below nodes of type '.$parentAggregate->getNodeTypeName());
             }
             if ($parentsNodeType->hasAutoCreatedChildNode($nodeAggregate->getNodeName())
-                && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeAggregate->getNodeName())->getName() !== (string)$command->getNewNodeTypeName()) {
-                throw new NodeConstraintException('Cannot change type of auto created child node' . $nodeAggregate->getNodeName() . ' to ' . $command->getNewNodeTypeName());
+                && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeAggregate->getNodeName())->getName() !== (string) $command->getNewNodeTypeName()) {
+                throw new NodeConstraintException('Cannot change type of auto created child node'.$nodeAggregate->getNodeName().' to '.$command->getNewNodeTypeName());
             }
             foreach ($this->contentGraph->findParentAggregates($command->getContentStreamIdentifier(), $parentAggregate->getNodeAggregateIdentifier()) as $grandParentAggregate) {
-                $grandParentsNodeType = $this->nodeTypeManager->getNodeType((string)$grandParentAggregate->getNodeTypeName());
+                $grandParentsNodeType = $this->nodeTypeManager->getNodeType((string) $grandParentAggregate->getNodeTypeName());
                 if ($grandParentsNodeType->hasAutoCreatedChildNode($parentAggregate->getNodeName())
-                    && !$grandParentsNodeType->allowsGrandchildNodeType((string)$parentAggregate->getNodeName(), $newNodeType)) {
-                    throw new NodeConstraintException('Node type "' . $command->getNewNodeTypeName() . '" is not allowed below auto created child nodes "' . $parentAggregate->getNodeName()
-                        . '" of nodes of type "' . $grandParentAggregate->getNodeTypeName() . '"', 1520011791);
+                    && !$grandParentsNodeType->allowsGrandchildNodeType((string) $parentAggregate->getNodeName(), $newNodeType)) {
+                    throw new NodeConstraintException('Node type "'.$command->getNewNodeTypeName().'" is not allowed below auto created child nodes "'.$parentAggregate->getNodeName()
+                        .'" of nodes of type "'.$grandParentAggregate->getNodeTypeName().'"', 1520011791);
                 }
             }
         }
@@ -137,30 +139,32 @@ final class NodeAggregateCommandHandler
 
     /**
      * @param Command\ChangeNodeAggregateType $command
+     *
      * @throws NodeConstraintException
      * @throws NodeTypeNotFoundException
+     *
      * @return \void
      */
     protected function checkConstraintsImposedOnAlreadyPresentDescendants(Command\ChangeNodeAggregateType $command): void
     {
-        $newNodeType = $this->nodeTypeManager->getNodeType((string)$command->getNewNodeTypeName());
+        $newNodeType = $this->nodeTypeManager->getNodeType((string) $command->getNewNodeTypeName());
 
         foreach ($this->contentGraph->findChildAggregates($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier()) as $childAggregate) {
-            $childsNodeType = $this->nodeTypeManager->getNodeType((string)$childAggregate->getNodeTypeName());
+            $childsNodeType = $this->nodeTypeManager->getNodeType((string) $childAggregate->getNodeTypeName());
             if (!$newNodeType->allowsChildNodeType($childsNodeType)) {
                 if (!$command->getStrategy()) {
-                    throw new NodeConstraintException('Node type ' . $command->getNewNodeTypeName() . ' does not allow children of type  ' . $childAggregate->getNodeTypeName()
-                        . ', which already exist. Please choose a resolution strategy.', 1520014467);
+                    throw new NodeConstraintException('Node type '.$command->getNewNodeTypeName().' does not allow children of type  '.$childAggregate->getNodeTypeName()
+                        .', which already exist. Please choose a resolution strategy.', 1520014467);
                 }
             }
 
             if ($newNodeType->hasAutoCreatedChildNode($childAggregate->getNodeName())) {
                 foreach ($this->contentGraph->findChildAggregates($command->getContentStreamIdentifier(), $childAggregate->getNodeAggregateIdentifier()) as $grandChildAggregate) {
-                    $grandChildsNodeType = $this->nodeTypeManager->getNodeType((string)$grandChildAggregate->getNodeTypeName());
-                    if (!$newNodeType->allowsGrandchildNodeType((string)$childAggregate->getNodeName(), $grandChildsNodeType)) {
+                    $grandChildsNodeType = $this->nodeTypeManager->getNodeType((string) $grandChildAggregate->getNodeTypeName());
+                    if (!$newNodeType->allowsGrandchildNodeType((string) $childAggregate->getNodeName(), $grandChildsNodeType)) {
                         if (!$command->getStrategy()) {
-                            throw new NodeConstraintException('Node type ' . $command->getNewNodeTypeName() . ' does not allow auto created child nodes "' . $childAggregate->getNodeName()
-                                . '" to have children of type  ' . $grandChildAggregate->getNodeTypeName() . ', which already exist. Please choose a resolution strategy.', 1520151998);
+                            throw new NodeConstraintException('Node type '.$command->getNewNodeTypeName().' does not allow auto created child nodes "'.$childAggregate->getNodeName()
+                                .'" to have children of type  '.$grandChildAggregate->getNodeTypeName().', which already exist. Please choose a resolution strategy.', 1520151998);
                         }
                     }
                 }
@@ -170,6 +174,7 @@ final class NodeAggregateCommandHandler
 
     /**
      * @param Command\CreateNodeSpecialization $command
+     *
      * @throws DimensionSpacePointIsAlreadyOccupied
      * @throws DimensionSpacePointIsNotYetOccupied
      * @throws DimensionSpacePointNotFound
@@ -206,9 +211,9 @@ final class NodeAggregateCommandHandler
         });
     }
 
-
     /**
      * @param Command\CreateNodeGeneralization $command
+     *
      * @throws DimensionSpacePointNotFound
      * @throws DimensionSpacePointIsNoGeneralization
      * @throws DimensionSpacePointIsAlreadyOccupied
@@ -240,6 +245,7 @@ final class NodeAggregateCommandHandler
 
     /**
      * @param DimensionSpacePoint $dimensionSpacePoint
+     *
      * @throws DimensionSpacePointNotFound
      */
     protected function requireDimensionSpacePointToExist(DimensionSpacePoint $dimensionSpacePoint)
@@ -252,32 +258,35 @@ final class NodeAggregateCommandHandler
     /**
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param DimensionSpacePoint $generalization
+     *
      * @throws DimensionSpacePointIsNoSpecialization
      */
     protected function requireDimensionSpacePointToBeSpecialization(DimensionSpacePoint $dimensionSpacePoint, DimensionSpacePoint $generalization)
     {
         if (!$this->interDimensionalVariationGraph->getSpecializationSet($generalization)->contains($dimensionSpacePoint)) {
-            throw new DimensionSpacePointIsNoSpecialization($dimensionSpacePoint . ' is no specialization of ' . $generalization, 1519931770);
+            throw new DimensionSpacePointIsNoSpecialization($dimensionSpacePoint.' is no specialization of '.$generalization, 1519931770);
         }
     }
 
     /**
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param DimensionSpacePoint $specialization
+     *
      * @throws DimensionSpacePointIsNoGeneralization
      */
     protected function requireDimensionSpacePointToBeGeneralization(DimensionSpacePoint $dimensionSpacePoint, DimensionSpacePoint $specialization)
     {
         if (!$this->interDimensionalVariationGraph->getSpecializationSet($dimensionSpacePoint)->contains($specialization)) {
-            throw new DimensionSpacePointIsNoGeneralization($dimensionSpacePoint . ' is no generalization of ' . $dimensionSpacePoint, 1521367710);
+            throw new DimensionSpacePointIsNoGeneralization($dimensionSpacePoint.' is no generalization of '.$dimensionSpacePoint, 1521367710);
         }
     }
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $sourceDimensionSpacePoint
-     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param DimensionSpacePoint     $sourceDimensionSpacePoint
+     * @param DimensionSpacePoint     $dimensionSpacePoint
+     *
      * @throws ParentsNodeAggregateNotVisibleInDimensionSpacePoint
      */
     protected function requireParentNodesAggregateToBeVisibleInDimensionSpacePoint(
@@ -294,7 +303,7 @@ final class NodeAggregateCommandHandler
             return;
         }
 
-        throw new ParentsNodeAggregateNotVisibleInDimensionSpacePoint('No suitable parent could be found for node "' . $nodeAggregateIdentifier . '" in target dimension space point ' . $dimensionSpacePoint,
+        throw new ParentsNodeAggregateNotVisibleInDimensionSpacePoint('No suitable parent could be found for node "'.$nodeAggregateIdentifier.'" in target dimension space point '.$dimensionSpacePoint,
             1521322565);
     }
 

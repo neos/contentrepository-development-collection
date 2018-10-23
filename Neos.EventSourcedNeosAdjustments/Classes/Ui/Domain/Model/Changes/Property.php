@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
 
 /*
@@ -14,6 +15,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperty;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
@@ -22,58 +24,59 @@ use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\NodePropertyConversionService;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\Neos\Ui\Domain\Model\Feedback\Operations\ReloadContentOutOfBand;
 use Neos\Neos\Ui\Domain\Model\RenderedNodeDomAddress;
 use Neos\Utility\ObjectAccess;
 
 /**
- * Changes a property on a node
+ * Changes a property on a node.
  */
 class Property extends AbstractChange
 {
-
     /**
      * @Flow\Inject
+     *
      * @var NodePropertyConversionService
      */
     protected $nodePropertyConversionService;
 
     /**
      * @Flow\Inject
+     *
      * @var NodeTypeManager
      */
     protected $nodeTypeManager;
 
     /**
      * @Flow\Inject
+     *
      * @var NodeServiceInterface
      */
     protected $nodeService;
 
     /**
-     * The node dom address
+     * The node dom address.
      *
      * @var RenderedNodeDomAddress
      */
     protected $nodeDomAddress;
 
     /**
-     * The name of the property to be changed
+     * The name of the property to be changed.
      *
      * @var string
      */
     protected $propertyName;
 
     /**
-     * The value, the property will be set to
+     * The value, the property will be set to.
      *
      * @var string
      */
     protected $value;
 
     /**
-     * The change has been initiated from the inline editing
+     * The change has been initiated from the inline editing.
      *
      * @var bool
      */
@@ -81,20 +84,23 @@ class Property extends AbstractChange
 
     /**
      * @Flow\Inject
+     *
      * @var NodeCommandHandler
      */
     protected $nodeCommandHandler;
 
     /**
      * @Flow\Inject
+     *
      * @var ContentGraphInterface
      */
     protected $contentGraph;
 
     /**
-     * Set the property name
+     * Set the property name.
      *
      * @param string $propertyName
+     *
      * @return void
      */
     public function setPropertyName($propertyName)
@@ -103,7 +109,7 @@ class Property extends AbstractChange
     }
 
     /**
-     * Get the property name
+     * Get the property name.
      *
      * @return string
      */
@@ -113,9 +119,10 @@ class Property extends AbstractChange
     }
 
     /**
-     * Set the node dom address
+     * Set the node dom address.
      *
      * @param RenderedNodeDomAddress $nodeDomAddress
+     *
      * @return void
      */
     public function setNodeDomAddress(RenderedNodeDomAddress $nodeDomAddress = null)
@@ -124,7 +131,7 @@ class Property extends AbstractChange
     }
 
     /**
-     * Get the node dom address
+     * Get the node dom address.
      *
      * @return RenderedNodeDomAddress
      */
@@ -134,7 +141,7 @@ class Property extends AbstractChange
     }
 
     /**
-     * Set the value
+     * Set the value.
      *
      * @param string $value
      */
@@ -144,7 +151,7 @@ class Property extends AbstractChange
     }
 
     /**
-     * Get the value
+     * Get the value.
      *
      * @return string
      */
@@ -154,7 +161,7 @@ class Property extends AbstractChange
     }
 
     /**
-     * Set isInline
+     * Set isInline.
      *
      * @param bool $isInline
      */
@@ -164,7 +171,7 @@ class Property extends AbstractChange
     }
 
     /**
-     * Get isInline
+     * Get isInline.
      *
      * @return bool
      */
@@ -174,9 +181,9 @@ class Property extends AbstractChange
     }
 
     /**
-     * Checks whether this change can be applied to the subject
+     * Checks whether this change can be applied to the subject.
      *
-     * @return boolean
+     * @return bool
      */
     public function canApply()
     {
@@ -188,7 +195,7 @@ class Property extends AbstractChange
     }
 
     /**
-     * Applies this change
+     * Applies this change.
      *
      * @return void
      */
@@ -205,14 +212,14 @@ class Property extends AbstractChange
 
             // TODO: Make changing the node type a separated, specific/defined change operation.
             if ($propertyName === '_nodeType') {
-                throw new \Exception("TODO FIX");
+                throw new \Exception('TODO FIX');
                 $nodeType = $this->nodeTypeManager->getNodeType($value);
                 $node = $this->changeNodeType($node, $nodeType);
-            } elseif ($propertyName{0} === '_') {
-                throw new \Exception("TODO FIX");
+            } elseif ($propertyName[0] === '_') {
+                throw new \Exception('TODO FIX');
                 ObjectAccess::setProperty($node, substr($propertyName, 1), $value);
             } else {
-                $propertyType = $this->nodeTypeManager->getNodeType((string)$node->getNodeType())->getPropertyType($propertyName);
+                $propertyType = $this->nodeTypeManager->getNodeType((string) $node->getNodeType())->getPropertyType($propertyName);
                 $command = new SetNodeProperty(
                     $node->getContentStreamIdentifier(),
                     $node->getNodeIdentifier(),
@@ -251,7 +258,8 @@ class Property extends AbstractChange
 
     /**
      * @param NodeInterface $node
-     * @param NodeType $nodeType
+     * @param NodeType      $nodeType
+     *
      * @return NodeInterface
      */
     protected function changeNodeType(NodeInterface $node, NodeType $nodeType)

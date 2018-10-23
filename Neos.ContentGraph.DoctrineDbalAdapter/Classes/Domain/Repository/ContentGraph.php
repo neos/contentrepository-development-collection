@@ -13,40 +13,42 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  */
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
-use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
+use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-
 
 /**
- * The Doctrine DBAL adapter content graph
+ * The Doctrine DBAL adapter content graph.
  *
  * To be used as a read-only source of nodes
  *
  * @Flow\Scope("singleton")
+ *
  * @api
  */
 final class ContentGraph implements ContentGraphInterface
 {
     /**
      * @Flow\Inject
+     *
      * @var DbalClient
      */
     protected $client;
 
     /**
      * @Flow\Inject
+     *
      * @var NodeFactory
      */
     protected $nodeFactory;
@@ -58,14 +60,15 @@ final class ContentGraph implements ContentGraphInterface
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @param DimensionSpacePoint     $dimensionSpacePoint
+     *
      * @return ContentSubgraphInterface|null
      */
     final public function getSubgraphByIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
     ): ?ContentSubgraphInterface {
-        $index = (string)$contentStreamIdentifier . '-' . $dimensionSpacePoint->getHash();
+        $index = (string) $contentStreamIdentifier.'-'.$dimensionSpacePoint->getHash();
         if (!isset($this->subgraphs[$index])) {
             $this->subgraphs[$index] = new ContentSubgraph($contentStreamIdentifier, $dimensionSpacePoint);
         }
@@ -82,17 +85,19 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     /**
-     * Find a node by node identifier and content stream identifier
+     * Find a node by node identifier and content stream identifier.
      *
      * Note: This does not pass the CR context to the node!!!
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
-     * @return NodeInterface|null
+     * @param NodeIdentifier          $nodeIdentifier
+     *
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
      * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
+     *
+     * @return NodeInterface|null
      */
     public function findNodeByIdentifierInContentStream(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier): ?NodeInterface
     {
@@ -107,8 +112,8 @@ final class ContentGraph implements ContentGraphInterface
                   WHERE n.nodeidentifier = :nodeIdentifier
                   AND h.contentstreamidentifier = :contentStreamIdentifier',
             [
-                'nodeIdentifier' => (string)$nodeIdentifier,
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier
+                'nodeIdentifier'          => (string) $nodeIdentifier,
+                'contentStreamIdentifier' => (string) $contentStreamIdentifier,
             ]
         )->fetch();
 
@@ -116,13 +121,15 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     /**
-     * Find all nodes of a node aggregate by node aggregate identifier and content stream identifier
+     * Find all nodes of a node aggregate by node aggregate identifier and content stream identifier.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePointSet $dimensionSpacePointSet
-     * @return array<NodeInterface>|NodeInterface[]
+     * @param DimensionSpacePointSet  $dimensionSpacePointSet
+     *
      * @throws \Doctrine\DBAL\DBALException
+     *
+     * @return array<NodeInterface>|NodeInterface[]
      */
     public function findNodesByNodeAggregateIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -136,8 +143,8 @@ final class ContentGraph implements ContentGraphInterface
  WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
  AND h.contentstreamidentifier = :contentStreamIdentifier';
         $parameters = [
-            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier
+            'nodeAggregateIdentifier' => (string) $nodeAggregateIdentifier,
+            'contentStreamIdentifier' => (string) $contentStreamIdentifier,
         ];
         $types = [];
         if ($dimensionSpacePointSet) {
@@ -159,15 +166,17 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param ContentStreamIdentifier     $contentStreamIdentifier
+     * @param NodeAggregateIdentifier     $nodeAggregateIdentifier
      * @param Domain\Service\Context|null $context
-     * @return NodeAggregate|null
+     *
      * @throws Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
      * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
+     *
+     * @return NodeAggregate|null
      */
     public function findNodeAggregateByIdentifier(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -181,8 +190,8 @@ final class ContentGraph implements ContentGraphInterface
                       WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
                       AND h.contentstreamidentifier = :contentStreamIdentifier';
         $parameters = [
-            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier
+            'nodeAggregateIdentifier' => (string) $nodeAggregateIdentifier,
+            'contentStreamIdentifier' => (string) $contentStreamIdentifier,
         ];
 
         $nodeRows = $connection->executeQuery($query, $parameters)->fetchAll();
@@ -197,12 +206,12 @@ final class ContentGraph implements ContentGraphInterface
             if (!$rawNodeTypeName) {
                 $rawNodeTypeName = $nodeRow['nodetypename'];
             } elseif ($nodeRow['nodetypename'] !== $rawNodeTypeName) {
-                throw new Domain\Context\Node\NodeAggregatesTypeIsAmbiguous('Node aggregate "' . $nodeAggregateIdentifier . '" has an ambiguous type.', 1519815810);
+                throw new Domain\Context\Node\NodeAggregatesTypeIsAmbiguous('Node aggregate "'.$nodeAggregateIdentifier.'" has an ambiguous type.', 1519815810);
             }
             if (!$rawNodeName) {
                 $rawNodeName = $nodeRow['name'];
             } elseif ($nodeRow['name'] !== $rawNodeName) {
-                throw new Domain\Context\Node\NodeAggregatesNameIsAmbiguous('Node aggregate "' . $nodeAggregateIdentifier . '" has an ambiguous name.', 1519919025);
+                throw new Domain\Context\Node\NodeAggregatesNameIsAmbiguous('Node aggregate "'.$nodeAggregateIdentifier.'" has an ambiguous name.', 1519919025);
             }
             $nodes[] = $this->nodeFactory->mapNodeRowToNode($nodeRow, $context);
         }
@@ -212,9 +221,11 @@ final class ContentGraph implements ContentGraphInterface
 
     /**
      * @param NodeTypeName $nodeTypeName
-     * @return NodeInterface|null
+     *
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
+     *
+     * @return NodeInterface|null
      */
     public function findRootNodeByType(NodeTypeName $nodeTypeName): ?NodeInterface
     {
@@ -226,7 +237,7 @@ final class ContentGraph implements ContentGraphInterface
                     INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
                   WHERE n.nodetypename = :nodeTypeName',
             [
-                'nodeTypeName' => (string)$nodeTypeName,
+                'nodeTypeName' => (string) $nodeTypeName,
             ]
         )->fetch();
 
@@ -236,19 +247,21 @@ final class ContentGraph implements ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return array|NodeAggregate[]
+     *
      * @throws Domain\Context\Node\NodeAggregatesNameIsAmbiguous
      * @throws Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
      * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
+     *
+     * @return array|NodeAggregate[]
      */
     public function findParentAggregates(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array
     {
         $nodeIdentifiers = [];
         foreach ($this->findNodesByNodeAggregateIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier) as $node) {
-            $nodeIdentifiers[] = (string)$node->getNodeIdentifier();
+            $nodeIdentifiers[] = (string) $node->getNodeIdentifier();
         }
 
         $connection = $this->client->getConnection();
@@ -261,8 +274,8 @@ final class ContentGraph implements ContentGraphInterface
                       AND ph.contentstreamidentifier = :contentStreamIdentifier
                       AND ch.contentstreamidentifier = :contentStreamIdentifier';
         $parameters = [
-            'nodeIdentifiers' => $nodeIdentifiers,
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier
+            'nodeIdentifiers'         => $nodeIdentifiers,
+            'contentStreamIdentifier' => (string) $contentStreamIdentifier,
         ];
         $types['nodeIdentifiers'] = Connection::PARAM_STR_ARRAY;
 
@@ -276,12 +289,12 @@ final class ContentGraph implements ContentGraphInterface
             if (!isset($rawNodeTypeNames[$rawNodeAggregateIdentifier])) {
                 $rawNodeTypeNames[$rawNodeAggregateIdentifier] = $nodeRow['nodetypename'];
             } elseif ($nodeRow['nodetypename'] !== $rawNodeTypeNames[$rawNodeAggregateIdentifier]) {
-                throw new Domain\Context\Node\NodeAggregatesTypeIsAmbiguous('Node aggregate "' . $rawNodeAggregateIdentifier . '" has an ambiguous node type.', 1519815810);
+                throw new Domain\Context\Node\NodeAggregatesTypeIsAmbiguous('Node aggregate "'.$rawNodeAggregateIdentifier.'" has an ambiguous node type.', 1519815810);
             }
             if (!isset($rawNodeNames[$rawNodeAggregateIdentifier])) {
                 $rawNodeNames[$rawNodeAggregateIdentifier] = $nodeRow['name'];
             } elseif ($nodeRow['name'] !== $rawNodeNames[$rawNodeAggregateIdentifier]) {
-                throw new Domain\Context\Node\NodeAggregatesNameIsAmbiguous('Node aggregate "' . $rawNodeAggregateIdentifier . '" has an ambiguous name.', 1519918382);
+                throw new Domain\Context\Node\NodeAggregatesNameIsAmbiguous('Node aggregate "'.$rawNodeAggregateIdentifier.'" has an ambiguous name.', 1519918382);
             }
         }
         foreach ($nodesByAggregate as $rawNodeAggregateIdentifier => $nodes) {
@@ -299,19 +312,21 @@ final class ContentGraph implements ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return array
+     *
      * @throws Domain\Context\Node\NodeAggregatesNameIsAmbiguous
      * @throws Domain\Context\Node\NodeAggregatesTypeIsAmbiguous
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
      * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
+     *
+     * @return array
      */
     public function findChildAggregates(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier): array
     {
         $nodeIdentifiers = [];
         foreach ($this->findNodesByNodeAggregateIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier) as $node) {
-            $nodeIdentifiers[] = (string)$node->getNodeIdentifier();
+            $nodeIdentifiers[] = (string) $node->getNodeIdentifier();
         }
 
         $connection = $this->client->getConnection();
@@ -324,8 +339,8 @@ final class ContentGraph implements ContentGraphInterface
                       AND ph.contentstreamidentifier = :contentStreamIdentifier
                       AND ch.contentstreamidentifier = :contentStreamIdentifier';
         $parameters = [
-            'nodeIdentifiers' => $nodeIdentifiers,
-            'contentStreamIdentifier' => $contentStreamIdentifier
+            'nodeIdentifiers'         => $nodeIdentifiers,
+            'contentStreamIdentifier' => $contentStreamIdentifier,
         ];
         $types['nodeIdentifiers'] = Connection::PARAM_STR_ARRAY;
 
@@ -339,12 +354,12 @@ final class ContentGraph implements ContentGraphInterface
             if (!isset($rawNodeTypeNames[$rawNodeAggregateIdentifier])) {
                 $rawNodeTypeNames[$rawNodeAggregateIdentifier] = $nodeRow['nodetypename'];
             } elseif ($nodeRow['nodetypename'] !== $rawNodeTypeNames[$rawNodeAggregateIdentifier]) {
-                throw new Domain\Context\Node\NodeAggregatesTypeIsAmbiguous('Node aggregate "' . $rawNodeAggregateIdentifier . '" has an ambiguous node type.', 1519815810);
+                throw new Domain\Context\Node\NodeAggregatesTypeIsAmbiguous('Node aggregate "'.$rawNodeAggregateIdentifier.'" has an ambiguous node type.', 1519815810);
             }
             if (!isset($rawNodeNames[$rawNodeAggregateIdentifier])) {
                 $rawNodeNames[$rawNodeAggregateIdentifier] = $nodeRow['name'];
             } elseif ($nodeRow['name'] !== $rawNodeNames[$rawNodeAggregateIdentifier]) {
-                throw new Domain\Context\Node\NodeAggregatesNameIsAmbiguous('Node aggregate "' . $rawNodeAggregateIdentifier . '" has an ambiguous name.', 1519918382);
+                throw new Domain\Context\Node\NodeAggregatesNameIsAmbiguous('Node aggregate "'.$rawNodeAggregateIdentifier.'" has an ambiguous name.', 1519918382);
             }
         }
         foreach ($nodesByAggregate as $rawNodeAggregateIdentifier => $nodes) {
@@ -361,8 +376,10 @@ final class ContentGraph implements ContentGraphInterface
 
     /**
      * @param Domain\Context\Node\ReadOnlyNodeInterface $node
-     * @return DimensionSpacePointSet
+     *
      * @throws \Doctrine\DBAL\DBALException
+     *
+     * @return DimensionSpacePointSet
      */
     public function findVisibleDimensionSpacePointsOfNode(Domain\Context\Node\ReadOnlyNodeInterface $node): DimensionSpacePointSet
     {
@@ -373,8 +390,8 @@ final class ContentGraph implements ContentGraphInterface
                       WHERE n.nodeidentifier = :nodeIdentifier
                       AND h.contentstreamidentifier = :contentStreamIdentifier';
         $parameters = [
-            'nodeIdentifier' => (string)$node->getNodeIdentifier(),
-            'contentStreamIdentifier' => (string)$node->getContentStreamIdentifier()
+            'nodeIdentifier'          => (string) $node->getNodeIdentifier(),
+            'contentStreamIdentifier' => (string) $node->getContentStreamIdentifier(),
         ];
         $dimensionSpacePoints = [];
         foreach ($connection->executeQuery($query, $parameters)->fetchAll() as $hierarchyRelationData) {
@@ -387,8 +404,10 @@ final class ContentGraph implements ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return DimensionSpacePointSet
+     *
      * @throws \Doctrine\DBAL\DBALException
+     *
+     * @return DimensionSpacePointSet
      */
     public function findVisibleDimensionSpacePointsOfNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -402,7 +421,7 @@ final class ContentGraph implements ContentGraphInterface
                       AND h.contentstreamidentifier = :contentStreamIdentifier';
         $parameters = [
             'nodeAggregateIdentifier' => $nodeAggregateIdentifier,
-            'contentStreamIdentifier' => $contentStreamIdentifier
+            'contentStreamIdentifier' => $contentStreamIdentifier,
         ];
         $dimensionSpacePoints = [];
         foreach ($connection->executeQuery($query, $parameters)->fetchAll() as $hierarchyRelationData) {

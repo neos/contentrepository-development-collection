@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
 /*
@@ -19,7 +20,7 @@ use Neos\Flow\Package\Package as BasePackage;
 class Package extends BasePackage
 {
     /**
-     * @var boolean
+     * @var bool
      */
     protected $protected = true;
 

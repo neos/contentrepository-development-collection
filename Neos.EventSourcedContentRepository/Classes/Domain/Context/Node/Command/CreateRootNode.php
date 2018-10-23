@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
 
 /*
@@ -17,7 +18,7 @@ use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
 /**
- * Create root node command
+ * Create root node command.
  *
  * A root node has no aggregate (and is colorless in the content graph).
  */
@@ -47,9 +48,9 @@ final class CreateRootNode
      * CreateRootNode constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
-     * @param NodeTypeName $nodeTypeName
-     * @param UserIdentifier $initiatingUserIdentifier
+     * @param NodeIdentifier          $nodeIdentifier
+     * @param NodeTypeName            $nodeTypeName
+     * @param UserIdentifier          $initiatingUserIdentifier
      */
     public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeIdentifier $nodeIdentifier, NodeTypeName $nodeTypeName, UserIdentifier $initiatingUserIdentifier)
     {
@@ -58,7 +59,6 @@ final class CreateRootNode
         $this->nodeTypeName = $nodeTypeName;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
-
 
     /**
      * @return ContentStreamIdentifier
@@ -77,7 +77,7 @@ final class CreateRootNode
     }
 
     /**
-     * Getter for NodeTypeName
+     * Getter for NodeTypeName.
      *
      * @return NodeTypeName
      */

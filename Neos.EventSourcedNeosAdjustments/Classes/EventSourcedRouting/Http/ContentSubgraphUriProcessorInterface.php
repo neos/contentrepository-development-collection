@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http;
 
 /*
@@ -11,16 +12,17 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http;
  * source code.
  */
 
-use Neos\Flow\Mvc\Routing;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
+use Neos\Flow\Mvc\Routing;
 
 /**
- * The interface for content subgraph URI processors
+ * The interface for content subgraph URI processors.
  */
 interface ContentSubgraphUriProcessorInterface
 {
     /**
      * @param NodeAddress $nodeAddress
+     *
      * @return Routing\Dto\UriConstraints
      */
     public function resolveDimensionUriConstraints(NodeAddress $nodeAddress): Routing\Dto\UriConstraints;

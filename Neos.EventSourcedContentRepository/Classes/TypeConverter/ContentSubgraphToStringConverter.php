@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\TypeConverter;
 
 /*
@@ -11,14 +12,13 @@ namespace Neos\EventSourcedContentRepository\TypeConverter;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 
 /**
- * An Object Converter for content subgraphs
+ * An Object Converter for content subgraphs.
  *
  * @Flow\Scope("singleton")
  */
@@ -39,12 +39,12 @@ class ContentSubgraphToStringConverter extends AbstractTypeConverter
      */
     protected $priority = 1;
 
-
     /**
-     * @param ContentSubgraphInterface $source
-     * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param ContentSubgraphInterface                   $source
+     * @param string                                     $targetType
+     * @param array                                      $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
+     *
      * @return string
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null): string

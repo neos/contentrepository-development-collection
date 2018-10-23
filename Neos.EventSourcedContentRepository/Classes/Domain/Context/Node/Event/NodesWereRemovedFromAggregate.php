@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
 /*
@@ -11,17 +12,16 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * Node was removed event
+ * Node was removed event.
  */
 final class NodesWereRemovedFromAggregate implements EventInterface, CopyableAcrossContentStreamsInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -39,9 +39,10 @@ final class NodesWereRemovedFromAggregate implements EventInterface, CopyableAcr
 
     /**
      * NodesWereRemovedFromAggregate constructor.
+     *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePointSet $dimensionSpacePointSet
+     * @param DimensionSpacePointSet  $dimensionSpacePointSet
      */
     public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePointSet $dimensionSpacePointSet)
     {
@@ -49,7 +50,6 @@ final class NodesWereRemovedFromAggregate implements EventInterface, CopyableAcr
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->dimensionSpacePointSet = $dimensionSpacePointSet;
     }
-
 
     /**
      * @return ContentStreamIdentifier
@@ -77,11 +77,12 @@ final class NodesWereRemovedFromAggregate implements EventInterface, CopyableAcr
 
     /**
      * @param ContentStreamIdentifier $targetContentStream
+     *
      * @return NodesWereRemovedFromAggregate
      */
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
     {
-        return new NodesWereRemovedFromAggregate(
+        return new self(
             $targetContentStream,
             $this->nodeAggregateIdentifier,
             $this->dimensionSpacePointSet

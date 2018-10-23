@@ -1,11 +1,11 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Fusion;
 
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-use Neos\Flow\Annotations as Flow;
 
 /**
- * A menu item
+ * A menu item.
  */
 final class MenuItem
 {
@@ -34,13 +34,12 @@ final class MenuItem
      */
     protected $children;
 
-
     /**
-     * @param NodeInterface $node
+     * @param NodeInterface      $node
      * @param MenuItemState|null $state
-     * @param string|null $label
-     * @param int $menuLevel
-     * @param array $children
+     * @param string|null        $label
+     * @param int                $menuLevel
+     * @param array              $children
      */
     public function __construct(NodeInterface $node, MenuItemState $state = null, string $label = null, int $menuLevel = 1, array $children = [])
     {
@@ -50,7 +49,6 @@ final class MenuItem
         $this->menuLevel = $menuLevel;
         $this->children = $children;
     }
-
 
     /**
      * @return NodeInterface
@@ -94,6 +92,7 @@ final class MenuItem
 
     /**
      * @return array|MenuItem[]
+     *
      * @deprecated Use getChildren instead
      */
     public function getSubItems(): array

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
 /*
@@ -11,15 +12,14 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcing\Event\EventInterface;
 
 class NodeInAggregateWasTranslated implements EventInterface, CopyableAcrossContentStreamsInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -31,28 +31,28 @@ class NodeInAggregateWasTranslated implements EventInterface, CopyableAcrossCont
     private $sourceNodeIdentifier;
 
     /**
-     * Node identifier for the translated node
+     * Node identifier for the translated node.
      *
      * @var NodeIdentifier
      */
     private $destinationNodeIdentifier;
 
     /**
-     * Node identifier of the parent node for the translated node
+     * Node identifier of the parent node for the translated node.
      *
      * @var NodeIdentifier
      */
     private $destinationParentNodeIdentifier;
 
     /**
-     * Dimension space point for the translated node
+     * Dimension space point for the translated node.
      *
      * @var DimensionSpacePoint
      */
     private $dimensionSpacePoint;
 
     /**
-     * Visibility of node in the dimension space
+     * Visibility of node in the dimension space.
      *
      * @var DimensionSpacePointSet
      */
@@ -62,11 +62,11 @@ class NodeInAggregateWasTranslated implements EventInterface, CopyableAcrossCont
      * NodeInAggregateWasTranslated constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $sourceNodeIdentifier
-     * @param NodeIdentifier $destinationNodeIdentifier
-     * @param NodeIdentifier $destinationParentNodeIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param DimensionSpacePointSet $visibleDimensionSpacePoints
+     * @param NodeIdentifier          $sourceNodeIdentifier
+     * @param NodeIdentifier          $destinationNodeIdentifier
+     * @param NodeIdentifier          $destinationParentNodeIdentifier
+     * @param DimensionSpacePoint     $dimensionSpacePoint
+     * @param DimensionSpacePointSet  $visibleDimensionSpacePoints
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -134,11 +134,12 @@ class NodeInAggregateWasTranslated implements EventInterface, CopyableAcrossCont
 
     /**
      * @param ContentStreamIdentifier $targetContentStream
+     *
      * @return NodeInAggregateWasTranslated
      */
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
     {
-        return new NodeInAggregateWasTranslated(
+        return new self(
             $targetContentStream,
             $this->sourceNodeIdentifier,
             $this->destinationNodeIdentifier,

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Fusion\Helper;
 
 /*
@@ -11,35 +12,36 @@ namespace Neos\EventSourcedNeosAdjustments\Fusion\Helper;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\Eel\ProtectedContextAwareInterface;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
+use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Exception;
 
 /**
- * Eel helper for ContentRepository Nodes
+ * Eel helper for ContentRepository Nodes.
  */
 class NodeHelper implements ProtectedContextAwareInterface
 {
-
     /**
      * @Flow\Inject
+     *
      * @var NodeAddressFactory
      */
     protected $nodeAddressFactory;
 
     /**
      * Check if the given node is already a collection, find collection by nodePath otherwise, throw exception
-     * if no content collection could be found
+     * if no content collection could be found.
      *
      * @param TraversableNodeInterface $node
-     * @param string $nodePath
-     * @return TraversableNodeInterface
+     * @param string                   $nodePath
+     *
      * @throws Exception
+     *
+     * @return TraversableNodeInterface
      */
     public function nearestContentCollection(TraversableNodeInterface $node, $nodePath)
     {
@@ -47,7 +49,7 @@ class NodeHelper implements ProtectedContextAwareInterface
         if ($node->getNodeType()->isOfType($contentCollectionType)) {
             return $node;
         } else {
-            if ((string)$nodePath === '') {
+            if ((string) $nodePath === '') {
                 throw new Exception(sprintf('No content collection of type %s could be found in the current node and no node path was provided. You might want to configure the nodePath property with a relative path to the content collection.', $contentCollectionType), 1409300545);
             }
             // TODO: support NodePath here??
@@ -55,7 +57,7 @@ class NodeHelper implements ProtectedContextAwareInterface
             if ($subNode !== null && $subNode->getNodeType()->isOfType($contentCollectionType)) {
                 return $subNode;
             } else {
-                throw new Exception(sprintf('No content collection of type %s could be found in the current node (%s) or at the path "%s". You might want to adjust your node type configuration and create the missing child node through the "flow node:repair --node-type %s" command.', $contentCollectionType, $node->getPath(), $nodePath, (string)$node->getNodeType()), 1389352984);
+                throw new Exception(sprintf('No content collection of type %s could be found in the current node (%s) or at the path "%s". You might want to adjust your node type configuration and create the missing child node through the "flow node:repair --node-type %s" command.', $contentCollectionType, $node->getPath(), $nodePath, (string) $node->getNodeType()), 1389352984);
             }
         }
     }
@@ -67,7 +69,8 @@ class NodeHelper implements ProtectedContextAwareInterface
 
     /**
      * @param string $methodName
-     * @return boolean
+     *
+     * @return bool
      */
     public function allowsCallOfMethod($methodName)
     {

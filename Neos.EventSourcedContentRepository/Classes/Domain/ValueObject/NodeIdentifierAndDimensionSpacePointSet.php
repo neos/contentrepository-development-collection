@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
 
 /*
@@ -12,11 +13,10 @@ namespace Neos\EventSourcedContentRepository\Domain\ValueObject;
  */
 
 /**
- * A node identifier and dimension space point set
+ * A node identifier and dimension space point set.
  */
 final class NodeIdentifierAndDimensionSpacePointSet implements \JsonSerializable
 {
-
     /**
      * @var NodeIdentifier
      */
@@ -52,13 +52,13 @@ final class NodeIdentifierAndDimensionSpacePointSet implements \JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'nodeIdentifier' => $this->nodeIdentifier,
-            'dimensionSpacePointSet' => $this->dimensionSpacePointSet
+            'nodeIdentifier'         => $this->nodeIdentifier,
+            'dimensionSpacePointSet' => $this->dimensionSpacePointSet,
         ];
     }
 
     public function __toString()
     {
-        return $this->nodeIdentifier . ': ' . $this->dimensionSpacePointSet;
+        return $this->nodeIdentifier.': '.$this->dimensionSpacePointSet;
     }
 }

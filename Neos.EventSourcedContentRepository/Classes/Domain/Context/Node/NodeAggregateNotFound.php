@@ -11,11 +11,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
 
 /**
- * The exception to be thrown if a node aggregate was not found
+ * The exception to be thrown if a node aggregate was not found.
  */
 class NodeAggregateNotFound extends Exception
 {

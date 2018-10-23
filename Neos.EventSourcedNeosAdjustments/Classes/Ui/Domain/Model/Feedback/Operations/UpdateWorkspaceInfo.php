@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
 
 /*
@@ -11,14 +12,14 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\WorkspaceService;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Neos\Ui\Domain\Model\AbstractFeedback;
 use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
-use Neos\Flow\Mvc\Controller\ControllerContext;
 
 class UpdateWorkspaceInfo extends AbstractFeedback
 {
@@ -29,12 +30,14 @@ class UpdateWorkspaceInfo extends AbstractFeedback
 
     /**
      * @Flow\Inject
+     *
      * @var WorkspaceService
      */
     protected $workspaceService;
 
     /**
      * @Flow\Inject
+     *
      * @var WorkspaceFinder
      */
     protected $workspaceFinder;
@@ -50,10 +53,12 @@ class UpdateWorkspaceInfo extends AbstractFeedback
     }
 
     /**
-     * Set the workspace
+     * Set the workspace.
      *
      * @param Workspace $workspace
+     *
      * @return void
+     *
      * @deprecated
      */
     public function setWorkspace(Workspace $workspace)
@@ -62,7 +67,7 @@ class UpdateWorkspaceInfo extends AbstractFeedback
     }
 
     /**
-     * Getter for WorkspaceName
+     * Getter for WorkspaceName.
      *
      * @return WorkspaceName
      */
@@ -72,7 +77,7 @@ class UpdateWorkspaceInfo extends AbstractFeedback
     }
 
     /**
-     * Get the type identifier
+     * Get the type identifier.
      *
      * @return string
      */
@@ -82,7 +87,7 @@ class UpdateWorkspaceInfo extends AbstractFeedback
     }
 
     /**
-     * Get the description
+     * Get the description.
      *
      * @return string
      */
@@ -92,35 +97,38 @@ class UpdateWorkspaceInfo extends AbstractFeedback
     }
 
     /**
-     * Checks whether this feedback is similar to another
+     * Checks whether this feedback is similar to another.
      *
      * @param FeedbackInterface $feedback
-     * @return boolean
+     *
+     * @return bool
      */
     public function isSimilarTo(FeedbackInterface $feedback)
     {
-        if (!$feedback instanceof UpdateWorkspaceInfo) {
+        if (!$feedback instanceof self) {
             return false;
         }
 
-        return (string)$this->getWorkspaceName() === (string)$feedback->getWorkspaceName();
+        return (string) $this->getWorkspaceName() === (string) $feedback->getWorkspaceName();
     }
 
     /**
-     * Serialize the payload for this feedback
+     * Serialize the payload for this feedback.
      *
      * @param ControllerContext $controllerContext
+     *
      * @return mixed
      */
     public function serializePayload(ControllerContext $controllerContext)
     {
         $workspace = $this->workspaceFinder->findOneByName($this->workspaceName);
+
         return [
-            'name' => (string)$this->workspaceName,
+            'name'             => (string) $this->workspaceName,
             'publishableNodes' => $this->workspaceService->getPublishableNodeInfo(
                 $this->workspaceName
             ),
-            'baseWorkspace' => (string)$workspace->getBaseWorkspaceName()
+            'baseWorkspace' => (string) $workspace->getBaseWorkspaceName(),
         ];
     }
 }

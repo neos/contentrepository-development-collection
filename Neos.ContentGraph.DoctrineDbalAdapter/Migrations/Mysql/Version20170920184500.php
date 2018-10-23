@@ -6,7 +6,7 @@ use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 /**
- * The migration for providing nodes and hierarchy edges
+ * The migration for providing nodes and hierarchy edges.
  */
 class Version20170920184500 extends AbstractMigration
 {
@@ -28,7 +28,6 @@ class Version20170920184500 extends AbstractMigration
 
         $this->addSql('ALTER TABLE neos_contentgraph_node ADD PRIMARY KEY (nodeidentifier)');
         $this->addSql('CREATE UNIQUE INDEX IDENTIFIER_IN_GRAPH ON neos_contentgraph_node (nodeaggregateidentifier, subgraphidentityhash)');
-
 
         $this->addSql('RENAME TABLE neos_contentgraph_hierarchyedge TO neos_contentgraph_hierarchyrelation');
         $this->addSql('ALTER TABLE neos_contentgraph_hierarchyrelation DROP PRIMARY KEY');
@@ -54,7 +53,6 @@ class Version20170920184500 extends AbstractMigration
 
         $this->addSql('ALTER TABLE neos_contentgraph_hierarchyrelation ADD PRIMARY KEY (parentnodesidentifieringraph, subgraphidentifier, childnodesidentifieringraph)');
         $this->addSql('RENAME TABLE neos_contentgraph_hierarchyrelation TO neos_contentgraph_hierarchyedge');
-
 
         $this->addSql('DROP INDEX IDENTIFIER_IN_GRAPH ON neos_contentgraph_node');
         $this->addSql('ALTER TABLE neos_contentgraph_node DROP PRIMARY KEY');

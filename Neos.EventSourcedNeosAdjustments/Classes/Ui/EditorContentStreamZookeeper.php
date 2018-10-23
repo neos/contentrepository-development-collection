@@ -12,12 +12,12 @@ namespace Neos\EventSourcedNeosAdjustments\Ui;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\RebaseWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
@@ -31,7 +31,7 @@ use Neos\Neos\Domain\Model\User;
 use Neos\Party\Domain\Service\PartyService;
 
 /**
- * The service for keeping track of editors' content streams
+ * The service for keeping track of editors' content streams.
  *
  * On authentication, workspaces may have to be created and content streams may have to be forked from live or rebased from older ones
  *
@@ -41,40 +41,45 @@ final class EditorContentStreamZookeeper
 {
     /**
      * @Flow\Inject
+     *
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
 
     /**
      * @Flow\Inject
+     *
      * @var PartyService
      */
     protected $partyService;
 
     /**
      * @Flow\Inject
+     *
      * @var PolicyService
      */
     protected $policyService;
 
     /**
      * @Flow\Inject
+     *
      * @var WorkspaceFinder
      */
     protected $workspaceFinder;
 
     /**
      * @Flow\Inject
+     *
      * @var WorkspaceCommandHandler
      */
     protected $workspaceCommandHandler;
 
-
     /**
      * This method is called whenever a login happens (AuthenticationProviderManager::class, 'authenticatedToken'), using
-     * Signal/Slot
+     * Signal/Slot.
      *
      * @param Authentication\TokenInterface $token
+     *
      * @throws \Exception
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\BaseWorkspaceDoesNotExist
      * @throws \Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceAlreadyExists

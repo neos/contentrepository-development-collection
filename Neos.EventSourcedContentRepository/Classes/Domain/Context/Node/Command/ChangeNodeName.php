@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
 
 /*
@@ -17,7 +18,6 @@ use Neos\ContentRepository\Domain\ValueObject\NodeName;
 
 final class ChangeNodeName
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -37,8 +37,8 @@ final class ChangeNodeName
      * SetNodeName constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
-     * @param NodeName $newNodeName
+     * @param NodeIdentifier          $nodeIdentifier
+     * @param NodeName                $newNodeName
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -73,5 +73,4 @@ final class ChangeNodeName
     {
         return $this->newNodeName;
     }
-
 }

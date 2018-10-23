@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
 
 /*
@@ -11,9 +12,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Exception;
 
 /**
@@ -26,7 +27,6 @@ use Neos\EventSourcedContentRepository\Exception;
  */
 final class RemoveNodesFromAggregate
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -44,9 +44,10 @@ final class RemoveNodesFromAggregate
 
     /**
      * RemoveNode constructor.
+     *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePointSet $dimensionSpacePointSet
+     * @param DimensionSpacePointSet  $dimensionSpacePointSet
      */
     public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePointSet $dimensionSpacePointSet)
     {
@@ -55,7 +56,7 @@ final class RemoveNodesFromAggregate
         $this->dimensionSpacePointSet = $dimensionSpacePointSet;
 
         if (count($this->dimensionSpacePointSet->getPoints()) === 0) {
-            throw new Exception('You need to specify a non-empty DimensionSpacePointSet in RemoveNodesFromAggregate!',  1532091306);
+            throw new Exception('You need to specify a non-empty DimensionSpacePointSet in RemoveNodesFromAggregate!', 1532091306);
         }
     }
 

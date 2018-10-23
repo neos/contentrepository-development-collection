@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionDetection;
 
 /*
@@ -16,7 +17,7 @@ use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Routing\WorkspaceNameAn
 use Neos\Flow\Http;
 
 /**
- * A content dimension preset detector that evaluates backend URIs, i.e. component contexts containing context paths
+ * A content dimension preset detector that evaluates backend URIs, i.e. component contexts containing context paths.
  */
 final class BackendUriContentDimensionValueDetector implements ContentDimensionValueDetectorInterface
 {
@@ -26,15 +27,16 @@ final class BackendUriContentDimensionValueDetector implements ContentDimensionV
     protected $defaultOptions = [];
 
     /**
-     * @param Dimension\ContentDimension $contentDimension
+     * @param Dimension\ContentDimension      $contentDimension
      * @param Http\Component\ComponentContext $componentContext
-     * @param array|null $overrideOptions
+     * @param array|null                      $overrideOptions
+     *
      * @return Dimension\ContentDimensionValue|null
      */
     public function detectValue(Dimension\ContentDimension $contentDimension, Http\Component\ComponentContext $componentContext, array $overrideOptions = null): ?Dimension\ContentDimensionValue
     {
         $path = $componentContext->getHttpRequest()->getUri()->getPath();
-        $path = '/' . mb_substr($path, mb_strpos($path, '@'));
+        $path = '/'.mb_substr($path, mb_strpos($path, '@'));
         if (mb_strpos($path, '.') !== false) {
             $path = mb_substr($path, 0, mb_strrpos($path, '.'));
         }

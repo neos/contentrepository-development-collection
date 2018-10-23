@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event;
 
 /*
@@ -16,9 +17,8 @@ use Neos\EventSourcing\Event\EventInterface;
 
 final class ContentStreamWasForked implements EventInterface
 {
-
     /**
-     * Content stream identifier for the new content stream
+     * Content stream identifier for the new content stream.
      *
      * @var ContentStreamIdentifier
      */
@@ -30,15 +30,16 @@ final class ContentStreamWasForked implements EventInterface
     private $sourceContentStreamIdentifier;
 
     /**
-     * @var integer
+     * @var int
      */
     private $versionOfSourceContentStream;
 
     /**
      * ContentStreamWasForked constructor.
+     *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param ContentStreamIdentifier $sourceContentStreamIdentifier
-     * @param int $versionOfSourceContentStream
+     * @param int                     $versionOfSourceContentStream
      */
     public function __construct(ContentStreamIdentifier $contentStreamIdentifier, ContentStreamIdentifier $sourceContentStreamIdentifier, int $versionOfSourceContentStream)
     {

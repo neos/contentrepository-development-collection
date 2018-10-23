@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping;
 
 /*
@@ -11,6 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Service\Mapping;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\SystemLoggerInterface;
@@ -21,7 +23,6 @@ use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\TypeHandling;
-use Neos\ContentRepository\Domain\Model\NodeType;
 
 /**
  * Creates PropertyMappingConfigurations to map NodeType properties for the Neos interface.
@@ -32,39 +33,45 @@ class NodePropertyConverterService
 {
     /**
      * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.dataTypes")
+     *
      * @var array
      */
     protected $typesConfiguration;
 
     /**
      * @Flow\Inject
+     *
      * @var ObjectManagerInterface
      */
     protected $objectManager;
 
     /**
      * @Flow\Inject
+     *
      * @var PropertyMapper
      */
     protected $propertyMapper;
 
     /**
      * @Flow\Transient
+     *
      * @var array
      */
     protected $generatedPropertyMappingConfigurations = [];
 
     /**
      * @Flow\Inject
+     *
      * @var SystemLoggerInterface
      */
     protected $systemLogger;
 
     /**
-     * Get a single property reduced to a simple type (no objects) representation
+     * Get a single property reduced to a simple type (no objects) representation.
      *
      * @param NodeInterface $node
-     * @param string $propertyName
+     * @param string        $propertyName
+     *
      * @return mixed
      */
     public function getProperty(NodeInterface $node, $propertyName)
@@ -76,6 +83,7 @@ class NodePropertyConverterService
         }
 
         $dataType = $node->getNodeType()->getPropertyType($propertyName);
+
         try {
             $convertedValue = $this->convertValue($propertyValue, $dataType);
         } catch (PropertyException $exception) {
@@ -99,9 +107,10 @@ class NodePropertyConverterService
     }
 
     /**
-     * Get all properties as JSON encoded string representation
+     * Get all properties as JSON encoded string representation.
      *
      * @param NodeInterface $node
+     *
      * @return string
      */
     public function getPropertiesJson(NodeInterface $node)
@@ -110,9 +119,10 @@ class NodePropertyConverterService
     }
 
     /**
-     * Get all properties reduced to simple type (no objects) representations in an array
+     * Get all properties reduced to simple type (no objects) representations in an array.
      *
      * @param NodeInterface $node
+     *
      * @return array
      */
     public function getPropertiesArray(NodeInterface $node)
@@ -133,10 +143,12 @@ class NodePropertyConverterService
     /**
      * Convert the given value to a simple type or an array of simple types.
      *
-     * @param mixed $propertyValue
+     * @param mixed  $propertyValue
      * @param string $dataType
-     * @return mixed
+     *
      * @throws PropertyException
+     *
+     * @return mixed
      */
     protected function convertValue($propertyValue, $dataType)
     {
@@ -144,7 +156,7 @@ class NodePropertyConverterService
 
         // This hardcoded handling is to circumvent rewriting PropertyMappers that convert objects. Usually they expect the source to be an object already and break if not.
         if (!TypeHandling::isSimpleType($parsedType['type']) && !is_object($propertyValue) && !is_array($propertyValue)) {
-            return null;
+            return;
         }
 
         $conversionTargetType = $parsedType['type'];
@@ -154,7 +166,7 @@ class NodePropertyConverterService
         // Technically the "string" hardcoded here is irrelevant as the configured type converter wins, but it cannot be the "elementType"
         // because if the source is of the type $elementType then the PropertyMapper skips the type converter.
         if ($parsedType['type'] === 'array' && $parsedType['elementType'] !== null) {
-            $conversionTargetType .= '<' . (TypeHandling::isSimpleType($parsedType['elementType']) ? $parsedType['elementType'] : 'string') . '>';
+            $conversionTargetType .= '<'.(TypeHandling::isSimpleType($parsedType['elementType']) ? $parsedType['elementType'] : 'string').'>';
         }
 
         $propertyMappingConfiguration = $this->createConfiguration($dataType);
@@ -172,14 +184,15 @@ class NodePropertyConverterService
      * 2) The generic configuration for the property type in settings.
      *
      * @param NodeType $nodeType
-     * @param string $propertyName
+     * @param string   $propertyName
+     *
      * @return mixed
      */
     protected function getDefaultValueForProperty(NodeType $nodeType, $propertyName)
     {
         $defaultValues = $nodeType->getDefaultValuesForProperties();
         if (!isset($defaultValues[$propertyName])) {
-            return null;
+            return;
         }
 
         return $defaultValues[$propertyName];
@@ -189,6 +202,7 @@ class NodePropertyConverterService
      * Create a property mapping configuration for the given dataType to convert a Node property value from the given dataType to a simple type.
      *
      * @param string $dataType
+     *
      * @return PropertyMappingConfigurationInterface
      */
     protected function createConfiguration($dataType)
@@ -199,7 +213,7 @@ class NodePropertyConverterService
 
             $parsedType = [
                 'elementType' => null,
-                'type' => $dataType
+                'type'        => $dataType,
             ];
             // Special handling for "reference(s)", should be deprecated and normlized to array<NodeInterface>
             if ($dataType !== 'references' && $dataType !== 'reference') {
@@ -221,8 +235,9 @@ class NodePropertyConverterService
 
     /**
      * @param PropertyMappingConfiguration $propertyMappingConfiguration
-     * @param string $dataType
-     * @return boolean
+     * @param string                       $dataType
+     *
+     * @return bool
      */
     protected function setTypeConverterForType(PropertyMappingConfiguration $propertyMappingConfiguration, $dataType)
     {
@@ -239,8 +254,9 @@ class NodePropertyConverterService
 
     /**
      * @param PropertyMappingConfiguration $propertyMappingConfiguration
-     * @param string $typeConverterClass
-     * @param string $dataType
+     * @param string                       $typeConverterClass
+     * @param string                       $dataType
+     *
      * @return void
      */
     protected function setTypeConverterOptionsForType(PropertyMappingConfiguration $propertyMappingConfiguration, $typeConverterClass, $dataType)

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Changes;
 
 /*
@@ -12,7 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Changes;
  */
 
 use Doctrine\DBAL\Connection;
-use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodePropertyWasSet;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasHidden;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasMoved;
@@ -20,8 +22,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\Node\Event\NodeWasShown;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Event\WorkspaceWasRebased;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcing\Projection\ProjectorInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -32,12 +33,14 @@ class ChangeProjector implements ProjectorInterface
 {
     /**
      * @Flow\Inject
+     *
      * @var DbalClient
      */
     protected $client;
 
     /**
      * @Flow\Inject
+     *
      * @var WorkspaceFinder
      */
     protected $workspaceFinder;
@@ -91,16 +94,16 @@ class ChangeProjector implements ProjectorInterface
                 DELETE FROM neos_contentrepository_projection_change
 WHERE contentStreamIdentifier NOT IN (:contentStreamIdentifier)',
                 [
-                    ':contentStreamIdentifier' => $workspaceContentStreamIdentifiers
+                    ':contentStreamIdentifier' => $workspaceContentStreamIdentifiers,
                 ],
                 [
-                    ':contentStreamIdentifier' => Connection::PARAM_STR_ARRAY
+                    ':contentStreamIdentifier' => Connection::PARAM_STR_ARRAY,
                 ]);
 
             $workspace = $this->workspaceFinder->findOneByName($event->getWorkspaceName());
             if ($workspace instanceof Workspace) {
                 $this->getDatabaseConnection()->delete('neos_contentrepository_projection_change', [
-                    'contentStreamIdentifier' => (string)$workspace->getCurrentContentStreamIdentifier()
+                    'contentStreamIdentifier' => (string) $workspace->getCurrentContentStreamIdentifier(),
                 ]);
             }
         });
@@ -158,7 +161,7 @@ WHERE n.contentStreamIdentifier = :contentStreamIdentifier
 AND n.nodeIdentifier = :nodeIdentifier',
             [
                 'contentStreamIdentifier' => $contentStreamIdentifier,
-                'nodeIdentifier' => $nodeIdentifier
+                'nodeIdentifier'          => $nodeIdentifier,
             ]
         )->fetch();
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
 /*
@@ -11,22 +12,21 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
-use Neos\EventSourcing\Event\EventInterface;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
+use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeName;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
+use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * Node aggregate with node was created event
+ * Node aggregate with node was created event.
  */
 final class NodeAggregateWithNodeWasCreated implements EventInterface, CopyableAcrossContentStreamsInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -43,14 +43,14 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface, CopyableA
     private $nodeTypeName;
 
     /**
-     * Location of the node in the dimension space
+     * Location of the node in the dimension space.
      *
      * @var DimensionSpacePoint
      */
     private $dimensionSpacePoint;
 
     /**
-     * Visibility of node in the dimension space
+     * Visibility of node in the dimension space.
      *
      * @var DimensionSpacePointSet
      */
@@ -72,7 +72,7 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface, CopyableA
     private $nodeName;
 
     /**
-     * (property name => PropertyValue)
+     * (property name => PropertyValue).
      *
      * @var array<PropertyValue>
      */
@@ -81,14 +81,14 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface, CopyableA
     /**
      * NodeAggregateWithNodeWasCreated constructor.
      *
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param NodeTypeName $nodeTypeName
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param DimensionSpacePointSet $visibleDimensionSpacePoints
-     * @param NodeIdentifier $nodeIdentifier
-     * @param NodeIdentifier $parentNodeIdentifier
-     * @param NodeName $nodeName
+     * @param ContentStreamIdentifier                                                    $contentStreamIdentifier
+     * @param NodeAggregateIdentifier                                                    $nodeAggregateIdentifier
+     * @param NodeTypeName                                                               $nodeTypeName
+     * @param DimensionSpacePoint                                                        $dimensionSpacePoint
+     * @param DimensionSpacePointSet                                                     $visibleDimensionSpacePoints
+     * @param NodeIdentifier                                                             $nodeIdentifier
+     * @param NodeIdentifier                                                             $parentNodeIdentifier
+     * @param NodeName                                                                   $nodeName
      * @param array<Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue> $propertyDefaultValuesAndTypes
      */
     public function __construct(
@@ -192,7 +192,7 @@ final class NodeAggregateWithNodeWasCreated implements EventInterface, CopyableA
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
     {
-        return new NodeAggregateWithNodeWasCreated(
+        return new self(
             $targetContentStream,
             $this->nodeAggregateIdentifier,
             $this->nodeTypeName,

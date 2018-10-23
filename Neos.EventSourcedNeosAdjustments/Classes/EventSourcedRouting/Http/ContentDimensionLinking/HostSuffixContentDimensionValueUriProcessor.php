@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionLinking;
 
 /*
@@ -11,19 +12,20 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimen
  * source code.
  */
 
-use Neos\Flow\Mvc\Routing;
 use Neos\ContentRepository\DimensionSpace\Dimension;
+use Neos\Flow\Mvc\Routing;
 
 /**
- * Host suffix based content dimension value uri processor
+ * Host suffix based content dimension value uri processor.
  */
 final class HostSuffixContentDimensionValueUriProcessor implements ContentDimensionValueUriProcessorInterface
 {
     /**
-     * @param Routing\Dto\UriConstraints $uriConstraints
-     * @param Dimension\ContentDimension $contentDimension
+     * @param Routing\Dto\UriConstraints      $uriConstraints
+     * @param Dimension\ContentDimension      $contentDimension
      * @param Dimension\ContentDimensionValue $contentDimensionValue
-     * @param array|null $overrideOptions
+     * @param array|null                      $overrideOptions
+     *
      * @return Routing\Dto\UriConstraints
      */
     public function processUriConstraints(

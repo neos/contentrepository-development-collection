@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
 /*
@@ -17,11 +18,10 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * Node property was set event
+ * Node property was set event.
  */
 final class NodePropertyWasSet implements EventInterface, CopyableAcrossContentStreamsInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -46,9 +46,9 @@ final class NodePropertyWasSet implements EventInterface, CopyableAcrossContentS
      * NodePropertyWasSet constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $nodeIdentifier
-     * @param string $propertyName
-     * @param PropertyValue $value
+     * @param NodeIdentifier          $nodeIdentifier
+     * @param string                  $propertyName
+     * @param PropertyValue           $value
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -96,11 +96,12 @@ final class NodePropertyWasSet implements EventInterface, CopyableAcrossContentS
 
     /**
      * @param ContentStreamIdentifier $targetContentStream
+     *
      * @return NodePropertyWasSet
      */
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
     {
-        return new NodePropertyWasSet(
+        return new self(
             $targetContentStream,
             $this->nodeIdentifier,
             $this->propertyName,

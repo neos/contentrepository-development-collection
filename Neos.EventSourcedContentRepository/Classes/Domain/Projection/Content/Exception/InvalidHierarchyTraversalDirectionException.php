@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\Exception;
 
 /*
@@ -10,11 +11,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\Exception
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception;
 
 /**
- * The exception to be thrown if an invalid hierarchy traversal direction was defined
+ * The exception to be thrown if an invalid hierarchy traversal direction was defined.
  */
 class InvalidHierarchyTraversalDirectionException extends Exception
 {

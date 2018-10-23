@@ -18,7 +18,7 @@ use Doctrine\DBAL\DriverManager;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * The Doctrine DBAL client adapter
+ * The Doctrine DBAL client adapter.
  *
  * @Flow\Scope("singleton")
  */
@@ -26,12 +26,14 @@ class DbalClient
 {
     /**
      * @Flow\InjectConfiguration(package="Neos.Flow", path="persistence.backendOptions")
+     *
      * @var array
      */
     protected $backendOptions;
 
     /**
      * @Flow\InjectConfiguration(package="Neos.Flow", path="persistence.doctrine.sqlLogger")
+     *
      * @var string
      */
     protected $sqlLogger;
@@ -40,7 +42,6 @@ class DbalClient
      * @var Connection
      */
     protected $connection;
-
 
     public function initializeObject()
     {
@@ -51,7 +52,6 @@ class DbalClient
         }
         $this->connection = DriverManager::getConnection($this->backendOptions, $configuration);
     }
-
 
     public function getConnection(): Connection
     {

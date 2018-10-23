@@ -6,7 +6,7 @@ use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 /**
- * Create the Event Store
+ * Create the Event Store.
  */
 class Version20180923103212 extends AbstractMigration
 {

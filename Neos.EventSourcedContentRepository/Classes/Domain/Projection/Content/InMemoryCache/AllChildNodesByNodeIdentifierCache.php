@@ -15,7 +15,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryC
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeTypeConstraints;
 
-
 /**
  * This cache is only filled for a $parentNodeIdentifier if we have retrieved *all* childNodes, without any restriction.
  */
@@ -25,19 +24,20 @@ final class AllChildNodesByNodeIdentifierCache
 
     public function add(NodeIdentifier $parentNodeIdentifier, array $allChildNodes)
     {
-        $key = (string)$parentNodeIdentifier;
+        $key = (string) $parentNodeIdentifier;
         $this->childNodes[$key] = $allChildNodes;
     }
 
     public function contains(NodeIdentifier $parentNodeIdentifier)
     {
-        $key = (string)$parentNodeIdentifier;
+        $key = (string) $parentNodeIdentifier;
+
         return isset($this->childNodes[$key]);
     }
 
     public function findChildNodes(NodeIdentifier $parentNodeIdentifier, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array
     {
-        $key = (string)$parentNodeIdentifier;
+        $key = (string) $parentNodeIdentifier;
         $result = [];
 
         if (isset($this->childNodes[$key])) {
@@ -53,6 +53,7 @@ final class AllChildNodesByNodeIdentifierCache
                 $result = array_slice($result, $offset ?? 0, $limit);
             }
         }
+
         return $result;
     }
 }

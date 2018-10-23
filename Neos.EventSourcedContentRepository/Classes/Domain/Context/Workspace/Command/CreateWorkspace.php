@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command;
 
 /*
@@ -18,7 +19,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
 
 /**
- * Create a new workspace, based on an existing baseWorkspace
+ * Create a new workspace, based on an existing baseWorkspace.
  */
 final class CreateWorkspace
 {
@@ -48,7 +49,8 @@ final class CreateWorkspace
     private $initiatingUserIdentifier;
 
     /**
-     * the content stream identifier for the content stream which is created together with the to-be-created workspace
+     * the content stream identifier for the content stream which is created together with the to-be-created workspace.
+     *
      * @var ContentStreamIdentifier
      */
     private $contentStreamIdentifier;
@@ -61,13 +63,13 @@ final class CreateWorkspace
     /**
      * CreateWorkspace constructor.
      *
-     * @param WorkspaceName $workspaceName
-     * @param WorkspaceName $baseWorkspaceName
-     * @param WorkspaceTitle $workspaceTitle
-     * @param WorkspaceDescription $workspaceDescription
-     * @param UserIdentifier $initiatingUserIdentifier
+     * @param WorkspaceName           $workspaceName
+     * @param WorkspaceName           $baseWorkspaceName
+     * @param WorkspaceTitle          $workspaceTitle
+     * @param WorkspaceDescription    $workspaceDescription
+     * @param UserIdentifier          $initiatingUserIdentifier
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param UserIdentifier $workspaceOwner
+     * @param UserIdentifier          $workspaceOwner
      */
     public function __construct(WorkspaceName $workspaceName, WorkspaceName $baseWorkspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, UserIdentifier $initiatingUserIdentifier, ContentStreamIdentifier $contentStreamIdentifier = null, UserIdentifier $workspaceOwner = null)
     {
@@ -76,10 +78,9 @@ final class CreateWorkspace
         $this->workspaceTitle = $workspaceTitle;
         $this->workspaceDescription = $workspaceDescription;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
-        $this->contentStreamIdentifier = $contentStreamIdentifier ?: new ContentStreamIdentifier();;
+        $this->contentStreamIdentifier = $contentStreamIdentifier ?: new ContentStreamIdentifier();
         $this->workspaceOwner = $workspaceOwner;
     }
-
 
     /**
      * @return WorkspaceName

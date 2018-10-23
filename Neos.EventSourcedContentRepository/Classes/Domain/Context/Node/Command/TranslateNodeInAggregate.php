@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
 
 /*
@@ -11,12 +12,12 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Command;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 
 /**
- * Translate node in aggregate command
+ * Translate node in aggregate command.
  *
  * Copies a node in a node aggregate to a translated node with the given dimension space point. The dimension space
  * point must not be an ancestor (generalization) or descendant (specialization) of the source node dimension space point.
@@ -25,7 +26,6 @@ use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
  */
 final class TranslateNodeInAggregate
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -37,21 +37,21 @@ final class TranslateNodeInAggregate
     private $sourceNodeIdentifier;
 
     /**
-     * Node identifier for the translated node
+     * Node identifier for the translated node.
      *
      * @var NodeIdentifier
      */
     private $destinationNodeIdentifier;
 
     /**
-     * Dimension space point for the translated node
+     * Dimension space point for the translated node.
      *
      * @var DimensionSpacePoint
      */
     private $dimensionSpacePoint;
 
     /**
-     * Parent node identifier of the translated node (optional, will be resolved if not given)
+     * Parent node identifier of the translated node (optional, will be resolved if not given).
      *
      * @var NodeIdentifier
      */
@@ -61,10 +61,10 @@ final class TranslateNodeInAggregate
      * TranslateNodeInAggregate constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeIdentifier $sourceNodeIdentifier
-     * @param NodeIdentifier $destinationNodeIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param NodeIdentifier $destinationParentNodeIdentifier
+     * @param NodeIdentifier          $sourceNodeIdentifier
+     * @param NodeIdentifier          $destinationNodeIdentifier
+     * @param DimensionSpacePoint     $dimensionSpacePoint
+     * @param NodeIdentifier          $destinationParentNodeIdentifier
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,

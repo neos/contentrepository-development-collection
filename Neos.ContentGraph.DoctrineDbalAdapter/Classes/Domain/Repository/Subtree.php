@@ -3,22 +3,19 @@
  * Created by IntelliJ IDEA.
  * User: sebastian
  * Date: 28.02.18
- * Time: 15:04
+ * Time: 15:04.
  */
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
-
-use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
-
+use Neos\EventSourcedContentRepository\Domain\Context\Node\SubtreeInterface;
 
 /**
- * Class Subtree
+ * Class Subtree.
  */
 class Subtree implements SubtreeInterface
 {
-
     /**
      * @var int
      */
@@ -34,7 +31,8 @@ class Subtree implements SubtreeInterface
      */
     protected $children = [];
 
-    public function __construct(int $level, NodeInterface $node = null) {
+    public function __construct(int $level, NodeInterface $node = null)
+    {
         $this->level = $level;
         $this->node = $node;
     }
@@ -46,7 +44,6 @@ class Subtree implements SubtreeInterface
     {
         return $this->level;
     }
-
 
     public function getNode(): ?NodeInterface
     {

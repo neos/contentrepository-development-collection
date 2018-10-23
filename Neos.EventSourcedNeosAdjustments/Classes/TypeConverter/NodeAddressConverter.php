@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\TypeConverter;
 
 /*
@@ -42,15 +43,17 @@ class NodeAddressConverter extends AbstractTypeConverter
 
     /**
      * @Flow\Inject
+     *
      * @var NodeAddressFactory
      */
     protected $nodeAddressFactory;
 
     /**
-     * @param mixed $source
-     * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param mixed                                      $source
+     * @param string                                     $targetType
+     * @param array                                      $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
+     *
      * @return NodeAddress
      */
     public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null): NodeAddress

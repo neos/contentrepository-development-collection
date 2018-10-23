@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository;
 
 /*
@@ -12,7 +13,7 @@ namespace Neos\EventSourcedContentRepository;
  */
 
 /**
- * A generic ContentRepository exception
+ * A generic ContentRepository exception.
  *
  * @api
  */

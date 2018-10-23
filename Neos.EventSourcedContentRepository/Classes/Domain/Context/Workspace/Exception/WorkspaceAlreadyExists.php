@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception;
 
 /*
@@ -14,7 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception;
 use Neos\EventSourcedContentRepository\Exception;
 
 /**
- * WorkspaceAlreadyExists
+ * WorkspaceAlreadyExists.
  */
 final class WorkspaceAlreadyExists extends Exception
 {

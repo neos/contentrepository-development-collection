@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper;
 
 /*
@@ -19,17 +20,16 @@ use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 
 class ContentDimensionsHelper implements ProtectedContextAwareInterface
 {
-
-
     /**
      * @Flow\Inject
+     *
      * @var ContentDimensionSourceInterface
      */
     protected $contentDimensionSource;
 
-
     /**
      * @Flow\Inject
+     *
      * @var ContentDimensionPresetSourceInterface
      */
     protected $contentDimensionsPresetSource;
@@ -43,26 +43,28 @@ class ContentDimensionsHelper implements ProtectedContextAwareInterface
 
         $result = [];
         foreach ($dimensions as $dimension) {
-            $result[(string)$dimension->getIdentifier()] = [
-                'label' => $dimension->getConfigurationValue('label'),
-                'icon' => $dimension->getConfigurationValue('icon'),
+            $result[(string) $dimension->getIdentifier()] = [
+                'label'        => $dimension->getConfigurationValue('label'),
+                'icon'         => $dimension->getConfigurationValue('icon'),
                 'defaultValue' => $dimension->getDefaultValue()->getValue(),
-                'values' => []
+                'values'       => [],
             ];
 
             foreach ($dimension->getValues() as $value) {
                 // TODO: make certain values hidable
-                $result[(string)$dimension->getIdentifier()]['values'][$value->getValue()] = [
+                $result[(string) $dimension->getIdentifier()]['values'][$value->getValue()] = [
                     'value' => $value->getValue(),
-                    'label' => $value->getConfigurationValue('label')
+                    'label' => $value->getConfigurationValue('label'),
                 ];
             }
         }
+
         return $result;
     }
 
     /**
      * @param DimensionSpacePoint $dimensions Dimension values indexed by dimension name
+     *
      * @return array Allowed preset names for the given dimension combination indexed by dimension name
      */
     public function allowedPresetsByName(DimensionSpacePoint $dimensions)
@@ -88,7 +90,8 @@ class ContentDimensionsHelper implements ProtectedContextAwareInterface
 
     /**
      * @param string $methodName
-     * @return boolean
+     *
+     * @return bool
      */
     public function allowsCallOfMethod($methodName)
     {

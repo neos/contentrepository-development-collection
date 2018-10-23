@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations;
 
 /*
@@ -15,10 +16,10 @@ use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddressFactory;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Ui\Domain\Model\AbstractFeedback;
-use Neos\Neos\Ui\Fusion\Helper\NodeInfoHelper;
-use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
 use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Neos\Ui\Domain\Model\AbstractFeedback;
+use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
+use Neos\Neos\Ui\Fusion\Helper\NodeInfoHelper;
 
 class UpdateNodeInfo extends AbstractFeedback
 {
@@ -29,19 +30,21 @@ class UpdateNodeInfo extends AbstractFeedback
 
     /**
      * @Flow\Inject
+     *
      * @var NodeInfoHelper
      */
     protected $nodeInfoHelper;
 
     /**
      * @Flow\Inject
+     *
      * @var ContentGraphInterface
      */
     protected $contentGraph;
 
-
     /**
      * @Flow\Inject
+     *
      * @var NodeAddressFactory
      */
     protected $nodeAddressFactory;
@@ -49,9 +52,10 @@ class UpdateNodeInfo extends AbstractFeedback
     protected $isRecursive = false;
 
     /**
-     * Set the node
+     * Set the node.
      *
      * @param NodeInterface $node
+     *
      * @return void
      */
     public function setNode(NodeInterface $node)
@@ -60,7 +64,7 @@ class UpdateNodeInfo extends AbstractFeedback
     }
 
     /**
-     * Update node infos recursively
+     * Update node infos recursively.
      *
      * @return void
      */
@@ -70,7 +74,7 @@ class UpdateNodeInfo extends AbstractFeedback
     }
 
     /**
-     * Get the node
+     * Get the node.
      *
      * @return NodeInterface
      */
@@ -80,7 +84,7 @@ class UpdateNodeInfo extends AbstractFeedback
     }
 
     /**
-     * Get the type identifier
+     * Get the type identifier.
      *
      * @return string
      */
@@ -90,7 +94,7 @@ class UpdateNodeInfo extends AbstractFeedback
     }
 
     /**
-     * Get the description
+     * Get the description.
      *
      * @return string
      */
@@ -100,14 +104,15 @@ class UpdateNodeInfo extends AbstractFeedback
     }
 
     /**
-     * Checks whether this feedback is similar to another
+     * Checks whether this feedback is similar to another.
      *
      * @param FeedbackInterface $feedback
-     * @return boolean
+     *
+     * @return bool
      */
     public function isSimilarTo(FeedbackInterface $feedback)
     {
-        if (!$feedback instanceof UpdateNodeInfo) {
+        if (!$feedback instanceof self) {
             return false;
         }
 
@@ -115,23 +120,25 @@ class UpdateNodeInfo extends AbstractFeedback
     }
 
     /**
-     * Serialize the payload for this feedback
+     * Serialize the payload for this feedback.
      *
      * @param ControllerContext $controllerContext
+     *
      * @return mixed
      */
     public function serializePayload(ControllerContext $controllerContext)
     {
         return [
-            'byContextPath' => $this->serializeNodeRecursively($this->getNode(), $controllerContext)
+            'byContextPath' => $this->serializeNodeRecursively($this->getNode(), $controllerContext),
         ];
     }
 
     /**
-     * Serialize node and all child nodes
+     * Serialize node and all child nodes.
      *
-     * @param NodeInterface $node
+     * @param NodeInterface     $node
      * @param ControllerContext $controllerContext
+     *
      * @return array
      */
     public function serializeNodeRecursively(NodeInterface $node, ControllerContext $controllerContext)
@@ -139,7 +146,7 @@ class UpdateNodeInfo extends AbstractFeedback
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint());
 
         $result = [
-            $this->nodeAddressFactory->createFromNode($node)->serializeForUri() => $this->nodeInfoHelper->renderNodeWithPropertiesAndChildrenInformation($node, $subgraph, $controllerContext)
+            $this->nodeAddressFactory->createFromNode($node)->serializeForUri() => $this->nodeInfoHelper->renderNodeWithPropertiesAndChildrenInformation($node, $subgraph, $controllerContext),
         ];
 
         if ($this->isRecursive === true) {

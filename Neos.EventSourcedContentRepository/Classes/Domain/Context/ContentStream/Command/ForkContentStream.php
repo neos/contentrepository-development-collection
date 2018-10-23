@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command;
 
 /*
@@ -18,9 +19,8 @@ use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
  */
 final class ForkContentStream
 {
-
     /**
-     * Content stream identifier for the new content stream
+     * Content stream identifier for the new content stream.
      *
      * @var ContentStreamIdentifier
      */
@@ -33,6 +33,7 @@ final class ForkContentStream
 
     /**
      * ContentStreamWasForked constructor.
+     *
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param ContentStreamIdentifier $sourceContentStreamIdentifier
      */

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\EventSourcedContentRepository\Domain\Projection\Changes;
 
 /*
@@ -11,13 +12,13 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Changes;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Finder for changes
+ * Finder for changes.
+ *
  * @Flow\Scope("singleton")
  *
  * @api
@@ -26,6 +27,7 @@ final class ChangeFinder
 {
     /**
      * @Flow\Inject
+     *
      * @var DbalClient
      */
     protected $client;
@@ -39,26 +41,28 @@ final class ChangeFinder
                 WHERE contentStreamIdentifier = :contentStreamIdentifier
             ',
             [
-                ':contentStreamIdentifier' => (string)$contentStreamIdentifier
+                ':contentStreamIdentifier' => (string) $contentStreamIdentifier,
             ]
         )->fetchAll();
         $changes = [];
         foreach ($changeRows as $changeRow) {
             $changes[] = Change::fromDatabaseRow($changeRow);
         }
+
         return $changes;
     }
 
     public function countByContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier): int
     {
         $connection = $this->client->getConnection();
+
         return $connection->executeQuery(
             '
                 SELECT * FROM neos_contentrepository_projection_change
                 WHERE contentStreamIdentifier = :contentStreamIdentifier
             ',
             [
-                ':contentStreamIdentifier' => (string)$contentStreamIdentifier
+                ':contentStreamIdentifier' => (string) $contentStreamIdentifier,
             ]
         )->rowCount();
     }

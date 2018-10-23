@@ -2,19 +2,18 @@
 
 namespace Neos\EventSourcedContentRepository\Domain\Context\Node\Event;
 
-use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Domain\ValueObject\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcing\Event\EventInterface;
 
 /**
- * A named reference from source- to destination-node was created
+ * A named reference from source- to destination-node was created.
  */
 final class NodeReferencesWereSet implements EventInterface, CopyableAcrossContentStreamsInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -44,10 +43,10 @@ final class NodeReferencesWereSet implements EventInterface, CopyableAcrossConte
      * ReferenceBetweenNodesWasCreated constructor.
      *
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePointSet $dimensionSpacePointSet
-     * @param NodeIdentifier $nodeIdentifier
-     * @param PropertyName $referenceNodeIdentifier
-     * @param array $destinationNodeIdentifiers
+     * @param DimensionSpacePointSet  $dimensionSpacePointSet
+     * @param NodeIdentifier          $nodeIdentifier
+     * @param PropertyName            $referenceNodeIdentifier
+     * @param array                   $destinationNodeIdentifiers
      */
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
@@ -103,11 +102,9 @@ final class NodeReferencesWereSet implements EventInterface, CopyableAcrossConte
         return $this->propertyName;
     }
 
-
-
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStream)
     {
-        return new NodeReferencesWereSet(
+        return new self(
             $targetContentStream,
             $this->dimensionSpacePointSet,
             $this->nodeIdentifier,
