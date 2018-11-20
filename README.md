@@ -78,7 +78,6 @@ The resulting `composer.json` file should look something like this:
         "vendor-dir": "Packages/Libraries",
         "bin-dir": "bin"
     },
-    "minimum-stability": "dev",
     "repositories": [
         {
             "type": "git",
@@ -95,6 +94,7 @@ The resulting `composer.json` file should look something like this:
         "neos/demo": "@dev",
 
         "neos/contentrepository-development-collection": "@dev",
+        "neos/content-repository-dimensionspace": "dev-master"
         "neos/event-sourcing": "dev-master",
         "neos/neos-ui": "dev-event-sourced-patch as dev-master",
         "neos/neos-ui-compiled": "@dev",
