@@ -15,16 +15,16 @@ use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\Command\SetNodeProperty;
 use Neos\EventSourcedContentRepository\Domain\Context\Node\NodeCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
+use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Utility\NodeUriPathSegmentGenerator;
 
 class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
 {
     /**
      * @Flow\Inject
-     * @var NodeUriPathSegmentGenerator
+     * @var NodeService
      */
-    protected $nodeUriPathSegmentGenerator;
+    protected $nodeService;
 
     /**
      * @Flow\Inject
@@ -52,15 +52,14 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
                 ));
             }
 
+            $uriPathSegment = $this->nodeService->generateUriPathSegment($node, $data['title']);
             $this->nodeCommandHandler->handleSetNodeProperty(new SetNodeProperty(
                 $node->getContentStreamIdentifier(),
                 $node->getNodeAggregateIdentifier(),
                 $node->getOriginDimensionSpacePoint(),
                 'uriPathSegment',
-                new PropertyValue($data['title'], 'string')
+                new PropertyValue($uriPathSegment, 'string')
             ));
-            // TODO: re-enable line below
-            // $node->setProperty('uriPathSegment', $this->nodeUriPathSegmentGenerator->generateUriPathSegment($node, (isset($data['title']) ? $data['title'] : null)));
         }
     }
 }

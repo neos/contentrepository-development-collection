@@ -11,6 +11,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
+use Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service\NodeService;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\ValueObject\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\ValueObject\NodeIdentifier;
@@ -28,6 +29,12 @@ class Create extends AbstractCreate
      * @var NodeCommandHandler
      */
     protected $nodeCommandHandler;
+
+    /**
+     * @Flow\Inject
+     * @var NodeService
+     */
+    protected $nodeService;
 
     /**
      * @param string $parentContextPath
@@ -70,9 +77,8 @@ class Create extends AbstractCreate
         if ($this->canApply()) {
             $parentNode = $this->getSubject();
 
-            // TODO: the $name=... line should be as expressed below
-            // $name = $this->getName() ?: $this->nodeService->generateUniqueNodeName($parent->findParentNode());
-            $nodeName = new NodeName($this->getName() ?: uniqid('node-'));
+            // TODO: Shouldn't we check the given name for uniqueness?
+            $nodeName = new NodeName($this->getName() ?: $this->nodeService->generateUniqueNodeName($parentNode));
 
             $nodeAggregateIdentifier = new NodeAggregateIdentifier(); // generate a new NodeAggregateIdentifier
 
