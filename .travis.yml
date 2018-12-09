@@ -33,6 +33,7 @@ before_install:
   - composer require --no-update --dev --prefer-source --no-interaction flowpack/behat:dev-master
 install:
   - composer update --no-progress --no-interaction
+  - composer install -d Build/Behat
   - cd ..
   - rm -rf neos-development-distribution/Packages/CR
   - mv contentrepository-development-collection neos-development-distribution/Packages/CR
@@ -42,8 +43,9 @@ before_script:
   - cp Configuration/Settings.yaml.example Configuration/Settings.yaml
   - Build/BuildEssentials/TravisCi/SetupDatabase.sh
   - cp Configuration/Settings.yaml Configuration/Testing/
-  - cat Configuration/Settings.yaml
-  - cat Configuration/Testing/Settings.yaml
+
 script:
   - bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml Packages/CR/Neos.EventSourcedContentRepository/Tests/Functional
   - bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml Packages/CR/Neos.EventSourcedNeosAdjustments/Tests/Functional
+  - bin/behat --ansi --stop-on-failure -f progress -c Packages/CR/Neos.EventSourcedContentRepository/Tests/Behavior/behat.yml.dist
+  #- bin/behat --ansi --stop-on-failure -f progress -c Packages/CR/Neos.EventSourcedNeosAdjustments/Tests/Behavior/behat.yml.dist
