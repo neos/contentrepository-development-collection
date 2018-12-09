@@ -8,7 +8,7 @@ matrix:
 
 sudo: false
 before_install:
-  - export NEOS_TARGET_VERSION=4.1
+  - export NEOS_TARGET_VERSION=master
   - cd ..
   - git clone https://github.com/neos/neos-development-distribution.git -b ${NEOS_TARGET_VERSION}
   - cd neos-development-distribution
