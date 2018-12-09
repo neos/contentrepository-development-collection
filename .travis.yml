@@ -2,6 +2,9 @@ language: php
 matrix:
   include:
     - php: 7.2
+      env: DB=mysql
+      addons:
+        mariadb: '10.2'
 
 sudo: false
 before_install:
@@ -39,6 +42,8 @@ before_script:
   - cp Configuration/Settings.yaml.example Configuration/Settings.yaml
   - Build/BuildEssentials/TravisCi/SetupDatabase.sh
   - cp Configuration/Settings.yaml Configuration/Testing/
+  - cat Configuration/Settings.yaml
+  - cat Configuration/Testing/Settings.yaml
 script:
   - bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml Packages/CR/Neos.EventSourcedContentRepository/Tests/Functional
   - bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml Packages/CR/Neos.EventSourcedNeosAdjustments/Tests/Functional
