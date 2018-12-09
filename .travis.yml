@@ -11,18 +11,8 @@ before_install:
   - export NEOS_TARGET_VERSION=master
   - cd ..
   - git clone https://github.com/neos/neos-development-distribution.git -b ${NEOS_TARGET_VERSION}
+  - cp contentrepository-development-collection/.travis_composer_json.json neos-development-distribution/composer.json
   - cd neos-development-distribution
-  - composer config repositories.contentrepository-development-collection git https://github.com/neos/contentrepository-development-collection.git
-  - composer config repositories.content-repository-dimensionspace git https://github.com/neos/content-repository-dimensionspace
-  - composer config minimum-stability dev
-  - composer config prefer-stable true
-  - composer require --no-update --no-interaction neos/event-sourcing:dev-master
-  - composer require --no-update --no-interaction neos/neos-development-collection:"dev-event-sourced-patch as dev-master"
-  - composer require --no-update --no-interaction neos/flow-development-collection:"dev-master"
-  - composer require --no-update --no-interaction neos/neos-ui:"dev-event-sourced-patch as dev-master"
-  - composer require --no-update --no-interaction neos/demo:"dev-master"
-  - composer require --no-update --dev --no-interaction neos/behat:dev-master
-  - composer require --no-update --dev --prefer-source --no-interaction flowpack/behat:dev-master
   - cat composer.json
 install:
   - composer update --no-progress --no-interaction
