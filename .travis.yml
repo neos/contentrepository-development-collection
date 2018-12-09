@@ -18,10 +18,12 @@ before_install:
   - composer config prefer-stable true
   - composer require --no-update --no-interaction neos/event-sourcing:dev-master
   - composer require --no-update --no-interaction neos/neos-development-collection:"dev-event-sourced-patch as dev-master"
+  - composer require --no-update --no-interaction neos/flow-development-collection:"dev-master"
   - composer require --no-update --no-interaction neos/neos-ui:"dev-event-sourced-patch as dev-master"
   - composer require --no-update --no-interaction neos/demo:"dev-master"
   - composer require --no-update --dev --no-interaction neos/behat:dev-master
   - composer require --no-update --dev --prefer-source --no-interaction flowpack/behat:dev-master
+  - cat composer.json
 install:
   - composer update --no-progress --no-interaction
   - composer install -d Build/Behat
