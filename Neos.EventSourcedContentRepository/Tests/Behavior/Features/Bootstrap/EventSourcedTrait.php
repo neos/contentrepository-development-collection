@@ -1275,4 +1275,15 @@ trait EventSourcedTrait
         $nodeAddressFactory = $this->getObjectManager()->get(NodeAddressFactory::class);
         $this->currentNodeAddresses[$alias] = $nodeAddressFactory->createFromNode($node);
     }
+
+    /**
+     * @Then /^I get the node at path "([^"]*)"$/
+     * @throws Exception
+     */
+    public function iGetTheNodeAtPath($nodePath)
+    {
+        $this->currentNode = $this->contentGraphInterface
+            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
+            ->findNodeByPath($nodePath, RootNodeIdentifiers::rootNodeAggregateIdentifier());
+    }
 }

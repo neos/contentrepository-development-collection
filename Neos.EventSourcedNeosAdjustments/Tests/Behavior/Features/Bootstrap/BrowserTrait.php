@@ -114,9 +114,7 @@ trait BrowserTrait
         $nodeAddresses = $this->getCurrentNodeAddresses();
         foreach ($nodeAddresses as $alias => $nodeAddress) {
             /* @var $nodeAddress \Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress */
-            if ($nodeAddressString === $alias) {
-                $nodeAddressString = $nodeAddress->serializeForUri();
-            }
+            $nodeAddressString = str_replace($alias, $nodeAddress->serializeForUri(), $nodeAddressString);
         }
 
         return $nodeAddressString;
@@ -129,10 +127,13 @@ trait BrowserTrait
     {
         $changes = [];
         foreach ($changeDefinition->getHash() as $singleChange) {
+            $payload = json_decode($this->replacePlaceholders($singleChange['Payload']), true);
+            Assert::assertNotNull($payload, "The following string was no valid JSON: " . $this->replacePlaceholders($singleChange['Payload']));
             $changes[] = [
+
                 'type' => $singleChange['Type'],
                 'subject' => $this->replacePlaceholders($singleChange['Subject Node Address']),
-                'payload' => json_decode($singleChange['Payload'], true)
+                'payload' => $payload
             ];
         }
 
@@ -141,6 +142,7 @@ trait BrowserTrait
         ];
         $this->currentResponse = $this->browser->request(new \Neos\Flow\Http\Uri('http://localhost/neos/ui-services/change'), 'POST', ['changes' => $changes], [], $server);
         $this->currentRequest = $this->browser->getLastRequest();
+        Assert::assertEquals(200, $this->currentResponse->getStatusCode(), 'Status code wrong. Full response was: ' . $this->currentResponse->getBody()->getContents());
     }
 
     /**
