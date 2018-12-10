@@ -1275,5 +1275,4 @@ trait EventSourcedTrait
         $nodeAddressFactory = $this->getObjectManager()->get(NodeAddressFactory::class);
         $this->currentNodeAddresses[$alias] = $nodeAddressFactory->createFromNode($node);
     }
-
 }

@@ -141,7 +141,6 @@ trait BrowserTrait
         ];
         $this->currentResponse = $this->browser->request(new \Neos\Flow\Http\Uri('http://localhost/neos/ui-services/change'), 'POST', ['changes' => $changes], [], $server);
         $this->currentRequest = $this->browser->getLastRequest();
-
     }
 
     /**
