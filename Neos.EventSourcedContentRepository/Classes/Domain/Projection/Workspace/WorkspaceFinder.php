@@ -48,26 +48,26 @@ final class WorkspaceFinder
     public function findOneByName(WorkspaceName $name): ?Workspace
     {
         // TODO consider re-introducing runtime cache
-        #if (!isset($this->cachedWorkspacesByName[(string)$name])) {
+        if (!isset($this->cachedWorkspacesByName[(string)$name])) {
 
-        $connection = $this->client->getConnection();
-        $workspaceRow = $connection->executeQuery(
-            '
+            $connection = $this->client->getConnection();
+            $workspaceRow = $connection->executeQuery(
+                '
                 SELECT * FROM neos_contentrepository_projection_workspace_v1
                 WHERE workspaceName = :workspaceName
             ',
-            [
-                ':workspaceName' => (string)$name
-            ]
-        )->fetch();
+                [
+                    ':workspaceName' => (string)$name
+                ]
+            )->fetch();
 
-        if ($workspaceRow === false) {
-            return null;
+            if ($workspaceRow === false) {
+                return null;
+            }
+
+            $workspace = Workspace::fromDatabaseRow($workspaceRow);
+            $this->cachedWorkspacesByName[(string)$name] = $workspace;
         }
-
-        $workspace = Workspace::fromDatabaseRow($workspaceRow);
-        $this->cachedWorkspacesByName[(string)$name] = $workspace;
-        #}
         return $this->cachedWorkspacesByName[(string)$name];
     }
 
@@ -78,25 +78,25 @@ final class WorkspaceFinder
     public function findOneByCurrentContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier): ?Workspace
     {
         // TODO consider re-introducing runtime cache
-        #if (!isset($this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier])) {
-        $connection = $this->client->getConnection();
-        $workspaceRow = $connection->executeQuery(
-            '
+        if (!isset($this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier])) {
+            $connection = $this->client->getConnection();
+            $workspaceRow = $connection->executeQuery(
+                '
                 SELECT * FROM neos_contentrepository_projection_workspace_v1
                 WHERE currentContentStreamIdentifier = :currentContentStreamIdentifier
             ',
-            [
-                ':currentContentStreamIdentifier' => (string)$contentStreamIdentifier
-            ]
-        )->fetch();
+                [
+                    ':currentContentStreamIdentifier' => (string)$contentStreamIdentifier
+                ]
+            )->fetch();
 
-        if ($workspaceRow === false) {
-            return null;
+            if ($workspaceRow === false) {
+                return null;
+            }
+
+            $workspace = Workspace::fromDatabaseRow($workspaceRow);
+            $this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier] = $workspace;
         }
-
-        $workspace = Workspace::fromDatabaseRow($workspaceRow);
-        $this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier] = $workspace;
-        #}
         return $this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier];
     }
 
@@ -105,7 +105,8 @@ final class WorkspaceFinder
      * @return array|Workspace[]
      * @throws \Neos\Flow\Persistence\Exception\InvalidQueryException
      */
-    public function findByPrefix(WorkspaceName $prefix): array
+    public
+    function findByPrefix(WorkspaceName $prefix): array
     {
         $result = [];
 
@@ -129,7 +130,8 @@ final class WorkspaceFinder
         return $result;
     }
 
-    public function findOneByWorkspaceOwner(string $owner): ?Workspace
+    public
+    function findOneByWorkspaceOwner(string $owner): ?Workspace
     {
         $connection = $this->client->getConnection();
         $workspaceRow = $connection->executeQuery(
@@ -151,9 +153,9 @@ final class WorkspaceFinder
 
 
     // TODO consider re-introducing runtime cache
-//    public function resetCache()
-//    {
-//        $this->cachedWorkspacesByName = [];
-//        $this->cachedWorkspacesByContentStreamIdentifier = [];
-//    }
+    public function resetCache()
+    {
+        $this->cachedWorkspacesByName = [];
+        $this->cachedWorkspacesByContentStreamIdentifier = [];
+    }
 }

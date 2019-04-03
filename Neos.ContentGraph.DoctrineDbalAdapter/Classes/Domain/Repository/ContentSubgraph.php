@@ -182,6 +182,7 @@ SELECT n.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_c
             if (is_array($nodeRow)) {
                 $node = $this->nodeFactory->mapNodeRowToNode($nodeRow);
                 $cache->add($nodeIdentifier, $node);
+                $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache()->add($node->getNodeAggregateIdentifier(), $node);
 
                 return $node;
             } else {
@@ -240,6 +241,7 @@ SELECT c.*, h.name, h.contentstreamidentifier, h.dimensionspacepoint FROM neos_c
             $result[] = $node;
             $namedChildNodeCache->add($nodeAggregateIdentifier, $node->getNodeName(), $node);
             $parentNodeIdentifierCache->add($node->getNodeAggregateIdentifier(), $nodeAggregateIdentifier);
+            $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache()->add($node->getNodeAggregateIdentifier(), $node);
         }
 
         if ($nodeTypeConstraints === null && $limit === null && $offset === null) {
@@ -475,6 +477,8 @@ SELECT p.*, h.contentstreamidentifier, hp.name, hp.dimensionspacepoint FROM neos
 
             // we also add the parent node to the NodeIdentifier => Node cache; as this might improve cache hit rates as well.
             $this->inMemoryCache->getNodeByNodeIdentifierCache()->add($node->getNodeIdentifier(), $node);
+            // we also add the parent node to the NodeAggregateIdentifier => Node cache; as this might improve cache hit rates as well.
+            $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache()->add($node->getNodeAggregateIdentifier(), $node);
         } else {
             $cache->rememberNonExistingParentNode($childNodeAggregateIdentifier);
         }
@@ -559,6 +563,7 @@ WHERE
                 $node = $this->nodeFactory->mapNodeRowToNode($nodeData);
                 if ($node) {
                     $cache->add($parentNodeAggregateIdentifier, $edgeName, $node);
+                    $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache()->add($node->getNodeAggregateIdentifier(), $node);
 
                     return $node;
                 }
@@ -790,6 +795,7 @@ order by level asc, position asc;')
 
         foreach ($result as $nodeData) {
             $node = $this->nodeFactory->mapNodeRowToNode($nodeData);
+            $this->getInMemoryCache()->getNodeByNodeAggregateIdentifierCache()->add($node->getNodeAggregateIdentifier(), $node);
             if (!isset($subtreesByNodeIdentifier[$nodeData['parentNodeIdentifier']])) {
                 throw new \Exception('TODO: must not happen');
             }
@@ -797,6 +803,14 @@ order by level asc, position asc;')
             $subtree = new Subtree($nodeData['level'], $node);
             $subtreesByNodeIdentifier[$nodeData['parentNodeIdentifier']]->add($subtree);
             $subtreesByNodeIdentifier[$nodeData['nodeidentifier']] = $subtree;
+
+
+            /* @var $tmp Subtree */
+            $tmp = $subtreesByNodeIdentifier[$nodeData['parentNodeIdentifier']];
+            if ($tmp->getNode()) {
+                $this->getInMemoryCache()->getParentNodeIdentifierByChildNodeIdentifierCache()->add($node->getNodeAggregateIdentifier(), $tmp->getNode()->getNodeAggregateIdentifier());
+            }
+
         }
 
         return $subtreesByNodeIdentifier['ROOT'];

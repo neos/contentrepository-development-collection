@@ -135,6 +135,9 @@ class NodeUriImplementation extends AbstractFusionObject
     public function evaluate()
     {
         $node = $this->getNode();
+        if (!$node) {
+            return null;
+        }
         $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
         if ($node instanceof NodeInterface) {
             $nodeAddress = $this->nodeAddressFactory->adjustWithNodeAggregateIdentifier($nodeAddress, $node->getNodeAggregateIdentifier());

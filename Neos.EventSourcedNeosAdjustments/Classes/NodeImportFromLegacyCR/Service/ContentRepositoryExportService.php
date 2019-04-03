@@ -230,7 +230,8 @@ class ContentRepositoryExportService
 
 
 
-        $excludedSet = $this->findOtherExistingDimensionSpacePointsForNodeData($nodeData);
+        //$excludedSet = $this->findOtherExistingDimensionSpacePointsForNodeData($nodeData);
+        $excludedSet = new DimensionSpacePointSet([]);
         $nodeIdentifier = NodeIdentifier::fromString($this->persistenceManager->getIdentifierByObject($nodeData));
         $this->exportNodeOrNodeAggregate(
             $nodeAggregateIdentifier,
@@ -361,13 +362,19 @@ class ContentRepositoryExportService
         $references = [];
         foreach ($nodeData->getProperties() as $propertyName => $propertyValue) {
             $type = $nodeData->getNodeType()->getPropertyType($propertyName);
-            if ($type === 'reference') {
-                $references[$propertyName] = [NodeAggregateIdentifier::fromString($propertyValue)];
-            }
-            if ($type === 'references' && is_array($propertyValue)) {
-                $references[$propertyName] = array_map(function ($identifier) {
-                    return NodeAggregateIdentifier::fromString($identifier);
-                }, $propertyValue);
+            try {
+                if ($type === 'reference') {
+                    if ($propertyValue) {
+                        $references[$propertyName] = [NodeAggregateIdentifier::fromString($propertyValue)];
+                    }
+                }
+                if ($type === 'references' && is_array($propertyValue)) {
+                    $references[$propertyName] = array_map(function ($identifier) {
+                        return NodeAggregateIdentifier::fromString($identifier);
+                    }, $propertyValue);
+                }
+            } catch (\Exception $e) {
+                echo "SKIPPING property reference with value $propertyValue\n";
             }
         }
         return $references;
@@ -380,9 +387,6 @@ class ContentRepositoryExportService
         }
 
         while ($dimensionSpacePoint !== null) {
-            if ($dimensionSpacePoint->getCoordinates()['language'] !== 'en_US') {
-                \Neos\Flow\var_dump($dimensionSpacePoint->getCoordinates());
-            }
             $key = $parentPath . '__' . $dimensionSpacePoint->getHash();
             if (isset($this->nodeIdentifiers[$key])) {
                 return $this->nodeIdentifiers[$key];
@@ -466,10 +470,8 @@ class ContentRepositoryExportService
         $publishedEvents = DomainEvents::withSingleEvent($event);
         $eventStore->commit($streamName, $publishedEvents);
 
-        $this->commandResult = $this->commandResult->merge(
-            CommandResult::fromPublishedEvents(
-                $publishedEvents
-            )
+        $this->commandResult = CommandResult::fromPublishedEvents(
+            $publishedEvents
         );
     }
 }
