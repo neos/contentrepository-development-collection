@@ -766,11 +766,16 @@ with recursive tree as (
      -- we need to join with the hierarchy relation, because we need the node name.
      inner join neos_contentgraph_hierarchyrelation h
         on h.childnodeanchor = n.relationanchorpoint
+    left join neos_contentgraph_restrictionedge r ON
+        (r.contentstreamidentifier = h.contentstreamidentifier
+        and r.dimensionspacepointhash = h.dimensionspacepointhash
+        and r.affectednodeaggregateidentifier = n.nodeaggregateidentifier)
      where
         n.nodeaggregateidentifier in (:entryNodeAggregateIdentifiers)
         and h.contentstreamidentifier = :contentStreamIdentifier
 		AND h.dimensionspacepointhash = :dimensionSpacePointHash
-		###VISIBILITY_CONSTRAINTS_INITIAL###
+		  and r.contentstreamidentifier is null
+		  and n.property__hiddeninindex is null
 union
      -- --------------------------------
      -- RECURSIVE query: do one "child" query step, taking into account the depth and node type constraints
@@ -789,12 +794,17 @@ union
         on h.parentnodeanchor = p.relationanchorpoint
 	 inner join neos_contentgraph_node c
 	    on h.childnodeanchor = c.relationanchorpoint
+    left join neos_contentgraph_restrictionedge r ON
+        (r.contentstreamidentifier = h.contentstreamidentifier
+        and r.dimensionspacepointhash = h.dimensionspacepointhash
+        and r.affectednodeaggregateidentifier = c.nodeaggregateidentifier)
 	 where
 	 	h.contentstreamidentifier = :contentStreamIdentifier
 		AND h.dimensionspacepointhash = :dimensionSpacePointHash
 		and p.level + 1 <= :maximumLevels
         ###NODE_TYPE_CONSTRAINTS###
-        ###VISIBILITY_CONSTRAINTS_RECURSION###
+        and r.contentstreamidentifier is null
+        and c.property__hiddeninindex is null
 
    -- select relationanchorpoint from neos_contentgraph_node
 )
