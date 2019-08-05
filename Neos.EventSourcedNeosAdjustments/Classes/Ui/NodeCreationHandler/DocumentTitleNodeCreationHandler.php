@@ -14,9 +14,9 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler;
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBusInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Utility\NodeUriPathSegmentGenerator;
 
@@ -30,9 +30,9 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
 
     /**
      * @Flow\Inject
-     * @var NodeAggregateCommandHandler
+     * @var CommandBusInterface
      */
-    protected $nodeAggregateCommandHandler;
+    protected $commandBus;
 
     /**
      * Set the node title for the newly created Document node
@@ -45,7 +45,7 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
     {
         if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
             if (isset($data['title'])) {
-                $this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
+                $this->commandBus->handle(new SetNodeProperties(
                     $node->getContentStreamIdentifier(),
                     $node->getNodeAggregateIdentifier(),
                     $node->getOriginDimensionSpacePoint(),
@@ -57,7 +57,7 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
                 ));
             }
 
-            $this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
+            $this->commandBus->handle(new SetNodeProperties(
                 $node->getContentStreamIdentifier(),
                 $node->getNodeAggregateIdentifier(),
                 $node->getOriginDimensionSpacePoint(),

@@ -13,6 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
  */
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\EventSourcedContentRepository\CommandHandlerInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\CreateContentStream;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamAlreadyExists;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
@@ -24,7 +26,7 @@ use Neos\EventSourcing\EventStore\EventStoreManager;
 /**
  * ContentStreamCommandHandler
  */
-final class ContentStreamCommandHandler
+final class ContentStreamCommandHandler implements CommandHandlerInterface
 {
     /**
      * @var ContentStreamRepository
@@ -48,7 +50,6 @@ final class ContentStreamCommandHandler
         $this->eventStoreManager = $eventStoreManager;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
     }
-
 
     /**
      * @param Command\CreateContentStream $command

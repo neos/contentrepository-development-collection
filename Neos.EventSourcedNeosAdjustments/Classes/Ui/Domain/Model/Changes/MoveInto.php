@@ -12,7 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBusInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
@@ -23,9 +23,9 @@ class MoveInto extends AbstractMove
 {
     /**
      * @Flow\Inject
-     * @var NodeAggregateCommandHandler
+     * @var CommandBusInterface
      */
-    protected $nodeAggregateCommandHandler;
+    protected $commandBus;
 
     /**
      * @var string
@@ -100,7 +100,7 @@ class MoveInto extends AbstractMove
                 RelationDistributionStrategy::gatherAll()
             );
 
-            $this->nodeAggregateCommandHandler->handleMoveNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
+            $this->commandBus->handle($command)->blockUntilProjectionsAreUpToDate();
 
             $updateParentNodeInfo = new \Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo();
             $updateParentNodeInfo->setNode($this->getParentNode());

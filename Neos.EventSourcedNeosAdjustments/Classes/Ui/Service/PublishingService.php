@@ -18,13 +18,13 @@ use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\RebaseWorkspace;
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Changes\Change;
 use Neos\EventSourcedContentRepository\Domain\Projection\Changes\ChangeFinder;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBusInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\Workspace;
 
@@ -60,6 +60,12 @@ class PublishingService
      * @var ChangeFinder
      */
     protected $changeFinder;
+
+    /**
+     * @Flow\Inject
+     * @var CommandBusInterface
+     */
+    protected $commandBus;
 
     /**
      * Returns a list of nodes contained in the given workspace which are not yet published
@@ -107,12 +113,6 @@ class PublishingService
 
 
     /**
-     * @Flow\Inject
-     * @var WorkspaceCommandHandler
-     */
-    protected $workspaceCommandHandler;
-
-    /**
      * @param WorkspaceName $workspaceName
      */
     public function publishWorkspace(WorkspaceName $workspaceName)
@@ -120,11 +120,11 @@ class PublishingService
         $command = new RebaseWorkspace(
             $workspaceName
         );
-        $this->workspaceCommandHandler->handleRebaseWorkspace($command)->blockUntilProjectionsAreUpToDate();
+        $this->commandBus->handle($command)->blockUntilProjectionsAreUpToDate();
 
         $command = new PublishWorkspace(
             $workspaceName
         );
-        $this->workspaceCommandHandler->handlePublishWorkspace($command)->blockUntilProjectionsAreUpToDate();
+        $this->commandBus->handle($command)->blockUntilProjectionsAreUpToDate();
     }
 }

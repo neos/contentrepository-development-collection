@@ -1,0 +1,4 @@
+Neos:
+  EventSourcedContentRepository:
+    commandHandlerMap: []
+      #'Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\CreateContentStream': 'Some\Custom\CommandHandler'

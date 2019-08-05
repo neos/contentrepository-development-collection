@@ -15,7 +15,6 @@ namespace Neos\EventSourcedNeosAdjustments\Ui;
 
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\RebaseWorkspace;
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -23,6 +22,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBusInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security\Authentication;
@@ -66,9 +66,9 @@ final class EditorContentStreamZookeeper
 
     /**
      * @Flow\Inject
-     * @var WorkspaceCommandHandler
+     * @var CommandBusInterface
      */
-    protected $workspaceCommandHandler;
+    protected $commandBus;
 
 
     /**
@@ -109,7 +109,7 @@ final class EditorContentStreamZookeeper
                         $workspaceName = $workspaceName->increment($similarlyNamedWorkspaces);
                     }
 
-                    $this->workspaceCommandHandler->handleCreateWorkspace(new CreateWorkspace(
+                    $this->commandBus->handle(new CreateWorkspace(
                         $workspaceName->toContentRepositoryWorkspaceName(),
                         $baseWorkspace->getWorkspaceName(),
                         new WorkspaceTitle((string) $user->getName()),
@@ -119,7 +119,7 @@ final class EditorContentStreamZookeeper
                         $userIdentifier
                     ))->blockUntilProjectionsAreUpToDate();
                 } else {
-                    $this->workspaceCommandHandler->handleRebaseWorkspace(new RebaseWorkspace(
+                    $this->commandBus->handle(new RebaseWorkspace(
                         $workspace->getWorkspaceName()
                     ))->blockUntilProjectionsAreUpToDate();
                 }

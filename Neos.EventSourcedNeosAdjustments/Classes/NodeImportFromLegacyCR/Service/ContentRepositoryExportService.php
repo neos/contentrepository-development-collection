@@ -47,6 +47,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBusInterface;
 use Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Service\Helpers\NodeAggregateIdentifierAndNodeTypeForLegacyImport;
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
@@ -105,6 +106,12 @@ class ContentRepositoryExportService
      * @var NodeTypeManager
      */
     protected $nodeTypeManager;
+
+    /**
+     * @Flow\Inject
+     * @var CommandBusInterface
+     */
+    protected $commandBus;
 
     /**
      * @Flow\Inject
@@ -301,7 +308,7 @@ class ContentRepositoryExportService
             if ($isTethered) {
                 // we KNOW that tethered nodes already exist; so we just set its properties.
                 if (!empty($propertyValues)) {
-                    $this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
+                    $this->commandBus->handle(new SetNodeProperties(
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $originDimensionSpacePoint,
@@ -312,7 +319,7 @@ class ContentRepositoryExportService
                 if (isset($this->alreadyCreatedNodeAggregateIdentifiers[(string)$nodeAggregateIdentifier])) {
                     $dimensionSpacePointOfAlreadyCreatedNode = $this->alreadyCreatedNodeAggregateIdentifiers[(string)$nodeAggregateIdentifier];
 
-                    $this->nodeAggregateCommandHandler->handleCreateNodeVariant(new CreateNodeVariant(
+                    $this->commandBus->handle(new CreateNodeVariant(
                     // a Node of this NodeAggregate already exists; we create a Node variant
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
@@ -320,7 +327,7 @@ class ContentRepositoryExportService
                         $originDimensionSpacePoint
                     ))->blockUntilProjectionsAreUpToDate();
 
-                    $this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
+                    $this->commandBus->handle(new SetNodeProperties(
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $originDimensionSpacePoint,
@@ -329,7 +336,7 @@ class ContentRepositoryExportService
                 } else {
                     $nodeAggregateIdentifiersByNodePaths = $this->findNodeAggregateIdentifiersForTetheredDescendantNodes($nodePath, $nodeTypeName);
 
-                    $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode(new CreateNodeAggregateWithNode(
+                    $this->commandBus->handle(new CreateNodeAggregateWithNode(
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $nodeTypeName,
@@ -348,7 +355,7 @@ class ContentRepositoryExportService
 
             // publish reference edges
             foreach ($propertyReferences as $propertyName => $references) {
-                $this->nodeAggregateCommandHandler->handleSetNodeReferences(new SetNodeReferences(
+                $this->commandBus->handle(new SetNodeReferences(
                     $this->contentStreamIdentifier,
                     $nodeAggregateIdentifier,
                     $originDimensionSpacePoint,
@@ -358,7 +365,7 @@ class ContentRepositoryExportService
             }
 
             if ($isHidden === true) {
-                $this->nodeAggregateCommandHandler->handleDisableNodeAggregate(new DisableNodeAggregate(
+                $this->commandBus->handle(new DisableNodeAggregate(
                     $this->contentStreamIdentifier,
                     $nodeAggregateIdentifier,
                     $originDimensionSpacePoint,

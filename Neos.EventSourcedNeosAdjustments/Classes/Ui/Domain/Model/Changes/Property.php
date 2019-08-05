@@ -21,10 +21,10 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Disa
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBusInterface;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\ReloadContentOutOfBand;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
@@ -88,9 +88,9 @@ class Property extends AbstractChange
 
     /**
      * @Flow\Inject
-     * @var NodeAggregateCommandHandler
+     * @var CommandBusInterface
      */
-    protected $nodeAggregateCommandHandler;
+    protected $commandBus;
 
     /**
      * Set the property name
@@ -222,7 +222,7 @@ class Property extends AbstractChange
                         ]
                     )
                 );
-                $this->nodeAggregateCommandHandler->handleSetNodeProperties($command)->blockUntilProjectionsAreUpToDate();
+                $this->commandBus->handle($command)->blockUntilProjectionsAreUpToDate();
             } else {
                 // property starts with "_"
                 if ($propertyName === '_nodeType') {
@@ -237,7 +237,7 @@ class Property extends AbstractChange
                             $node->getOriginDimensionSpacePoint(),
                             NodeVariantSelectionStrategyIdentifier::allSpecializations()
                         );
-                        $this->nodeAggregateCommandHandler->handleDisableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
+                        $this->commandBus->handle($command)->blockUntilProjectionsAreUpToDate();
                     } else {
                         // unhide
                         $command = new EnableNodeAggregate(
@@ -246,7 +246,7 @@ class Property extends AbstractChange
                             $node->getOriginDimensionSpacePoint(),
                             NodeVariantSelectionStrategyIdentifier::allSpecializations()
                         );
-                        $this->nodeAggregateCommandHandler->handleEnableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
+                        $this->commandBus->handle($command)->blockUntilProjectionsAreUpToDate();
                     }
                 } else {
                     throw new \Exception("TODO FIX");

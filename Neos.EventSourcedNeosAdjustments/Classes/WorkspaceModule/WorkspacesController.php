@@ -21,13 +21,13 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\DiscardWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Changes\ChangeFinder;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBusInterface;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace\WorkspaceName as NeosWorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
@@ -127,9 +127,9 @@ class WorkspacesController extends AbstractModuleController
 
     /**
      * @Flow\Inject
-     * @var WorkspaceCommandHandler
+     * @var CommandBusInterface
      */
-    protected $workspaceCommandHandler;
+    protected $commandBus;
 
     /**
      * @return void
@@ -445,7 +445,7 @@ class WorkspacesController extends AbstractModuleController
         $workspace = $this->workspaceFinder->findOneByName($workspace);
         $baseWorkspace = $this->workspaceFinder->findOneByName($workspace->getBaseWorkspaceName());
 
-        $this->workspaceCommandHandler->handlePublishWorkspace(new PublishWorkspace($workspace->getWorkspaceName()))->blockUntilProjectionsAreUpToDate();
+        $this->commandBus->handle(new PublishWorkspace($workspace->getWorkspaceName()))->blockUntilProjectionsAreUpToDate();
         $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenPublished', [htmlspecialchars($workspace->getWorkspaceName()->getName()), htmlspecialchars($baseWorkspace->getWorkspaceName()->getName())], null, null, 'Modules', 'Neos.Neos'));
         $this->redirect('index');
     }
@@ -458,7 +458,7 @@ class WorkspacesController extends AbstractModuleController
     public function discardWorkspaceAction(WorkspaceName $workspace)
     {
         $workspace = $this->workspaceFinder->findOneByName($workspace);
-        $this->workspaceCommandHandler->handleDiscardWorkspace(new DiscardWorkspace($workspace->getWorkspaceName()))->blockUntilProjectionsAreUpToDate();
+        $this->commandBus->handle(new DiscardWorkspace($workspace->getWorkspaceName()))->blockUntilProjectionsAreUpToDate();
 
         $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenDiscarded', [htmlspecialchars($workspace->getWorkspaceName()->getName())], null, null, 'Modules', 'Neos.Neos'));
         $this->redirect('index');

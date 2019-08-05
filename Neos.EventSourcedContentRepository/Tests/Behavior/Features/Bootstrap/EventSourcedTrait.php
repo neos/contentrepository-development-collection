@@ -26,7 +26,6 @@ use Neos\ContentRepository\Exception\NodeException;
 use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamAlreadyExists;
-use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository;
@@ -60,13 +59,12 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInt
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
-use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBusInterface;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\NodeDiscriminator;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
@@ -461,8 +459,7 @@ trait EventSourcedTrait
         }
         $command = CreateRootWorkspace::fromArray($commandArguments);
 
-        $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
-            ->handleCreateRootWorkspace($command);
+        $this->lastCommandOrEventResult = $this->getCommandBus()->handle($command);
     }
 
     /**
@@ -501,8 +498,7 @@ trait EventSourcedTrait
         $commandArguments = $this->readPayloadTable($payloadTable);
         $command = CreateRootNodeAggregateWithNode::fromArray($commandArguments);
 
-        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleCreateRootNodeAggregateWithNode($command);
+        $this->lastCommandOrEventResult = $this->getCommandBus()->handle($command);
         $this->rootNodeAggregateIdentifier = $command->getNodeAggregateIdentifier();
     }
 
@@ -537,8 +533,7 @@ trait EventSourcedTrait
         }
         $command = CreateNodeAggregateWithNode::fromArray($commandArguments);
 
-        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleCreateNodeAggregateWithNode($command);
+        $this->lastCommandOrEventResult = $this->getCommandBus()->handle($command);
     }
 
     /**
@@ -571,8 +566,7 @@ trait EventSourcedTrait
         $commandArguments = $this->readPayloadTable($payloadTable);
 
         $command = CreateNodeVariant::fromArray($commandArguments);
-        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleCreateNodeVariant($command);
+        $this->lastCommandOrEventResult = $this->getCommandBus()->handle($command);
     }
 
     /**
@@ -602,8 +596,7 @@ trait EventSourcedTrait
         }
         $command = SetNodeReferences::fromArray($commandArguments);
 
-        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleSetNodeReferences($command);
+        $this->lastCommandOrEventResult = $this->getCommandBus()->handle($command);
     }
 
     /**
@@ -629,8 +622,7 @@ trait EventSourcedTrait
         $commandArguments = $this->readPayloadTable($payloadTable);
         $command = RemoveNodeAggregate::fromArray($commandArguments);
 
-        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleRemoveNodeAggregate($command);
+        $this->lastCommandOrEventResult = $this->getCommandBus()->handle($command);
     }
 
     /**
@@ -655,13 +647,8 @@ trait EventSourcedTrait
     public function theCommandChangeNodeAggregateTypeIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-
         $command = ChangeNodeAggregateType::fromArray($commandArguments);
-
-        /** @var NodeAggregateCommandHandler $commandHandler */
-        $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
-
-        $commandHandler->handleChangeNodeAggregateType($command);
+        $this->getCommandBus()->handle($command);
     }
 
     /**
@@ -691,8 +678,7 @@ trait EventSourcedTrait
         }
         $command = MoveNodeAggregate::fromArray($commandArguments);
 
-        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleMoveNodeAggregate($command);
+        $this->lastCommandOrEventResult = $this->getCommandBus()->handle($command);
     }
 
     /**
@@ -724,8 +710,7 @@ trait EventSourcedTrait
         $commandArguments = $this->readPayloadTable($payloadTable);
         $command = PublishIndividualNodesFromWorkspace::fromArray($commandArguments);
 
-        $this->lastCommandOrEventResult = $this->getWorkspaceCommandHandler()
-            ->handlePublishIndividualNodesFromWorkspace($command);
+        $this->lastCommandOrEventResult = $this->getCommandBus()->handle($command);
     }
 
     /**
@@ -738,8 +723,7 @@ trait EventSourcedTrait
         $commandArguments = $this->readPayloadTable($payloadTable);
         $command = DisableNodeAggregate::fromArray($commandArguments);
 
-        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleDisableNodeAggregate($command);
+        $this->lastCommandOrEventResult = $this->getCommandBus()->handle($command);
     }
 
     /**
@@ -765,8 +749,7 @@ trait EventSourcedTrait
         $commandArguments = $this->readPayloadTable($payloadTable);
         $command = EnableNodeAggregate::fromArray($commandArguments);
 
-        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
-            ->handleEnableNodeAggregate($command);
+        $this->lastCommandOrEventResult = $this->getCommandBus()->handle($command);
     }
 
     /**
@@ -794,8 +777,7 @@ trait EventSourcedTrait
         $commandArguments = $this->readPayloadTable($payloadTable);
         $command = ForkContentStream::fromArray($commandArguments);
 
-        $this->lastCommandOrEventResult = $this->getContentStreamCommandHandler()
-            ->handleForkContentStream($command);
+        $this->lastCommandOrEventResult = $this->getCommandBus()->handle($command);
     }
 
     /**
@@ -808,7 +790,7 @@ trait EventSourcedTrait
      */
     public function theCommandIsExecutedWithPayload(string $shortCommandName, TableNode $payloadTable = null, $commandArguments = null)
     {
-        list($commandClassName, $commandHandlerClassName, $commandHandlerMethod) = self::resolveShortCommandName($shortCommandName);
+        $commandClassName = self::resolveShortCommandName($shortCommandName);
         if ($commandArguments === null && $payloadTable !== null) {
             $commandArguments = $this->readPayloadTable($payloadTable);
         }
@@ -817,10 +799,7 @@ trait EventSourcedTrait
             throw new \InvalidArgumentException(sprintf('Command "%s" does not implement a static "fromArray" constructor', $commandClassName), 1545564621);
         }
         $command = $commandClassName::fromArray($commandArguments);
-
-        $commandHandler = $this->getObjectManager()->get($commandHandlerClassName);
-
-        $this->lastCommandOrEventResult = $commandHandler->$commandHandlerMethod($command);
+        $this->lastCommandOrEventResult = $this->getCommandBus()->handle($command);
 
         // @todo check whether this is necessary at all
         if (isset($commandArguments['rootNodeAggregateIdentifier'])) {
@@ -854,90 +833,38 @@ trait EventSourcedTrait
 
     /**
      * @param $shortCommandName
-     * @return array
+     * @return string
      * @throws Exception
      */
     protected static function resolveShortCommandName($shortCommandName)
     {
         switch ($shortCommandName) {
             case 'CreateRootWorkspace':
-                return [
-                    CreateRootWorkspace::class,
-                    WorkspaceCommandHandler::class,
-                    'handleCreateRootWorkspace'
-                ];
+                return CreateRootWorkspace::class;
             case 'CreateWorkspace':
-                return [
-                    CreateWorkspace::class,
-                    WorkspaceCommandHandler::class,
-                    'handleCreateWorkspace'
-                ];
+                return CreateWorkspace::class;
             case 'PublishWorkspace':
-                return [
-                    PublishWorkspace::class,
-                    WorkspaceCommandHandler::class,
-                    'handlePublishWorkspace'
-                ];
+                return PublishWorkspace::class;
             case 'PublishIndividualNodesFromWorkspace':
-                return [
-                    PublishIndividualNodesFromWorkspace::class,
-                    WorkspaceCommandHandler::class,
-                    'handlePublishIndividualNodesFromWorkspace'
-                ];
+                return PublishIndividualNodesFromWorkspace::class;
             case 'RebaseWorkspace':
-                return [
-                    RebaseWorkspace::class,
-                    WorkspaceCommandHandler::class,
-                    'handleRebaseWorkspace'
-                ];
+                return RebaseWorkspace::class;
             case 'CreateNodeAggregateWithNode':
-                return [
-                    CreateNodeAggregateWithNode::class,
-                    NodeAggregateCommandHandler::class,
-                    'handleCreateNodeAggregateWithNode'
-                ];
+                return CreateNodeAggregateWithNode::class;
             case 'ForkContentStream':
-                return [
-                    ForkContentStream::class,
-                    ContentStreamCommandHandler::class,
-                    'handleForkContentStream'
-                ];
+                return ForkContentStream::class;
             case 'ChangeNodeAggregateName':
-                return [
-                    ChangeNodeAggregateName::class,
-                    NodeAggregateCommandHandler::class,
-                    'handleChangeNodeAggregateName'
-                ];
+                return ChangeNodeAggregateName::class;
             case 'SetNodeProperties':
-                return [
-                    SetNodeProperties::class,
-                    NodeAggregateCommandHandler::class,
-                    'handleSetNodeProperties'
-                ];
+                return SetNodeProperties::class;
             case 'DisableNodeAggregate':
-                return [
-                    DisableNodeAggregate::class,
-                    NodeAggregateCommandHandler::class,
-                    'handleDisableNodeAggregate'
-                ];
+                return DisableNodeAggregate::class;
             case 'EnableNodeAggregate':
-                return [
-                    EnableNodeAggregate::class,
-                    NodeAggregateCommandHandler::class,
-                    'handleEnableNodeAggregate'
-                ];
+                return EnableNodeAggregate::class;
             case 'MoveNodeAggregate':
-                return [
-                    MoveNodeAggregate::class,
-                    NodeAggregateCommandHandler::class,
-                    'handleMoveNodeAggregate'
-                ];
+                return MoveNodeAggregate::class;
             case 'SetNodeReferences':
-                return [
-                    SetNodeReferences::class,
-                    NodeAggregateCommandHandler::class,
-                    'handleSetNodeReferences'
-                ];
+                return SetNodeReferences::class;
 
             default:
                 throw new \Exception('The short command name "' . $shortCommandName . '" is currently not supported by the tests.');
@@ -1706,28 +1633,12 @@ trait EventSourcedTrait
             ->findNodeByPath(NodePath::fromString($serializedNodePath), $this->getRootNodeAggregateIdentifier());
     }
 
-    protected function getWorkspaceCommandHandler(): WorkspaceCommandHandler
+    protected function getCommandBus(): CommandBusInterface
     {
-        /** @var WorkspaceCommandHandler $commandHandler */
-        $commandHandler = $this->getObjectManager()->get(WorkspaceCommandHandler::class);
+        /** @var CommandBusInterface $commandBus */
+        $commandBus = $this->getObjectManager()->get(CommandBusInterface::class);
 
-        return $commandHandler;
-    }
-
-    protected function getContentStreamCommandHandler(): ContentStreamCommandHandler
-    {
-        /** @var ContentStreamCommandHandler $commandHandler */
-        $commandHandler = $this->getObjectManager()->get(ContentStreamCommandHandler::class);
-
-        return $commandHandler;
-    }
-
-    protected function getNodeAggregateCommandHandler(): NodeAggregateCommandHandler
-    {
-        /** @var NodeAggregateCommandHandler $commandHandler */
-        $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
-
-        return $commandHandler;
+        return $commandBus;
     }
 
     protected function getRootNodeAggregateIdentifier(): ?NodeAggregateIdentifier
