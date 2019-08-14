@@ -8,7 +8,8 @@
     "require": {
         "neos/event-sourcing": "*",
         "neos/content-repository": "*",
-        "neos/content-repository-dimensionspace": "*"
+        "neos/content-repository-dimensionspace": "*",
+        "doctrine/migrations": "^1.8"
     },
     "autoload": {
         "psr-4": {

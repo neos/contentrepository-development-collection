@@ -1,0 +1,22 @@
+{
+  "name": "neos/standalone-cr-shims",
+  "version": "dev-master",
+  "license": [
+    "GPL-3.0-or-later"
+  ],
+  "type": "library",
+  "replace": {
+    "neos/flow": "self.version",
+    "neos/eel": "self.version",
+    "neos/fluid-adaptor": "self.version"
+  },
+  "require": {
+    "ramsey/uuid": "^3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Neos\\Flow\\Utility\\": "src/NeosFlowUtility",
+      "Neos\\Flow\\Persistence\\Doctrine\\DataTypes\\": "src/NeosFlowPersistenceDoctrineDataTypes"
+    }
+  }
+}

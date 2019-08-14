@@ -1,0 +1,40 @@
+{
+  "name": "neos/standalone-cr-example",
+  "description": "Example for Standalone CR",
+  "authors": [
+    {
+      "name": "Sebastian Kurfürst",
+      "email": "sebastian@neos.io",
+      "homepage": "https://neos.io"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../Neos.EventSourcedContentRepository/"
+    },
+    {
+      "type": "path",
+      "url": "../Neos.ContentGraph.DoctrineDbalAdapter/"
+    },
+    {
+      "type": "path",
+      "url": "./shims/"
+    },
+    {
+      "type": "git",
+      "url": "https://github.com/neos/content-repository-dimensionspace.git"
+    }
+  ],
+  "require": {
+    "neos/standalone-cr-shims": "dev-master",
+    "neos/event-sourced-content-repository": "dev-draft-standalone-cr",
+    "neos/contentgraph-doctrinedbaladapter": "dev-draft-standalone-cr"
+  },
+  "minimum-stability": "dev",
+  "autoload": {
+    "psr-4": {
+      "Neos\\StandaloneCrExample\\": "src/"
+    }
+  }
+}
