@@ -66,7 +66,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBusInterface;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\NodeDiscriminator;
-use Neos\EventSourcedNeosAdjustments\Domain\Context\Content\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\Event\EventTypeResolver;
@@ -1554,7 +1554,7 @@ trait EventSourcedTrait
     }
 
     /**
-     * @var NodeAddress[]
+     * @var \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress[]
      */
     private $currentNodeAddresses;
 

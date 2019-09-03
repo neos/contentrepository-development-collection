@@ -167,7 +167,7 @@ The resulting `composer.json` file should look something like this:
 
 6. After that, run `./flow flow:package:rescan`.
 
-**HINT**: If you experice issues clear the Date/Temporary directory and run the command again.
+**HINT**: If you experice issues clear the `Data/Temporary` directory and run the command again.
 
 7. If using dimensions, the dimension configuration has changed. Use the following configuration in `Settings.yaml` for the Demo site (Adjust as needed):
 
@@ -277,6 +277,7 @@ Neos:
 - [x] command to import from NodeData to events
 - [x] make it work with Neos.ContentRepository.DimensionSpace package
 - [x] ensure Behavioral Tests run again
+- [ ] Content Cache (#103)
 - [ ] ensure Functional Tests run again
 - [x] figure out how/if to use event sourced Site/Domain (!possibly difficult!) -> fixed; won't use event sourced site/domain
 - [x] change RoutePart Handler when using event-sourced mode
