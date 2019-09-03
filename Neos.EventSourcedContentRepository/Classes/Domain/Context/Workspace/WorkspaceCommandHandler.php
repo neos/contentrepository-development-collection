@@ -53,7 +53,6 @@ use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCach
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventEnvelope;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\EventSourcing\EventStore\Exception\ConcurrencyException;
 use Neos\EventSourcing\EventStore\Exception\EventStreamNotFoundException;
