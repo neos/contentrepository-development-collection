@@ -14,5 +14,4 @@ namespace Neos\EventSourcedContentRepository;
 
 interface CommandHandlerInterface
 {
-
 }
