@@ -16,13 +16,13 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpac
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBus;
 use Neos\EventSourcedNeosAdjustments\FusionCaching\ContentCacheFlusher;
-use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\RemoveNode;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Removes a node
@@ -31,9 +31,9 @@ class Remove extends AbstractChange
 {
     /**
      * @Flow\Inject
-     * @var NodeAggregateCommandHandler
+     * @var CommandBus
      */
-    protected $nodeAggregateCommandHandler;
+    protected $commandBus;
 
     /**
      * @Flow\Inject
@@ -79,7 +79,7 @@ class Remove extends AbstractChange
                 NodeVariantSelectionStrategyIdentifier::allSpecializations()
             );
 
-            $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
+            $this->commandBus->handleBlocking($command);
 
             $removeNode = new RemoveNode($node, $parentNode);
             $this->feedbackCollection->add($removeNode);

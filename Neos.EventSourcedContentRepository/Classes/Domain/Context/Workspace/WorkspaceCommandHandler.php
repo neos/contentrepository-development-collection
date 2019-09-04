@@ -13,7 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\Workspace;
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
+use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
+use Neos\EventSourcedContentRepository\CommandHandlerInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\CreateContentStream;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Command\ForkContentStream;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamCommandHandler;
@@ -21,19 +22,9 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamAlreadyExists;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeNameIsAlreadyOccupied;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
@@ -47,13 +38,12 @@ use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\Worksp
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Exception\WorkspaceDoesNotExist;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBus;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventStore\EventEnvelope;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcing\EventStore\EventStoreManager;
 use Neos\EventSourcing\EventStore\Exception\ConcurrencyException;
 use Neos\EventSourcing\EventStore\Exception\EventStreamNotFoundException;
@@ -63,7 +53,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * WorkspaceCommandHandler
  */
-final class WorkspaceCommandHandler
+final class WorkspaceCommandHandler implements CommandHandlerInterface
 {
     /**
      * @Flow\Inject
@@ -73,15 +63,15 @@ final class WorkspaceCommandHandler
 
     /**
      * @Flow\Inject
-     * @var NodeAggregateCommandHandler
-     */
-    protected $nodeAggregateCommandHandler;
-
-    /**
-     * @Flow\Inject
      * @var ContentStreamCommandHandler
      */
     protected $contentStreamCommandHandler;
+
+    /**
+     * @Flow\Inject
+     * @var CommandBus
+     */
+    protected $commandBus;
 
     /**
      * @Flow\Inject
@@ -352,12 +342,12 @@ final class WorkspaceCommandHandler
         // - fork a new content stream
         // - extract the commands from the to-be-rebased content stream; and applies them on the new content stream
         $rebasedContentStream = ContentStreamIdentifier::create();
-        $this->contentStreamCommandHandler->handleForkContentStream(
+        $this->commandBus->handleBlocking(
             new ForkContentStream(
                 $rebasedContentStream,
                 $baseWorkspace->getCurrentContentStreamIdentifier()
             )
-        )->blockUntilProjectionsAreUpToDate();
+        );
 
         $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
 
@@ -369,7 +359,7 @@ final class WorkspaceCommandHandler
 
             // try to apply the command on the rebased content stream
             $commandToRebase = $originalCommand->createCopyForContentStream($rebasedContentStream);
-            $this->applyCommand($commandToRebase)->blockUntilProjectionsAreUpToDate();
+            $this->commandBus->handleBlocking($commandToRebase);
         }
 
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
@@ -421,50 +411,6 @@ final class WorkspaceCommandHandler
     }
 
     /**
-     * @param $command
-     * @return CommandResult
-     * @throws \Neos\ContentRepository\Exception\NodeConstraintException
-     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
-     * @throws ContentStreamDoesNotExistYet
-     * @throws NodeNameIsAlreadyOccupied
-     * @throws NodeAggregatesTypeIsAmbiguous
-     * @throws DimensionSpacePointNotFound
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
-     */
-    private function applyCommand($command): CommandResult
-    {
-        switch (get_class($command)) {
-            case ChangeNodeAggregateName::class:
-                return $this->nodeAggregateCommandHandler->handleChangeNodeAggregateName($command);
-                break;
-            case CreateNodeAggregateWithNode::class:
-                return $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode($command);
-                break;
-            case MoveNodeAggregate::class:
-                return $this->nodeAggregateCommandHandler->handleMoveNodeAggregate($command);
-                break;
-            case SetNodeProperties::class:
-                return $this->nodeAggregateCommandHandler->handleSetNodeProperties($command);
-                break;
-            case DisableNodeAggregate::class:
-                return $this->nodeAggregateCommandHandler->handleDisableNodeAggregate($command);
-                break;
-            case EnableNodeAggregate::class:
-                return $this->nodeAggregateCommandHandler->handleEnableNodeAggregate($command);
-                break;
-            case SetNodeReferences::class:
-                return $this->nodeAggregateCommandHandler->handleSetNodeReferences($command);
-                break;
-            case RemoveNodeAggregate::class:
-                return $this->nodeAggregateCommandHandler->handleRemoveNodeAggregate($command);
-                break;
-            default:
-                throw new \Exception(sprintf('TODO: Command %s is not supported by handleRebaseWorkspace() currently... Please implement it there.', get_class($command)));
-        }
-    }
-
-    /**
      * This method is like a combined Rebase and Publish!
      *
      * @param Command\PublishIndividualNodesFromWorkspace $command
@@ -510,28 +456,28 @@ final class WorkspaceCommandHandler
 
         // 2) fork a new contentStream, based on the base WS, and apply MATCHING
         $matchingContentStream = ContentStreamIdentifier::create();
-        $this->contentStreamCommandHandler->handleForkContentStream(
+        $this->commandBus->handleBlocking(
             new ForkContentStream(
                 $matchingContentStream,
                 $baseWorkspace->getCurrentContentStreamIdentifier()
             )
-        )->blockUntilProjectionsAreUpToDate();
+        );
 
         foreach ($matchingCommands as $matchingCommand) {
-            $this->applyCommand($matchingCommand->createCopyForContentStream($matchingContentStream))->blockUntilProjectionsAreUpToDate();
+            $this->commandBus->handleBlocking($matchingCommand->createCopyForContentStream($matchingContentStream));
         }
 
         // 3) fork a new contentStream, based on the matching content stream, and apply REST
         $remainingContentStream = ContentStreamIdentifier::create();
-        $this->contentStreamCommandHandler->handleForkContentStream(
+        $this->commandBus->handleBlocking(
             new ForkContentStream(
                 $remainingContentStream,
                 $matchingContentStream
             )
-        )->blockUntilProjectionsAreUpToDate();
+        );
 
         foreach ($remainingCommands as $remainingCommand) {
-            $this->applyCommand($remainingCommand->createCopyForContentStream($remainingContentStream))->blockUntilProjectionsAreUpToDate();
+            $this->commandBus->handleBlocking($remainingCommand->createCopyForContentStream($remainingContentStream));
         }
 
         // 4) if that all worked out, take EVENTS(MATCHING) and apply them to base WS.
@@ -560,7 +506,7 @@ final class WorkspaceCommandHandler
 
     /**
      * @param object $command
-     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress[] $nodeAddresses
+     * @param NodeAddress[] $nodeAddresses
      * @return bool
      * @throws \Exception
      */
@@ -591,12 +537,12 @@ final class WorkspaceCommandHandler
 
 
         $newContentStream = ContentStreamIdentifier::create();
-        $this->contentStreamCommandHandler->handleForkContentStream(
+        $this->commandBus->handleBlocking(
             new ForkContentStream(
                 $newContentStream,
                 $baseWorkspace->getCurrentContentStreamIdentifier()
             )
-        )->blockUntilProjectionsAreUpToDate();
+        );
 
         // TODO: "Rebased" is not the correct wording here!
         $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());

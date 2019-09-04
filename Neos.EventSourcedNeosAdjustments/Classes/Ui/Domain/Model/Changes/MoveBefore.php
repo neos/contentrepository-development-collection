@@ -12,20 +12,20 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
  * source code.
  */
 
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
-use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBus;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
+use Neos\Flow\Annotations as Flow;
 
 class MoveBefore extends AbstractMove
 {
 
     /**
      * @Flow\Inject
-     * @var NodeAggregateCommandHandler
+     * @var CommandBus
      */
-    protected $nodeAggregateCommandHandler;
+    protected $commandBus;
 
     /**
      * "Subject" is the to-be-moved node; the "sibling" node is the node after which the "Subject" should be copied.
@@ -69,7 +69,7 @@ class MoveBefore extends AbstractMove
             );
 
             $this->contentCacheFlusher->registerNodeChange($subject);
-            $this->nodeAggregateCommandHandler->handleMoveNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
+            $this->commandBus->handleBlocking($command);
 
             $updateParentNodeInfo = new \Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo();
             $updateParentNodeInfo->setNode($succeedingSibling->findParentNode());
