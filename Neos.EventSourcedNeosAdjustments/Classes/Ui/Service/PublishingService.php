@@ -12,6 +12,7 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface;
@@ -24,9 +25,8 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInt
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBusInterface;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBus;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\Workspace;
 
 /**
  * A generic ContentRepository Publishing Service
@@ -63,7 +63,7 @@ class PublishingService
 
     /**
      * @Flow\Inject
-     * @var CommandBusInterface
+     * @var CommandBus
      */
     protected $commandBus;
 
@@ -120,11 +120,11 @@ class PublishingService
         $command = new RebaseWorkspace(
             $workspaceName
         );
-        $this->commandBus->handle($command)->blockUntilProjectionsAreUpToDate();
+        $this->commandBus->handleBlocking($command);
 
         $command = new PublishWorkspace(
             $workspaceName
         );
-        $this->commandBus->handle($command)->blockUntilProjectionsAreUpToDate();
+        $this->commandBus->handleBlocking($command);
     }
 }

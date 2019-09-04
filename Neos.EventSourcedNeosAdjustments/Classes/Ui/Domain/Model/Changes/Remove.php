@@ -17,12 +17,12 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\Co
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
-use Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBusInterface;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBus;
 use Neos\EventSourcedNeosAdjustments\FusionCaching\ContentCacheFlusher;
-use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\RemoveNode;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Removes a node
@@ -31,7 +31,7 @@ class Remove extends AbstractChange
 {
     /**
      * @Flow\Inject
-     * @var CommandBusInterface
+     * @var CommandBus
      */
     protected $commandBus;
 
@@ -79,7 +79,7 @@ class Remove extends AbstractChange
                 NodeVariantSelectionStrategyIdentifier::allSpecializations()
             );
 
-            $this->commandBus->handle($command)->blockUntilProjectionsAreUpToDate();
+            $this->commandBus->handleBlocking($command);
 
             $removeNode = new RemoveNode($node, $parentNode);
             $this->feedbackCollection->add($removeNode);

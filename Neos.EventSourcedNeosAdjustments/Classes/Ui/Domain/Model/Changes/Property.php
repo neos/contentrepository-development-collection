@@ -17,24 +17,24 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeServiceInterface;
+use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\EnableNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
-use Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBusInterface;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBus;
 use Neos\EventSourcedNeosAdjustments\FusionCaching\ContentCacheFlusher;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\AbstractChange;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\ReloadContentOutOfBand;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\NodePropertyConversionService;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\Neos\Ui\Domain\Model\RenderedNodeDomAddress;
 use Neos\Utility\ObjectAccess;
 
@@ -92,7 +92,7 @@ class Property extends AbstractChange
 
     /**
      * @Flow\Inject
-     * @var CommandBusInterface
+     * @var CommandBus
      */
     protected $commandBus;
 
@@ -245,7 +245,7 @@ class Property extends AbstractChange
                     $destinationNodeAggregateIdentifiers,
                     PropertyName::fromString($propertyName)
                 );
-                $this->nodeAggregateCommandHandler->handleSetNodeReferences($command)->blockUntilProjectionsAreUpToDate();
+                $this->commandBus->handleBlocking($command);
             } else {
                 $value = $this->nodePropertyConversionService->convert(
                     $node->getNodeType(),
@@ -266,7 +266,7 @@ class Property extends AbstractChange
                             ]
                         )
                     );
-                    $this->nodeAggregateCommandHandler->handleSetNodeProperties($command)->blockUntilProjectionsAreUpToDate();
+                    $this->commandBus->handleBlocking($command);
                 } else {
                     // property starts with "_"
                     if ($propertyName === '_nodeType') {
@@ -281,7 +281,7 @@ class Property extends AbstractChange
                                 $node->getOriginDimensionSpacePoint(),
                                 NodeVariantSelectionStrategyIdentifier::allSpecializations()
                             );
-                            $this->nodeAggregateCommandHandler->handleDisableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
+                            $this->commandBus->handleBlocking($command);
                         } else {
                             // unhide
                             $command = new EnableNodeAggregate(
@@ -290,7 +290,7 @@ class Property extends AbstractChange
                                 $node->getOriginDimensionSpacePoint(),
                                 NodeVariantSelectionStrategyIdentifier::allSpecializations()
                             );
-                            $this->nodeAggregateCommandHandler->handleEnableNodeAggregate($command)->blockUntilProjectionsAreUpToDate();
+                            $this->commandBus->handleBlocking($command);
                         }
                     } else {
                         throw new \Exception("TODO FIX");

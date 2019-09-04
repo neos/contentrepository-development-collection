@@ -16,7 +16,7 @@ use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
-use Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBusInterface;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBus;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\NodeUriPathSegmentGenerator;
 use Neos\Flow\Annotations as Flow;
 
@@ -30,7 +30,7 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
 
     /**
      * @Flow\Inject
-     * @var CommandBusInterface
+     * @var CommandBus
      */
     protected $commandBus;
 
@@ -58,7 +58,7 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
             }
 
             $uriPathSegment = $this->nodeUriPathSegmentGenerator->generateUriPathSegment($node, $data['title']);
-            $this->commandBus->handle(new SetNodeProperties(
+            $this->commandBus->handleBlocking(new SetNodeProperties(
                 $node->getContentStreamIdentifier(),
                 $node->getNodeAggregateIdentifier(),
                 $node->getOriginDimensionSpacePoint(),
@@ -67,7 +67,7 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
                         'uriPathSegment' => new PropertyValue($uriPathSegment, 'string')
                     ]
                 )
-            ))->blockUntilProjectionsAreUpToDate();
+            ));
             // TODO: re-enable line below
             // $node->setProperty('uriPathSegment', $this->nodeUriPathSegmentGenerator->generateUriPathSegment($node, (isset($data['title']) ? $data['title'] : null)));
         }

@@ -35,8 +35,3 @@ Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjecto
         arguments:
           1:
             value: Neos_EventSourcedContentRepository_ProcessedWorkspaceEvents
-
-Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBusInterface:
-  scope: singleton
-  factoryObjectName: 'Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBusFactory'
-  factoryMethodName: get

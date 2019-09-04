@@ -15,9 +15,13 @@ namespace Neos\EventSourcedNeosAdjustments\WorkspaceModule;
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Exception\WorkspaceException;
+use Neos\ContentRepository\TypeConverter\NodeConverter;
+use Neos\ContentRepository\Utility;
 use Neos\Diff\Diff;
 use Neos\Diff\Renderer\Html\HtmlArrayRenderer;
 use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\Error\Messages\Message;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\DiscardWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\PublishWorkspace;
@@ -27,10 +31,9 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBusInterface;
+use Neos\EventSourcedContentRepository\Service\Infrastructure\CommandBus\CommandBus;
 use Neos\EventSourcedNeosAdjustments\Domain\Context\Workspace\WorkspaceName as NeosWorkspaceName;
 use Neos\Flow\Annotations as Flow;
-use Neos\Error\Messages\Message;
 use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Package\PackageManager;
@@ -45,9 +48,6 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Service\PublishingService;
-use Neos\ContentRepository\Exception\WorkspaceException;
-use Neos\ContentRepository\TypeConverter\NodeConverter;
-use Neos\ContentRepository\Utility;
 use Neos\Neos\Utility\User as UserUtility;
 
 /**
@@ -127,7 +127,7 @@ class WorkspacesController extends AbstractModuleController
 
     /**
      * @Flow\Inject
-     * @var CommandBusInterface
+     * @var CommandBus
      */
     protected $commandBus;
 
@@ -445,7 +445,7 @@ class WorkspacesController extends AbstractModuleController
         $workspace = $this->workspaceFinder->findOneByName($workspace);
         $baseWorkspace = $this->workspaceFinder->findOneByName($workspace->getBaseWorkspaceName());
 
-        $this->commandBus->handle(new PublishWorkspace($workspace->getWorkspaceName()))->blockUntilProjectionsAreUpToDate();
+        $this->commandBus->handleBlocking(new PublishWorkspace($workspace->getWorkspaceName()));
         $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenPublished', [htmlspecialchars($workspace->getWorkspaceName()->getName()), htmlspecialchars($baseWorkspace->getWorkspaceName()->getName())], null, null, 'Modules', 'Neos.Neos'));
         $this->redirect('index');
     }
@@ -455,10 +455,10 @@ class WorkspacesController extends AbstractModuleController
      *
      * @param WorkspaceName $workspace
      */
-    public function discardWorkspaceAction(WorkspaceName $workspace)
+    public function discardWorkspaceAction(WorkspaceName $workspaceName)
     {
-        $workspace = $this->workspaceFinder->findOneByName($workspace);
-        $this->commandBus->handle(new DiscardWorkspace($workspace->getWorkspaceName()))->blockUntilProjectionsAreUpToDate();
+        $workspace = $this->workspaceFinder->findOneByName($workspaceName);
+        $this->commandBus->handleBlocking(new DiscardWorkspace($workspace->getWorkspaceName()));
 
         $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenDiscarded', [htmlspecialchars($workspace->getWorkspaceName()->getName())], null, null, 'Modules', 'Neos.Neos'));
         $this->redirect('index');
