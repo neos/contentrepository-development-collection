@@ -112,6 +112,8 @@ composer install
 ```
 4. use the `require` part ot the composer.json file below:
 
+> **WARNING**: The `neos/event-sourcing` dependency does not work with the current master right now and is locked to a specific commit. As soon as the master branch will be working again, we will change the dependency back to `dev-master`.
+
 The resulting `composer.json` file should look something like this:
 ```yaml
 {
@@ -138,7 +140,7 @@ The resulting `composer.json` file should look something like this:
 
         "neos/contentrepository-development-collection": "dev-master",
         "neos/content-repository-dimensionspace": "dev-master",
-        "neos/event-sourcing": "dev-master",
+        "neos/event-sourcing": "dev-master#7a39c4e5cfbf273a7d84a25a4eebd7b3874f5324",
         "neos/neos-ui": "dev-event-sourced-patch as dev-master",
         "neos/neos-ui-compiled": "@dev",
 
