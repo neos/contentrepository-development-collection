@@ -115,6 +115,14 @@ final class NodeSpecializationVariantWasCreated implements DomainEventInterface,
     }
 
     /**
+     * @return UserIdentifier
+     */
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
+    /**
      * @param ContentStreamIdentifier $targetContentStreamIdentifier
      * @return NodeSpecializationVariantWasCreated
      */

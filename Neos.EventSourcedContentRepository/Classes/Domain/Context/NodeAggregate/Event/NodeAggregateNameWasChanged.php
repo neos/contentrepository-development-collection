@@ -82,6 +82,14 @@ final class NodeAggregateNameWasChanged implements DomainEventInterface, Copyabl
         return $this->newNodeName;
     }
 
+    /**
+     * @return UserIdentifier
+     */
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier)
     {
         return new NodeAggregateNameWasChanged(
