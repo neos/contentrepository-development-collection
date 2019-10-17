@@ -19,6 +19,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcro
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
 final class SetNodeProperties implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
 {
@@ -43,18 +44,22 @@ final class SetNodeProperties implements \JsonSerializable, CopyableAcrossConten
     private $propertyValues;
 
     /**
-     * SetNodeProperties constructor.
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $originDimensionSpacePoint
-     * @param PropertyValues $propertyValues
+     * @var UserIdentifier
      */
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePoint $originDimensionSpacePoint, PropertyValues $propertyValues)
-    {
+    private $initiatingUserIdentifier;
+
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        DimensionSpacePoint $originDimensionSpacePoint,
+        PropertyValues $propertyValues,
+        UserIdentifier $initiatingUserIdentifier
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->propertyValues = $propertyValues;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     public static function fromArray(array $array): self
@@ -62,8 +67,9 @@ final class SetNodeProperties implements \JsonSerializable, CopyableAcrossConten
         return new static(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            new DimensionSpacePoint($array['originDimensionSpacePoint']),
-            PropertyValues::fromArray($array['propertyValues'])
+            DimensionSpacePoint::fromArray($array['originDimensionSpacePoint']),
+            PropertyValues::fromArray($array['propertyValues']),
+            UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
 
@@ -99,6 +105,14 @@ final class SetNodeProperties implements \JsonSerializable, CopyableAcrossConten
         return $this->propertyValues;
     }
 
+    /**
+     * @return UserIdentifier
+     */
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
     public function jsonSerialize(): array
     {
         return [
@@ -106,6 +120,7 @@ final class SetNodeProperties implements \JsonSerializable, CopyableAcrossConten
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'originDimensionSpacePoint' => $this->originDimensionSpacePoint,
             'propertyValues' => $this->propertyValues,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
         ];
     }
 
@@ -115,14 +130,15 @@ final class SetNodeProperties implements \JsonSerializable, CopyableAcrossConten
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->originDimensionSpacePoint,
-            $this->propertyValues
+            $this->propertyValues,
+            $this->initiatingUserIdentifier
         );
     }
 
     public function matchesNodeAddress(NodeAddress $nodeAddress): bool
     {
         return (
-            (string)$this->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
+            $this->getContentStreamIdentifier()->equals($nodeAddress->getContentStreamIdentifier())
             && $this->getOriginDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
             && $this->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
         );

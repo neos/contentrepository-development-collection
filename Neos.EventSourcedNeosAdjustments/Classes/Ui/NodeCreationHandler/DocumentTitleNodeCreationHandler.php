@@ -17,9 +17,15 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetN
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedNeosAdjustments\Ui\Service\NodeUriPathSegmentGenerator;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Neos\Domain\Service\UserService;
 
+/**
+ * @todo replace with setting initial property values on CreateNodeAggregateWithNode
+ */
 class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
 {
     /**
@@ -33,6 +39,18 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
      * @var NodeAggregateCommandHandler
      */
     protected $nodeAggregateCommandHandler;
+
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
+
+    /**
+     * @Flow\Inject
+     * @var UserService
+     */
+    protected $userService;
 
     /**
      * Set the node title for the newly created Document node
@@ -53,7 +71,8 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
                         [
                             'title' => new PropertyValue($data['title'], 'string')
                         ]
-                    )
+                    ),
+                    UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($this->userService->getCurrentUser()))
                 ));
             }
 
@@ -66,7 +85,8 @@ class DocumentTitleNodeCreationHandler implements NodeCreationHandlerInterface
                     [
                         'uriPathSegment' => new PropertyValue($uriPathSegment, 'string')
                     ]
-                )
+                ),
+                UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($this->userService->getCurrentUser()))
             ))->blockUntilProjectionsAreUpToDate();
             // TODO: re-enable line below
             // $node->setProperty('uriPathSegment', $this->nodeUriPathSegmentGenerator->generateUriPathSegment($node, (isset($data['title']) ? $data['title'] : null)));

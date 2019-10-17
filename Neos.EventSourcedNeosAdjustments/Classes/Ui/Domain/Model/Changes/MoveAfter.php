@@ -14,20 +14,12 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Changes;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateNodeInfo;
 use Neos\EventSourcedNeosAdjustments\Ui\Fusion\Helper\NodeInfoHelper;
 
 class MoveAfter extends AbstractMove
 {
-
-    /**
-     * @Flow\Inject
-     * @var NodeAggregateCommandHandler
-     */
-    protected $nodeAggregateCommandHandler;
-
     /**
      * "Subject" is the to-be-moved node; the "sibling" node is the node after which the "Subject" should be copied.
      *
@@ -74,7 +66,8 @@ class MoveAfter extends AbstractMove
                 $subject->getNodeAggregateIdentifier(),
                 $hasEqualParentNode ? null : $parentNodeOfPreviousSibling->getNodeAggregateIdentifier(),
                 $succeedingSibling ? $succeedingSibling->getNodeAggregateIdentifier() : null,
-                RelationDistributionStrategy::gatherAll()
+                RelationDistributionStrategy::gatherAll(),
+                $this->getInitiatingUserIdentifier()
             );
 
             $this->contentCacheFlusher->registerNodeChange($subject);

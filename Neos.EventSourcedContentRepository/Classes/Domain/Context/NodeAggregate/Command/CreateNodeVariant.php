@@ -15,6 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
 /**
  * Create a variant of a node in a content stream
@@ -43,16 +44,23 @@ final class CreateNodeVariant implements \JsonSerializable
      */
     private $targetOrigin;
 
+    /**
+     * @var UserIdentifier
+     */
+    private $initiatingUserIdentifier;
+
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $sourceOrigin,
-        DimensionSpacePoint $targetOrigin
+        DimensionSpacePoint $targetOrigin,
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->sourceOrigin = $sourceOrigin;
         $this->targetOrigin = $targetOrigin;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     public static function fromArray(array $array): self
@@ -60,8 +68,9 @@ final class CreateNodeVariant implements \JsonSerializable
         return new static(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            new DimensionSpacePoint($array['sourceOrigin']),
-            new DimensionSpacePoint($array['targetOrigin'])
+            DimensionSpacePoint::fromArray($array['sourceOrigin']),
+            DimensionSpacePoint::fromArray($array['targetOrigin']),
+            UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
 
@@ -97,13 +106,19 @@ final class CreateNodeVariant implements \JsonSerializable
         return $this->targetOrigin;
     }
 
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
     public function jsonSerialize(): array
     {
         return [
             'contentStreamIdentifier' => $this->contentStreamIdentifier,
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'sourceOrigin' => $this->sourceOrigin,
-            'targetOrigin' => $this->targetOrigin
+            'targetOrigin' => $this->targetOrigin,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
         ];
     }
 }

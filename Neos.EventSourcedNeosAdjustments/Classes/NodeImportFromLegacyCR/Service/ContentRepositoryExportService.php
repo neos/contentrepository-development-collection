@@ -302,7 +302,8 @@ class ContentRepositoryExportService
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $originDimensionSpacePoint,
-                        PropertyValues::fromArray($propertyValues)
+                        PropertyValues::fromArray($propertyValues),
+                        UserIdentifier::forSystemUser()
                     ))->blockUntilProjectionsAreUpToDate();
                 }
             } else {
@@ -314,14 +315,16 @@ class ContentRepositoryExportService
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $dimensionSpacePointOfAlreadyCreatedNode,
-                        $originDimensionSpacePoint
+                        $originDimensionSpacePoint,
+                        UserIdentifier::forSystemUser()
                     ))->blockUntilProjectionsAreUpToDate();
 
                     $this->nodeAggregateCommandHandler->handleSetNodeProperties(new SetNodeProperties(
                         $this->contentStreamIdentifier,
                         $nodeAggregateIdentifier,
                         $originDimensionSpacePoint,
-                        PropertyValues::fromArray($propertyValues)
+                        PropertyValues::fromArray($propertyValues),
+                        UserIdentifier::forSystemUser()
                     ))->blockUntilProjectionsAreUpToDate();
                 } else {
                     $nodeAggregateIdentifiersByNodePaths = $this->findNodeAggregateIdentifiersForTetheredDescendantNodes($nodePath, $nodeTypeName);
@@ -350,7 +353,8 @@ class ContentRepositoryExportService
                     $nodeAggregateIdentifier,
                     $originDimensionSpacePoint,
                     $references,
-                    PropertyName::fromString($propertyName)
+                    PropertyName::fromString($propertyName),
+                    UserIdentifier::forSystemUser()
                 ))->blockUntilProjectionsAreUpToDate();
             }
 
@@ -359,7 +363,8 @@ class ContentRepositoryExportService
                     $this->contentStreamIdentifier,
                     $nodeAggregateIdentifier,
                     $originDimensionSpacePoint,
-                    NodeVariantSelectionStrategyIdentifier::virtualSpecializations()
+                    NodeVariantSelectionStrategyIdentifier::virtualSpecializations(),
+                    UserIdentifier::forSystemUser()
                 ));
             }
 

@@ -20,6 +20,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWit
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\RelationDistributionStrategyIsInvalid;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The "Move node aggregate" command
@@ -30,6 +32,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
  * into `newParentNodeAggregateIdentifier` (or keep the current parent)
  * before `newSucceedingSiblingNodeAggregateIdentifier` (or as last of all siblings)
  * using `relationDistributionStrategy`
+ *
+ * @Flow\Proxy(false)
  */
 final class MoveNodeAggregate implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
 {
@@ -66,13 +70,19 @@ final class MoveNodeAggregate implements \JsonSerializable, CopyableAcrossConten
      */
     private $relationDistributionStrategy;
 
+    /**
+     * @var UserIdentifier
+     */
+    private $initiatingUserIdentifier;
+
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         ?NodeAggregateIdentifier $newParentNodeAggregateIdentifier,
         ?NodeAggregateIdentifier $newSucceedingSiblingNodeAggregateIdentifier,
-        RelationDistributionStrategy $relationDistributionStrategy
+        RelationDistributionStrategy $relationDistributionStrategy,
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
@@ -80,6 +90,7 @@ final class MoveNodeAggregate implements \JsonSerializable, CopyableAcrossConten
         $this->newParentNodeAggregateIdentifier = $newParentNodeAggregateIdentifier;
         $this->newSucceedingSiblingNodeAggregateIdentifier = $newSucceedingSiblingNodeAggregateIdentifier;
         $this->relationDistributionStrategy = $relationDistributionStrategy;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     /**
@@ -95,7 +106,8 @@ final class MoveNodeAggregate implements \JsonSerializable, CopyableAcrossConten
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             isset($array['newParentNodeAggregateIdentifier']) ? NodeAggregateIdentifier::fromString($array['newParentNodeAggregateIdentifier']) : null,
             isset($array['newSucceedingSiblingNodeAggregateIdentifier']) ? NodeAggregateIdentifier::fromString($array['newSucceedingSiblingNodeAggregateIdentifier']) : null,
-            RelationDistributionStrategy::fromString($array['relationDistributionStrategy'])
+            RelationDistributionStrategy::fromString($array['relationDistributionStrategy']),
+            UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
 
@@ -129,6 +141,11 @@ final class MoveNodeAggregate implements \JsonSerializable, CopyableAcrossConten
         return $this->relationDistributionStrategy;
     }
 
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
     public function jsonSerialize(): array
     {
         return [
@@ -138,24 +155,26 @@ final class MoveNodeAggregate implements \JsonSerializable, CopyableAcrossConten
             'newParentNodeAggregateIdentifier' => $this->newParentNodeAggregateIdentifier,
             'newSucceedingSiblingNodeAggregateIdentifier' => $this->newSucceedingSiblingNodeAggregateIdentifier,
             'relationDistributionStrategy' => $this->relationDistributionStrategy,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
         ];
     }
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new MoveNodeAggregate(
+        return new static(
             $targetContentStreamIdentifier,
             $this->dimensionSpacePoint,
             $this->nodeAggregateIdentifier,
             $this->newParentNodeAggregateIdentifier,
             $this->newSucceedingSiblingNodeAggregateIdentifier,
-            $this->relationDistributionStrategy
+            $this->relationDistributionStrategy,
+            $this->initiatingUserIdentifier
         );
     }
 
     public function matchesNodeAddress(NodeAddress $nodeAddress): bool
     {
-        return (string)$this->contentStreamIdentifier === (string)$nodeAddress->getContentStreamIdentifier()
+        return $this->contentStreamIdentifier->equals($nodeAddress->getContentStreamIdentifier())
             && $this->nodeAggregateIdentifier->equals($nodeAddress->getNodeAggregateIdentifier())
             && $this->dimensionSpacePoint->equals($nodeAddress->getDimensionSpacePoint());
     }

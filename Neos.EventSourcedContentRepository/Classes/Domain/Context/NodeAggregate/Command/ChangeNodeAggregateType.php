@@ -15,7 +15,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyIsUnknown;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
 final class ChangeNodeAggregateType
 {
@@ -39,18 +41,29 @@ final class ChangeNodeAggregateType
      */
     protected $strategy;
 
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $newNodeTypeName, ?NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy)
-    {
+    /**
+     * @var UserIdentifier
+     */
+    private $initiatingUserIdentifier;
+
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeTypeName $newNodeTypeName,
+        ?NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy,
+        UserIdentifier $initiatingUserIdentifier
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->newNodeTypeName = $newNodeTypeName;
         $this->strategy = $strategy;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     /**
      * @param array $array
      * @return ChangeNodeAggregateType
-     * @throws \Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyIsUnknown
+     * @throws NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyIsUnknown
      */
     public static function fromArray(array $array): self
     {
@@ -60,8 +73,8 @@ final class ChangeNodeAggregateType
             NodeTypeName::fromString($array['newNodeTypeName']),
             isset($array['strategy'])
                 ? NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::fromString($array['strategy'])
-                : null
-
+                : null,
+            UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
 
@@ -95,5 +108,13 @@ final class ChangeNodeAggregateType
     public function getStrategy(): ?NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy
     {
         return $this->strategy;
+    }
+
+    /**
+     * @return UserIdentifier
+     */
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
     }
 }

@@ -8,6 +8,7 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -44,24 +45,24 @@ final class NodeReferencesWereSet implements DomainEventInterface, CopyableAcros
     private $referenceName;
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $sourceNodeAggregateIdentifier
-     * @param DimensionSpacePoint $sourceOriginDimensionSpacePoint
-     * @param NodeAggregateIdentifier[] $destinationNodeAggregateIdentifiers
-     * @param PropertyName $referenceName
+     * @var UserIdentifier
      */
+    private $initiatingUserIdentifier;
+
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $sourceNodeAggregateIdentifier,
         DimensionSpacePoint $sourceOriginDimensionSpacePoint,
         array $destinationNodeAggregateIdentifiers,
-        PropertyName $referenceName
+        PropertyName $referenceName,
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->sourceNodeAggregateIdentifier = $sourceNodeAggregateIdentifier;
         $this->sourceOriginDimensionSpacePoint = $sourceOriginDimensionSpacePoint;
         $this->destinationNodeAggregateIdentifiers = $destinationNodeAggregateIdentifiers;
         $this->referenceName = $referenceName;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     /**
@@ -104,14 +105,23 @@ final class NodeReferencesWereSet implements DomainEventInterface, CopyableAcros
         return $this->referenceName;
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier)
+    /**
+     * @return UserIdentifier
+     */
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): NodeReferencesWereSet
     {
         return new NodeReferencesWereSet(
             $targetContentStreamIdentifier,
             $this->sourceNodeAggregateIdentifier,
             $this->sourceOriginDimensionSpacePoint,
             $this->destinationNodeAggregateIdentifiers,
-            $this->referenceName
+            $this->referenceName,
+            $this->initiatingUserIdentifier
         );
     }
 }

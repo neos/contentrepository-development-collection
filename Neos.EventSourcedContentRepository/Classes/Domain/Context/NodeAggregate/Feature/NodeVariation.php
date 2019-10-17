@@ -154,7 +154,8 @@ trait NodeVariation
             $nodeAggregate->getIdentifier(),
             $command->getSourceOrigin(),
             $command->getTargetOrigin(),
-            $specializationVisibility
+            $specializationVisibility,
+            $command->getInitiatingUserIdentifier()
         );
 
         foreach ($this->getContentGraph()->findTetheredChildNodeAggregates($command->getContentStreamIdentifier(), $nodeAggregate->getIdentifier()) as $tetheredChildNodeAggregate) {
@@ -204,7 +205,8 @@ trait NodeVariation
             $nodeAggregate->getIdentifier(),
             $command->getSourceOrigin(),
             $command->getTargetOrigin(),
-            $generalizationVisibility
+            $generalizationVisibility,
+            $command->getInitiatingUserIdentifier()
         );
 
         foreach ($this->getContentGraph()->findTetheredChildNodeAggregates($command->getContentStreamIdentifier(), $nodeAggregate->getIdentifier()) as $tetheredChildNodeAggregate) {
@@ -254,7 +256,8 @@ trait NodeVariation
             $nodeAggregate->getIdentifier(),
             $command->getSourceOrigin(),
             $command->getTargetOrigin(),
-            $peerVisibility
+            $peerVisibility,
+            $command->getInitiatingUserIdentifier()
         );
 
         foreach ($this->getContentGraph()->findTetheredChildNodeAggregates($command->getContentStreamIdentifier(), $nodeAggregate->getIdentifier()) as $tetheredChildNodeAggregate) {

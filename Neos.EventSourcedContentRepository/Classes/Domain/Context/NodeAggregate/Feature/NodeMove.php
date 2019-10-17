@@ -124,7 +124,8 @@ trait NodeMove
                         $command->getNewParentNodeAggregateIdentifier(),
                         $command->getNewSucceedingSiblingNodeAggregateIdentifier(),
                         $nodeMoveMappings,
-                        $affectedDimensionSpacePoints
+                        $affectedDimensionSpacePoints,
+                        $command->getInitiatingUserIdentifier()
                     ),
                     Uuid::uuid4()->toString()
                 )

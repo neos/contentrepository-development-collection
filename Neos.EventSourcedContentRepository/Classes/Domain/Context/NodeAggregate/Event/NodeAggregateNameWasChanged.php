@@ -16,6 +16,7 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -41,20 +42,20 @@ final class NodeAggregateNameWasChanged implements DomainEventInterface, Copyabl
     private $newNodeName;
 
     /**
-     * NodeNameWasChanged constructor.
-     *
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param NodeName $newNodeName
+     * @var UserIdentifier
      */
+    private $initiatingUserIdentifier;
+
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        NodeName $newNodeName
+        NodeName $newNodeName,
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->newNodeName = $newNodeName;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     /**
@@ -86,7 +87,8 @@ final class NodeAggregateNameWasChanged implements DomainEventInterface, Copyabl
         return new NodeAggregateNameWasChanged(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
-            $this->newNodeName
+            $this->newNodeName,
+            $this->initiatingUserIdentifier
         );
     }
 }

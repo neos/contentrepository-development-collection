@@ -19,6 +19,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcro
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeVariantSelectionStrategyIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
 /**
  * Disable the given node aggregate in the given content stream in a dimension space point using a given strategy
@@ -51,16 +52,23 @@ final class DisableNodeAggregate implements \JsonSerializable, CopyableAcrossCon
      */
     private $nodeVariantSelectionStrategy;
 
+    /**
+     * @var UserIdentifier
+     */
+    private $initiatingUserIdentifier;
+
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $coveredDimensionSpacePoint,
-        NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy
+        NodeVariantSelectionStrategyIdentifier $nodeVariantSelectionStrategy,
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->coveredDimensionSpacePoint = $coveredDimensionSpacePoint;
         $this->nodeVariantSelectionStrategy = $nodeVariantSelectionStrategy;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     public static function fromArray(array $array): self
@@ -68,8 +76,9 @@ final class DisableNodeAggregate implements \JsonSerializable, CopyableAcrossCon
         return new static(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            new DimensionSpacePoint($array['coveredDimensionSpacePoint']),
-            NodeVariantSelectionStrategyIdentifier::fromString($array['nodeVariantSelectionStrategy'])
+            DimensionSpacePoint::fromArray($array['coveredDimensionSpacePoint']),
+            NodeVariantSelectionStrategyIdentifier::fromString($array['nodeVariantSelectionStrategy']),
+            UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
 
@@ -93,6 +102,11 @@ final class DisableNodeAggregate implements \JsonSerializable, CopyableAcrossCon
         return $this->nodeVariantSelectionStrategy;
     }
 
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
     public function jsonSerialize(): array
     {
         return [
@@ -100,6 +114,7 @@ final class DisableNodeAggregate implements \JsonSerializable, CopyableAcrossCon
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'coveredDimensionSpacePoint' => $this->coveredDimensionSpacePoint,
             'nodeVariantSelectionStrategy' => $this->nodeVariantSelectionStrategy,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
         ];
     }
 
@@ -109,14 +124,15 @@ final class DisableNodeAggregate implements \JsonSerializable, CopyableAcrossCon
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->coveredDimensionSpacePoint,
-            $this->nodeVariantSelectionStrategy
+            $this->nodeVariantSelectionStrategy,
+            $this->initiatingUserIdentifier
         );
     }
 
     public function matchesNodeAddress(NodeAddress $nodeAddress): bool
     {
         return (
-            (string)$this->getContentStreamIdentifier() === (string)$nodeAddress->getContentStreamIdentifier()
+            $this->getContentStreamIdentifier()->equals($nodeAddress->getContentStreamIdentifier())
             && $this->getCoveredDimensionSpacePoint()->equals($nodeAddress->getDimensionSpacePoint())
             && $this->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
         );

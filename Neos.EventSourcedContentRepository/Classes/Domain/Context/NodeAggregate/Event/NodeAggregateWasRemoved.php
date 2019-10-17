@@ -15,6 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
@@ -44,16 +45,23 @@ final class NodeAggregateWasRemoved implements DomainEventInterface, CopyableAcr
      */
     private $affectedCoveredDimensionSpacePoints;
 
+    /**
+     * @var UserIdentifier
+     */
+    private $initiatingUserIdentifier;
+
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePointSet $affectedOccupiedDimensionSpacePoints,
-        DimensionSpacePointSet $affectedCoveredDimensionSpacePoints
+        DimensionSpacePointSet $affectedCoveredDimensionSpacePoints,
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->affectedOccupiedDimensionSpacePoints = $affectedOccupiedDimensionSpacePoints;
         $this->affectedCoveredDimensionSpacePoints = $affectedCoveredDimensionSpacePoints;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
@@ -76,13 +84,19 @@ final class NodeAggregateWasRemoved implements DomainEventInterface, CopyableAcr
         return $this->affectedCoveredDimensionSpacePoints;
     }
 
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier)
     {
         return new NodeAggregateWasRemoved(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->affectedOccupiedDimensionSpacePoints,
-            $this->affectedCoveredDimensionSpacePoints
+            $this->affectedCoveredDimensionSpacePoints,
+            $this->initiatingUserIdentifier
         );
     }
 }

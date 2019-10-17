@@ -17,6 +17,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -52,18 +53,25 @@ final class NodeSpecializationVariantWasCreated implements DomainEventInterface,
      */
     private $specializationCoverage;
 
+    /**
+     * @var UserIdentifier
+     */
+    private $initiatingUserIdentifier;
+
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $sourceOrigin,
         DimensionSpacePoint $specializationOrigin,
-        DimensionSpacePointSet $specializationCoverage
+        DimensionSpacePointSet $specializationCoverage,
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->sourceOrigin = $sourceOrigin;
         $this->specializationOrigin = $specializationOrigin;
         $this->specializationCoverage = $specializationCoverage;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     /**
@@ -117,7 +125,8 @@ final class NodeSpecializationVariantWasCreated implements DomainEventInterface,
             $this->nodeAggregateIdentifier,
             $this->sourceOrigin,
             $this->specializationOrigin,
-            $this->specializationCoverage
+            $this->specializationCoverage,
+            $this->initiatingUserIdentifier
         );
     }
 }

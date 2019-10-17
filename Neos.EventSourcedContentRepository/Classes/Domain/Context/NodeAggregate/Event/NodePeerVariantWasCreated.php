@@ -17,6 +17,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -50,18 +51,25 @@ final class NodePeerVariantWasCreated implements DomainEventInterface, CopyableA
      */
     private $peerCoverage;
 
+    /**
+     * @var UserIdentifier
+     */
+    private $initiatingUserIdentifier;
+
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $sourceOrigin,
         DimensionSpacePoint $peerOrigin,
-        DimensionSpacePointSet $peerCoverage
+        DimensionSpacePointSet $peerCoverage,
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->sourceOrigin = $sourceOrigin;
         $this->peerOrigin = $peerOrigin;
         $this->peerCoverage = $peerCoverage;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     /**
@@ -105,6 +113,14 @@ final class NodePeerVariantWasCreated implements DomainEventInterface, CopyableA
     }
 
     /**
+     * @return UserIdentifier
+     */
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
+    /**
      * @param ContentStreamIdentifier $targetContentStreamIdentifier
      * @return NodePeerVariantWasCreated
      */
@@ -115,7 +131,8 @@ final class NodePeerVariantWasCreated implements DomainEventInterface, CopyableA
             $this->nodeAggregateIdentifier,
             $this->sourceOrigin,
             $this->peerOrigin,
-            $this->peerCoverage
+            $this->peerCoverage,
+            $this->initiatingUserIdentifier
         );
     }
 }

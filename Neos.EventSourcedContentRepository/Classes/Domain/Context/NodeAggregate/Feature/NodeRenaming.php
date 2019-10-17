@@ -44,7 +44,8 @@ trait NodeRenaming
                     new NodeAggregateNameWasChanged(
                         $command->getContentStreamIdentifier(),
                         $command->getNodeAggregateIdentifier(),
-                        $command->getNewNodeName()
+                        $command->getNewNodeName(),
+                        $command->getInitiatingUserIdentifier()
                     ),
                     Uuid::uuid4()->toString()
                 )

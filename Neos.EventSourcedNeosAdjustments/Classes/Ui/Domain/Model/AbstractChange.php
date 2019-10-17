@@ -15,11 +15,15 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\Domain\Model;
 
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\NodeCreated;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\ReloadDocument;
 use Neos\EventSourcedNeosAdjustments\Ui\Domain\Model\Feedback\Operations\UpdateWorkspaceInfo;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Ui\Domain\Model\FeedbackCollection;
 
 abstract class AbstractChange implements ChangeInterface
@@ -41,6 +45,23 @@ abstract class AbstractChange implements ChangeInterface
      */
     protected $workspaceFinder;
 
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
+
+    /**
+     * @Flow\Inject
+     * @var UserService
+     */
+    protected $userService;
+
+    /**
+     * @Flow\Inject
+     * @var NodeAggregateCommandHandler
+     */
+    protected $nodeAggregateCommandHandler;
 
     /**
      * Set the subject
@@ -109,5 +130,10 @@ abstract class AbstractChange implements ChangeInterface
         $nodeCreated = new NodeCreated();
         $nodeCreated->setNode($node);
         $this->feedbackCollection->add($nodeCreated);
+    }
+
+    protected function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->persistenceManager->getIdentifierByObject($this->userService->getCurrentUser());
     }
 }

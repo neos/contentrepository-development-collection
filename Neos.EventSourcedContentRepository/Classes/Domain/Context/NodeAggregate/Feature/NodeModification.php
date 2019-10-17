@@ -51,7 +51,8 @@ trait NodeModification
                         $contentStreamIdentifier,
                         $command->getNodeAggregateIdentifier(),
                         $command->getOriginDimensionSpacePoint(),
-                        $command->getPropertyValues()
+                        $command->getPropertyValues(),
+                        $command->getInitiatingUserIdentifier()
                     ),
                     Uuid::uuid4()->toString()
                 )

@@ -272,8 +272,8 @@ final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAc
     public function matchesNodeAddress(NodeAddress $nodeAddress): bool
     {
         return (
-            (string)$this->contentStreamIdentifier === (string)$nodeAddress->getContentStreamIdentifier()
-                && (string)$this->nodeAggregateIdentifier === (string)$nodeAddress->getNodeAggregateIdentifier()
+            $this->contentStreamIdentifier->equals($nodeAddress->getContentStreamIdentifier())
+                && $this->nodeAggregateIdentifier->equals($nodeAddress->getNodeAggregateIdentifier())
                 && $this->originDimensionSpacePoint->equals($nodeAddress->getDimensionSpacePoint())
         );
     }

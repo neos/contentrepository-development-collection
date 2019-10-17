@@ -17,17 +17,17 @@ use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Node property was set event
+ * Node properties were set
  *
  * @Flow\Proxy(false)
  */
 final class NodePropertiesWereSet implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
-
     /**
      * @var ContentStreamIdentifier
      */
@@ -49,22 +49,22 @@ final class NodePropertiesWereSet implements DomainEventInterface, CopyableAcros
     private $propertyValues;
 
     /**
-     * NodePropertiesWereSet constructor.
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $originDimensionSpacePoint
-     * @param PropertyValues $propertyValues
+     * @var UserIdentifier
      */
+    private $initiatingUserIdentifier;
+
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $originDimensionSpacePoint,
-        PropertyValues $propertyValues
+        PropertyValues $propertyValues,
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->propertyValues = $propertyValues;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     /**
@@ -100,6 +100,14 @@ final class NodePropertiesWereSet implements DomainEventInterface, CopyableAcros
     }
 
     /**
+     * @return UserIdentifier
+     */
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
+    /**
      * @param ContentStreamIdentifier $targetContentStreamIdentifier
      * @return NodePropertiesWereSet
      */
@@ -109,7 +117,8 @@ final class NodePropertiesWereSet implements DomainEventInterface, CopyableAcros
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->originDimensionSpacePoint,
-            $this->propertyValues
+            $this->propertyValues,
+            $this->initiatingUserIdentifier
         );
     }
 }

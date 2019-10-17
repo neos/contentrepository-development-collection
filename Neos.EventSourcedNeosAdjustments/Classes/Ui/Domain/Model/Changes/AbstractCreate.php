@@ -20,7 +20,6 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeNameIsAlreadyOccupied;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedNeosAdjustments\Ui\NodeCreationHandler\NodeCreationHandlerInterface;
@@ -29,12 +28,6 @@ use Neos\Neos\Ui\Exception\InvalidNodeCreationHandlerException;
 
 abstract class AbstractCreate extends AbstractStructuralChange
 {
-    /**
-     * @Flow\Inject
-     * @var NodeAggregateCommandHandler
-     */
-    protected $nodeAggregateCommandHandler;
-
     /**
      * The type of the node that will be created
      *
@@ -164,7 +157,7 @@ abstract class AbstractCreate extends AbstractStructuralChange
             $nodeAggregateIdentifier,
             NodeTypeName::fromString($this->getNodeType()->getName()),
             $parentNode->getDimensionSpacePoint(),
-            UserIdentifier::forSystemUser(), // TODO
+            $this->getInitiatingUserIdentifier(),
             $parentNode->getNodeAggregateIdentifier(),
             $succeedingSiblingNodeAggregateIdentifier,
             $nodeName

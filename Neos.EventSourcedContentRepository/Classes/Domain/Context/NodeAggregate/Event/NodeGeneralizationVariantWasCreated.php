@@ -17,6 +17,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 
@@ -52,20 +53,26 @@ final class NodeGeneralizationVariantWasCreated implements DomainEventInterface,
      */
     private $generalizationCoverage;
 
+    /**
+     * @var UserIdentifier
+     */
+    private $initiatingUserIdentifier;
+
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         DimensionSpacePoint $sourceOrigin,
         DimensionSpacePoint $generalizationOrigin,
-        DimensionSpacePointSet $generalizationCoverage
+        DimensionSpacePointSet $generalizationCoverage,
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->sourceOrigin = $sourceOrigin;
         $this->generalizationOrigin = $generalizationOrigin;
         $this->generalizationCoverage = $generalizationCoverage;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
-
 
     /**
      * @return ContentStreamIdentifier
@@ -108,6 +115,14 @@ final class NodeGeneralizationVariantWasCreated implements DomainEventInterface,
     }
 
     /**
+     * @return UserIdentifier
+     */
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
+    /**
      * @param ContentStreamIdentifier $targetContentStreamIdentifier
      * @return NodeGeneralizationVariantWasCreated
      */
@@ -118,7 +133,8 @@ final class NodeGeneralizationVariantWasCreated implements DomainEventInterface,
             $this->nodeAggregateIdentifier,
             $this->sourceOrigin,
             $this->generalizationOrigin,
-            $this->generalizationCoverage
+            $this->generalizationCoverage,
+            $this->initiatingUserIdentifier
         );
     }
 }

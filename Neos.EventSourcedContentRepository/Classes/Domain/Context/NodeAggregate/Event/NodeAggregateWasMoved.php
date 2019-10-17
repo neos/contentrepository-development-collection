@@ -6,6 +6,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\NodeMoveMappings;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
@@ -47,13 +48,19 @@ final class NodeAggregateWasMoved implements DomainEventInterface, CopyableAcros
      */
     private $affectedDimensionSpacePoints;
 
+    /**
+     * @var UserIdentifier
+     */
+    private $initiatingUserIdentifier;
+
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         ?NodeAggregateIdentifier $newParentNodeAggregateIdentifier,
         ?NodeAggregateIdentifier $newSucceedingSiblingNodeAggregateIdentifier,
         ?NodeMoveMappings $nodeMoveMappings,
-        DimensionSpacePointSet $affectedDimensionSpacePoints
+        DimensionSpacePointSet $affectedDimensionSpacePoints,
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -61,6 +68,7 @@ final class NodeAggregateWasMoved implements DomainEventInterface, CopyableAcros
         $this->newSucceedingSiblingNodeAggregateIdentifier = $newSucceedingSiblingNodeAggregateIdentifier;
         $this->nodeMoveMappings = $nodeMoveMappings;
         $this->affectedDimensionSpacePoints = $affectedDimensionSpacePoints;
+        $this->initiatingUserIdentifier = $initiatingUserIdentifier;
     }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
@@ -93,6 +101,11 @@ final class NodeAggregateWasMoved implements DomainEventInterface, CopyableAcros
         return $this->affectedDimensionSpacePoints;
     }
 
+    public function getInitiatingUserIdentifier(): UserIdentifier
+    {
+        return $this->initiatingUserIdentifier;
+    }
+
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): NodeAggregateWasMoved
     {
         return new NodeAggregateWasMoved(
@@ -101,7 +114,8 @@ final class NodeAggregateWasMoved implements DomainEventInterface, CopyableAcros
             $this->newParentNodeAggregateIdentifier,
             $this->newSucceedingSiblingNodeAggregateIdentifier,
             $this->nodeMoveMappings,
-            $this->affectedDimensionSpacePoints
+            $this->affectedDimensionSpacePoints,
+            $this->initiatingUserIdentifier
         );
     }
 }
