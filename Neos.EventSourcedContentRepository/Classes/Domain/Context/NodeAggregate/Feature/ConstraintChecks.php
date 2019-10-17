@@ -41,9 +41,11 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\No
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeIsNotOfTypeRoot;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeIsOfTypeRoot;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeNotFound;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\PropertyNameIsUndeclaredInNodeType;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\PropertyTypeDoesNotMatch;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 
 trait ConstraintChecks
 {
@@ -111,6 +113,32 @@ trait ConstraintChecks
     {
         if ($nodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
             throw new NodeTypeIsOfTypeRoot('Node type "' . $nodeType->getName() . '" is of type root.', 1541765806);
+        }
+    }
+
+    /**
+     * @param NodeType $nodeType
+     * @param PropertyName $propertyName
+     * @throws PropertyNameIsUndeclaredInNodeType
+     */
+    protected function requireNodeTypeToDeclareProperty(NodeType $nodeType, PropertyName $propertyName): void
+    {
+        if (!isset($nodeType->getProperties()[(string) $propertyName])) {
+            throw PropertyNameIsUndeclaredInNodeType::butWasSupposedToBe($propertyName, NodeTypeName::fromString($nodeType->getName()));
+        }
+    }
+
+    /**
+     * @param NodeType $nodeType
+     * @param PropertyName $propertyName
+     * @param string $propertyType
+     * @throws PropertyTypeDoesNotMatch
+     */
+    protected function requirePropertyToBeDeclaredAsType(NodeType $nodeType, PropertyName $propertyName, string $propertyType): void
+    {
+        $declaredPropertyType = $nodeType->getPropertyType((string) $propertyName);
+        if ($declaredPropertyType !== $propertyType) {
+            throw PropertyTypeDoesNotMatch::butWasSupposedTo($propertyType, $propertyName, $declaredPropertyType, NodeTypeName::fromString($nodeType->getName()));
         }
     }
 
@@ -192,7 +220,7 @@ trait ConstraintChecks
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return NodeAggregate
+     * @return ReadableNodeAggregateInterface
      * @throws NodeAggregatesTypeIsAmbiguous
      * @throws NodeAggregateCurrentlyDoesNotExist
      */

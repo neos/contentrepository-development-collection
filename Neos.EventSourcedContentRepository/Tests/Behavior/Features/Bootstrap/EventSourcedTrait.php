@@ -600,6 +600,35 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Given /^the command SetNodeProperties is executed with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theCommandSetNodePropertiesIsExecutedWithPayload(TableNode $payloadTable)
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+
+        $command = SetNodeProperties::fromArray($commandArguments);
+
+        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
+            ->handleSetNodeProperties($command);
+    }
+
+    /**
+     * @Given /^the command SetNodeProperties is executed with payload and exceptions are caught:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theCommandSetNodePropertiesIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
+    {
+        try {
+            $this->theCommandSetNodePropertiesIsExecutedWithPayload($payloadTable);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
+    }
+
+    /**
      * @Given /^the command SetNodeReferences is executed with payload:$/
      * @param TableNode $payloadTable
      * @throws Exception
@@ -629,6 +658,7 @@ trait EventSourcedTrait
             $this->lastCommandException = $exception;
         }
     }
+
     /**
      * @Given /^the command RemoveNodeAggregate is executed with payload:$/
      * @param TableNode $payloadTable
@@ -1397,7 +1427,12 @@ trait EventSourcedTrait
      */
     public function iExpectThisNodeToHaveTheProperties(TableNode $expectedProperties)
     {
-        $this->iExpectTheCurrentNodeToHaveTheProperties($expectedProperties);
+        $properties = $this->currentNode->getProperties();
+        foreach ($expectedProperties->getHash() as $row) {
+            Assert::assertArrayHasKey($row['Key'], $properties, 'Property "' . $row['Key'] . '" not found');
+            $actualProperty = $properties[$row['Key']];
+            Assert::assertEquals($row['Value'], $actualProperty, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . $row['Value'] . '; Actual: ' . $actualProperty);
+        }
     }
 
     /**
@@ -1436,12 +1471,7 @@ trait EventSourcedTrait
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
             ->findNodeByNodeAggregateIdentifier($this->currentNode->getNodeAggregateIdentifier());
 
-        $properties = $this->currentNode->getProperties();
-        foreach ($expectedProperties->getHash() as $row) {
-            Assert::assertArrayHasKey($row['Key'], $properties, 'Property "' . $row['Key'] . '" not found');
-            $actualProperty = $properties[$row['Key']];
-            Assert::assertEquals($row['Value'], $actualProperty, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . $row['Value'] . '; Actual: ' . $actualProperty);
-        }
+        $this->iExpectThisNodeToHaveTheProperties($expectedProperties);
     }
 
     /**
