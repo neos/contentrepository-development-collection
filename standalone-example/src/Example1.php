@@ -13,6 +13,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
+use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\EventListener\EventListenerLocator;
@@ -20,6 +21,7 @@ use Neos\EventSourcing\EventStore\EventListenerTrigger\EventListenerTrigger;
 use Neos\EventSourcing\EventStore\EventNormalizer;
 use Neos\EventSourcing\EventStore\EventStore;
 use Neos\Utility\ObjectAccess;
+use Ramsey\Uuid\Uuid;
 
 class Example1
 {
@@ -29,16 +31,16 @@ class Example1
         $eventStore = $container->getEventStore();
 
         $cs = ContentStreamIdentifier::create();
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($cs)->getEventStreamName();
+        /*$streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($cs)->getEventStreamName();
         $event = new ContentStreamWasCreated(
             $cs,
             UserIdentifier::forSystemUser()
         );
-        $event = EventWithIdentifier::create($event);
+        $event = DecoratedEvent::addIdentifier($event, Uuid::uuid4()->toString());*/
 
         $eventStore->setup();
 
-        $eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
+        //$eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
 
         $command = new CreateRootWorkspace(
             WorkspaceName::forLive(),

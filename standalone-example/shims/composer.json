@@ -17,7 +17,9 @@
   "autoload": {
     "psr-4": {
       "Neos\\Flow\\Utility\\": "src/NeosFlowUtility",
-      "Neos\\Flow\\Persistence\\Doctrine\\DataTypes\\": "src/NeosFlowPersistenceDoctrineDataTypes"
+      "Neos\\Flow\\": "src/NeosFlow",
+      "Neos\\Flow\\Persistence\\Doctrine\\DataTypes\\": "src/NeosFlowPersistenceDoctrineDataTypes",
+      "Neos\\Eel\\": "src/NeosEel"
     }
   }
 }

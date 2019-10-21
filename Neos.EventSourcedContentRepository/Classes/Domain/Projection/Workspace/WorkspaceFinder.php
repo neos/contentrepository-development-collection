@@ -26,7 +26,6 @@ final class WorkspaceFinder
 {
 
     /**
-     * @Flow\Inject
      * @var DbalClient
      */
     protected $client;
@@ -45,6 +44,15 @@ final class WorkspaceFinder
      * @var array
      */
     private $cachedWorkspacesByContentStreamIdentifier = [];
+
+    /**
+     * WorkspaceFinder constructor.
+     * @param DbalClient $client
+     */
+    public function __construct(DbalClient $client)
+    {
+        $this->client = $client;
+    }
 
     public function disableCache()
     {

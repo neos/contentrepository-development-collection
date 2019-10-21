@@ -9,6 +9,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\Command\CreateRootWorkspace;
 use Neos\EventSourcedContentRepository\Domain\Context\Workspace\WorkspaceCommandHandler;
+use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjector;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceDescription;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
@@ -73,9 +74,6 @@ class EventSourcingFactories
     {
         $eventNormalizer = new EventNormalizer();
         ObjectAccess::setProperty($eventNormalizer, 'eventTypeResolver', $eventTypeResolver, true);
-        $initializeObjectOfNormalizer = new \ReflectionMethod($eventNormalizer, 'initializeObject');
-        $initializeObjectOfNormalizer->setAccessible(true);
-        $initializeObjectOfNormalizer->invoke($eventNormalizer);
 
         return $eventNormalizer;
     }
@@ -95,16 +93,15 @@ class EventSourcingFactories
         $eventClassNamesAndListeners = [];
 
         $listenerClassNames = [
-            GraphProjector::class
+            GraphProjector::class,
+            WorkspaceProjector::class
         ];
 
         foreach ($listenerClassNames as $listenerClassName) {
-            var_dump($listenerClassName);
             $methods = get_class_methods($listenerClassName);
-            var_dump($methods);
             foreach ($methods as $listenerMethodName) {
-                if (strpos($listenerMethodName, 'handle') === 0) {
-                    // method starts with "handle"
+                if (strpos($listenerMethodName, 'when') === 0) {
+                    // method starts with "when"
 
                     $listenerMethod = new \ReflectionMethod($listenerClassName, $listenerMethodName);
                     $params = $listenerMethod->getParameters();
@@ -115,42 +112,9 @@ class EventSourcingFactories
             }
         }
 
-        var_dump($eventClassNamesAndListeners);
-
-
         ObjectAccess::setProperty($eventListenerLocator, 'eventClassNamesAndListeners', $eventClassNamesAndListeners, true);
 
         return $eventListenerLocator;
     }
-
-    public function run()
-    {
-        echo "Hallo";
-
-        $cs = ContentStreamIdentifier::create();
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($cs)->getEventStreamName();
-        $event = new ContentStreamWasCreated(
-            $cs,
-            UserIdentifier::forSystemUser()
-        );
-        $event = EventWithIdentifier::create($event);
-        $eventStore = self::prepareEventStore();
-
-        $eventStore->setup();
-
-        $eventStore->commit($streamName, DomainEvents::withSingleEvent($event));
-
-        $command = new CreateRootWorkspace(
-            WorkspaceName::forLive(),
-            new WorkspaceTitle('live'),
-            new WorkspaceDescription('The live WS'),
-            UserIdentifier::forSystemUser(),
-            $cs
-        );
-
-        $cmd = new WorkspaceCommandHandler();
-        $cmd->handleCreateRootWorkspace($command);
-    }
-
 
 }
