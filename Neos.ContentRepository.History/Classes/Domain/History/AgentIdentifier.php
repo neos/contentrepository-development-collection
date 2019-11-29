@@ -49,6 +49,16 @@ final class AgentIdentifier implements \JsonSerializable
         return new static((string) $userIdentifier);
     }
 
+    public function getValue(): string
+    {
+        return $this->value;
+    }
+
+    public function equals(AgentIdentifier $other): bool
+    {
+        return $this->value === $other->getValue();
+    }
+
     public function jsonSerialize(): string
     {
         return $this->value;

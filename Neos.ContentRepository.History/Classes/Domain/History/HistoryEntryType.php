@@ -22,8 +22,8 @@ use Neos\Flow\Annotations as Flow;
 final class HistoryEntryType implements \JsonSerializable
 {
     const TYPE_CREATED = 'created';
-    const TYPE_DISABLED = 'created';
-    const TYPE_ENABLED = 'created';
+    const TYPE_DISABLED = 'disabled';
+    const TYPE_ENABLED = 'enabled';
     const TYPE_MODIFIED = 'modified';
     const TYPE_MOVED = 'moved';
     const TYPE_REFERENCED = 'referenced';
