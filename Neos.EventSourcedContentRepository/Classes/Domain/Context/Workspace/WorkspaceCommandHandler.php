@@ -554,6 +554,10 @@ final class WorkspaceCommandHandler
         )->blockUntilProjectionsAreUpToDate();
 
         foreach ($matchingCommands as $matchingCommand) {
+            if (!($matchingCommand instanceof CopyableAcrossContentStreamsInterface)) {
+                throw new \RuntimeException('ERROR: The command ' . get_class($matchingCommand) . ' does not implement CopyableAcrossContentStreamsInterface; but it should!');
+            }
+
             $this->applyCommand($matchingCommand->createCopyForContentStream($matchingContentStream))->blockUntilProjectionsAreUpToDate();
         }
 
@@ -592,6 +596,82 @@ final class WorkspaceCommandHandler
 
         // It is safe to only return the last command result, as the commands which were rebased are already executed "synchronously"
         return $commandResult->merge(CommandResult::fromPublishedEvents($events));
+    }
+
+    /**
+     * This method is like a Rebase while dropping some modifications!
+     *
+     * @param Command\PublishIndividualNodesFromWorkspace $command
+     * @return CommandResult
+     * @throws BaseWorkspaceDoesNotExist
+     * @throws BaseWorkspaceHasBeenModifiedInTheMeantime
+     * @throws ContentStreamAlreadyExists
+     * @throws ContentStreamDoesNotExistYet
+     * @throws WorkspaceDoesNotExist
+     * @throws \Exception
+     */
+    public function handleDiscardIndividualNodesFromWorkspace(Command\DiscardIndividualNodesFromWorkspace $command)
+    {
+        $this->readSideMemoryCacheManager->disableCache();
+
+        $workspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
+        if ($workspace === null) {
+            throw new WorkspaceDoesNotExist(sprintf('The source workspace %s does not exist', $command->getWorkspaceName()), 1513924741);
+        }
+        $baseWorkspace = $this->workspaceFinder->findOneByName($workspace->getBaseWorkspaceName());
+
+        if ($baseWorkspace === null) {
+            throw new BaseWorkspaceDoesNotExist(sprintf('The workspace %s (base workspace of %s) does not exist', $command->getBaseWorkspaceName(), $command->getWorkspaceName()), 1513924882);
+        }
+
+        $workspace = $this->workspaceFinder->findOneByName($command->getWorkspaceName());
+        if ($workspace === null) {
+            throw new WorkspaceDoesNotExist(sprintf('The source workspace %s does not exist', $command->getWorkspaceName()), 1513924741);
+        }
+
+        // 1) filter commands, only keeping the ones NOT MATCHING the nodes from the command (i.e. the modifications we want to keep)
+        $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
+
+        $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
+        /** @var CopyableAcrossContentStreamsInterface[] $commandsToKeep */
+        $commandsToKeep = [];
+
+        foreach ($originalCommands as $originalCommand) {
+            // TODO: the Node Address Bounded Context MUST be moved to the CR core. This is the smoking gun why we need this ;)
+            if (!$this->commandMatchesNodeAddresses($originalCommand, $command->getNodeAddresses())) {
+                $commandsToKeep[] = $originalCommand;
+            }
+        }
+
+        // 2) fork a new contentStream, based on the base WS, and apply the commands to keep
+        $newContentStream = ContentStreamIdentifier::create();
+        $this->contentStreamCommandHandler->handleForkContentStream(
+            new ForkContentStream(
+                $newContentStream,
+                $baseWorkspace->getCurrentContentStreamIdentifier()
+            )
+        )->blockUntilProjectionsAreUpToDate();
+
+        foreach ($commandsToKeep as $commandToKeep) {
+            $this->applyCommand($commandToKeep->createCopyForContentStream($newContentStream))->blockUntilProjectionsAreUpToDate();
+        }
+
+        // 3) switch content stream to forked WS.
+        // if we got so far without an Exception, we can switch the Workspace's active Content stream.
+        $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
+        $events = DomainEvents::withSingleEvent(
+            DecoratedEvent::addIdentifier(
+                new WorkspaceWasRebased(
+                    $command->getWorkspaceName(),
+                    $newContentStream
+                ),
+                Uuid::uuid4()->toString()
+            )
+        );
+        $this->eventStore->commit($streamName, $events);
+
+        // It is safe to only return the last command result, as the commands which were rebased are already executed "synchronously"
+        return CommandResult::fromPublishedEvents($events);
     }
 
     /**
@@ -636,7 +716,6 @@ final class WorkspaceCommandHandler
 
         // TODO: "Rebased" is not the correct wording here!
         $streamName = StreamName::fromString('Neos.ContentRepository:Workspace:' . $command->getWorkspaceName());
-        $eventStore = $this->eventStore->getEventStoreForStreamName($streamName);
         $events = DomainEvents::withSingleEvent(
             DecoratedEvent::addIdentifier(
                 new WorkspaceWasRebased(
