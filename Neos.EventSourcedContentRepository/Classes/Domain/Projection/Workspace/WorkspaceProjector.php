@@ -49,16 +49,20 @@ class WorkspaceProjector implements ProjectorInterface, AfterInvokeInterface
     protected $assumeProjectorRunsSynchronously = false;
 
     /**
+     * WorkspaceProjector constructor.
+     * @param \Doctrine\DBAL\Connection $dbal
+     */
+    public function __construct(\Doctrine\DBAL\Connection $dbal)
+    {
+        $this->dbal = $dbal;
+    }
+
+    /**
      * @internal
      */
     public function assumeProjectorRunsSynchronously()
     {
         $this->assumeProjectorRunsSynchronously = true;
-    }
-
-    public function injectEntityManager(EntityManagerInterface $entityManager): void
-    {
-        $this->dbal = $entityManager->getConnection();
     }
 
     public function isEmpty(): bool

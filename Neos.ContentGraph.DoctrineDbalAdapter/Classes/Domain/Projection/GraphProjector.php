@@ -54,13 +54,11 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
     const RELATION_DEFAULT_OFFSET = 128;
 
     /**
-     * @Flow\Inject
      * @var ProjectionContentGraph
      */
     protected $projectionContentGraph;
 
     /**
-     * @Flow\Inject
      * @var DbalClient
      */
     protected $client;
@@ -75,6 +73,18 @@ class GraphProjector implements ProjectorInterface, AfterInvokeInterface
      * @var bool
      */
     protected $assumeProjectorRunsSynchronously = false;
+
+    /**
+     * GraphProjector constructor.
+     * @param ProjectionContentGraph $projectionContentGraph
+     * @param DbalClient $client
+     */
+    public function __construct(ProjectionContentGraph $projectionContentGraph, DbalClient $client)
+    {
+        $this->projectionContentGraph = $projectionContentGraph;
+        $this->client = $client;
+    }
+
 
     /**
      * @internal

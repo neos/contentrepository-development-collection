@@ -14,4 +14,14 @@ class SlimEventTypeResolver extends EventTypeResolver
     {
         return get_class($event);
     }
+
+    public function getEventTypeByClassName(string $className): string
+    {
+        return $className;
+    }
+
+    public function getEventClassNameByType(string $eventType): string
+    {
+        return $eventType;
+    }
 }

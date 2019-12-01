@@ -42,21 +42,32 @@ use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 final class ContentGraph implements ContentGraphInterface
 {
     /**
-     * @Flow\Inject
      * @var DbalClient
      */
     protected $client;
 
     /**
-     * @Flow\Inject
      * @var NodeFactory
      */
     protected $nodeFactory;
 
     /**
+     * In-Memory Cache for created subgraphs
+     *
      * @var array|ContentSubgraphInterface[]
      */
     protected $subgraphs;
+
+    /**
+     * ContentGraph constructor.
+     * @param DbalClient $client
+     * @param NodeFactory $nodeFactory
+     */
+    public function __construct(DbalClient $client, NodeFactory $nodeFactory)
+    {
+        $this->client = $client;
+        $this->nodeFactory = $nodeFactory;
+    }
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier

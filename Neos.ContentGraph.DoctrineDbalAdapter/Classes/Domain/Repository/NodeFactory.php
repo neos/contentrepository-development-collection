@@ -38,7 +38,6 @@ use Neos\Flow\Reflection\ReflectionService;
 final class NodeFactory
 {
     /**
-     * @Flow\Inject
      * @var NodeTypeManager
      */
     protected $nodeTypeManager;
@@ -55,6 +54,14 @@ final class NodeFactory
      */
     protected $reflectionService;
 
+    /**
+     * NodeFactory constructor.
+     * @param NodeTypeManager $nodeTypeManager
+     */
+    public function __construct(NodeTypeManager $nodeTypeManager)
+    {
+        $this->nodeTypeManager = $nodeTypeManager;
+    }
 
     /**
      * @param array $nodeRow Node Row from projection (neos_contentgraph_node table)
@@ -256,7 +263,14 @@ final class NodeFactory
             }
             return $customClassName;
         } else {
-            return $this->objectManager->getClassNameByObjectName(NodeInterface::class);
+            if ($this->objectManager) {
+                // Called within Flow
+                return $this->objectManager->getClassNameByObjectName(NodeInterface::class);
+            } else {
+                // called standalone -- TODO: hardcoded class name here
+                return ContentProjection\Node::class;
+            }
+
         }
     }
 }

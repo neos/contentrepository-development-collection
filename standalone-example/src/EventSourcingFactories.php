@@ -3,6 +3,7 @@
 namespace Neos\StandaloneCrExample;
 
 
+use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
@@ -17,6 +18,7 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceTitle;
 use Neos\EventSourcing\Event\Decorator\EventWithIdentifier;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\Event\EventTypeResolver;
+use Neos\EventSourcing\EventListener\EventListenerInvoker;
 use Neos\EventSourcing\EventListener\EventListenerLocator;
 use Neos\EventSourcing\EventStore\EventListenerTrigger\EventListenerTrigger;
 use Neos\EventSourcing\EventStore\EventNormalizer;
@@ -36,7 +38,7 @@ class EventSourcingFactories
         return $connectionFactory;
     }
 
-    public static function buildEventStorage(ConnectionFactory $connectionFactory): DoctrineEventStorage
+    public static function buildEventStorage(ConnectionFactory $connectionFactory, EventNormalizer $eventNormalizer): DoctrineEventStorage
     {
         $storage = new DoctrineEventStorage([
             'backendOptions' => [
@@ -52,7 +54,7 @@ class EventSourcingFactories
                     'className' => 'Neos\Flow\Persistence\Doctrine\DataTypes\JsonArrayType'
                 ]
             ]
-        ]);
+        ], $eventNormalizer);
 
         ObjectAccess::setProperty($storage, 'connectionFactory', $connectionFactory, TRUE);
         ObjectAccess::setProperty($storage, 'now', new \DateTimeImmutable(), TRUE);
@@ -117,4 +119,16 @@ class EventSourcingFactories
         return $eventListenerLocator;
     }
 
+    public static function buildEventListenerInvoker(EventStore $eventStore, ConnectionFactory $connectionFactory) {
+        $connection = $connectionFactory->create([
+            'backendOptions' => [
+                'driver' => 'pdo_mysql',
+                'dbname' => 'escr-standalone',
+                'user' => 'root',
+                'password' => '',
+                'host' => 'localhost',
+            ]
+        ]);
+        return new SlimEventListenerInvoker($eventStore, $connection);
+    }
 }

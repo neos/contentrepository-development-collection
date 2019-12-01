@@ -6,6 +6,7 @@ namespace Neos\StandaloneCrExample;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Migrations\Configuration\Configuration;
 use Doctrine\DBAL\Migrations\Migration;
+use Doctrine\DBAL\Types\Type;
 use Neos\EventSourcing\EventStore\Storage\Doctrine\Factory\ConnectionFactory;
 use Neos\Flow\Package\PackageInterface;
 use Neos\Utility\Files;
@@ -21,7 +22,20 @@ class Migrations
             'password' => '',
             'host' => 'localhost',
         ];
-        $connection = DriverManager::getConnection($connectionParams, null);
+        $connection = DriverManager::getConnection($connectionParams);
+        if (!Type::hasType('flow_json_array')) {
+            Type::addType('flow_json_array', 'Neos\Flow\Persistence\Doctrine\DataTypes\JsonArrayType');
+        }
+        $connection->getDatabasePlatform()->registerDoctrineTypeMapping('json_array', 'flow_json_array');
+
+        foreach ($connection->getSchemaManager()->listTables() as $table) {
+            $truncateTableSql = $connection->getDriver()->getDatabasePlatform()->getDropTableSQL($table->getName());
+
+            $connection->beginTransaction();
+            $connection->exec($truncateTableSql);
+            $connection->commit();
+        }
+
 
         $configuration = new Configuration($connection, null);
         $configuration->setMigrationsNamespace('Neos\Flow\Persistence\Doctrine\Migrations');
