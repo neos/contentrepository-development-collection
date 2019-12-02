@@ -4,7 +4,6 @@ namespace Neos\EventSourcedContentRepository\Standalone\Configuration;
 
 final class DimensionConfiguration
 {
-
     private function __construct()
     {
     }

@@ -2,7 +2,6 @@
 
 namespace Neos\EventSourcedContentRepository\Standalone\DependencyInjection;
 
-
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
 use Neos\Cache\Frontend\VariableFrontend;
@@ -16,7 +15,6 @@ use Neos\Utility\ObjectAccess;
 
 class ContentRepositoryFactories
 {
-
     public static function buildDbalClient(ContentRepositoryConfiguration $contentRepositoryConfiguration): DbalClient
     {
         $dbalClient = new DbalClient();
@@ -36,7 +34,8 @@ class ContentRepositoryFactories
     }
 
 
-    public static function buildNodeTypeManager(VariableFrontend $fullConfigurationCache, ConfigurationManager $configurationManager) {
+    public static function buildNodeTypeManager(VariableFrontend $fullConfigurationCache, ConfigurationManager $configurationManager)
+    {
         $nodeTypeManager = new NodeTypeManager();
         ObjectAccess::setProperty($nodeTypeManager, 'fullConfigurationCache', $fullConfigurationCache, true);
         ObjectAccess::setProperty($nodeTypeManager, 'configurationManager', $configurationManager, true);

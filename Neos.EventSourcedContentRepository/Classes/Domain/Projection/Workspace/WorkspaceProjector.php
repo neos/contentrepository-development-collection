@@ -12,7 +12,6 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Workspace;
  * source code.
  */
 
-use Doctrine\ORM\EntityManagerInterface;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;

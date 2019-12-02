@@ -270,7 +270,6 @@ final class NodeFactory
                 // called standalone -- TODO: hardcoded class name here
                 return ContentProjection\Node::class;
             }
-
         }
     }
 }

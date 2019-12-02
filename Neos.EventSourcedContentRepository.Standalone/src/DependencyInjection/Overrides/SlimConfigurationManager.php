@@ -3,7 +3,6 @@
 
 namespace Neos\EventSourcedContentRepository\Standalone\DependencyInjection\Overrides;
 
-
 use Neos\Flow\Configuration\ConfigurationManager;
 
 class SlimConfigurationManager extends ConfigurationManager

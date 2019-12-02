@@ -2,7 +2,6 @@
 
 namespace Neos\EventSourcedContentRepository\Standalone\DependencyInjection;
 
-
 use Neos\Cache\Backend\NullBackend;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
@@ -34,7 +33,6 @@ use Symfony\Component\DependencyInjection\Reference;
 
 final class ContentRepositoryContainerConfigurer
 {
-
     public static function configure(ContainerBuilder $containerBuilder, ContentRepositoryConfiguration $contentRepositoryConfiguration)
     {
         $containerBuilder->register(ContentRepositoryConfiguration::class, WorkspaceCommandHandler::class);
@@ -99,7 +97,8 @@ final class ContentRepositoryContainerConfigurer
             ->addArgument(new Reference(NodeFactory::class));
 
         $containerBuilder->register(NodeFactory::class, NodeFactory::class)
-            ->addArgument(new Reference(NodeTypeManager::class));;
+            ->addArgument(new Reference(NodeTypeManager::class));
+        ;
 
         $containerBuilder->register(InterDimensionalVariationGraph::class, InterDimensionalVariationGraph::class)
             ->addArgument(new Reference(ContentDimensionSourceInterface::class))

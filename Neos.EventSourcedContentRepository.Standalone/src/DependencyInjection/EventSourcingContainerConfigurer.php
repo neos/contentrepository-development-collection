@@ -2,7 +2,6 @@
 
 namespace Neos\EventSourcedContentRepository\Standalone\DependencyInjection;
 
-
 use Neos\EventSourcedContentRepository\Standalone\Configuration\ContentRepositoryConfiguration;
 use Neos\EventSourcedContentRepository\Standalone\DependencyInjection\Overrides\SlimEventListenerInvoker;
 use Neos\EventSourcedContentRepository\Standalone\DependencyInjection\Overrides\SlimEventTypeResolver;
@@ -19,7 +18,6 @@ use Symfony\Component\DependencyInjection\Reference;
 
 final class EventSourcingContainerConfigurer
 {
-
     public static function configure(ContainerBuilder $containerBuilder, ContentRepositoryConfiguration $contentRepositoryConfiguration)
     {
         $containerBuilder->register(EventStore::class)

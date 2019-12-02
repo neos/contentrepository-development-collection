@@ -2,7 +2,6 @@
 
 namespace Neos\EventSourcedContentRepository\Standalone;
 
-
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Migrations\Configuration\Configuration;
@@ -132,7 +131,7 @@ final class ContentRepository
         $workspaceProjector->assumeProjectorRunsSynchronously();
 
         $eventListenerInvoker = $this->getEventListenerInvoker();
-        $this->getEventStore()->onPostCommit(function () use($eventListenerInvoker, $graphProjector, $workspaceProjector) {
+        $this->getEventStore()->onPostCommit(function () use ($eventListenerInvoker, $graphProjector, $workspaceProjector) {
             $eventListenerInvoker->catchUp($graphProjector);
             $eventListenerInvoker->catchUp($workspaceProjector);
         });
