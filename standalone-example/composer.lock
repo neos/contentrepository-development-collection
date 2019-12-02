@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f90438748571f4bbb5a0c1ad4e7c618e",
+    "content-hash": "01c533ad39f8c435982f3e44823fe826",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -56,12 +56,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/annotations.git",
-                "reference": "904dca4eb10715b92569fbcd79e201d5c349b6bc"
+                "reference": "a6dbe784068ea77213109e499e91a0175898c26b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/annotations/zipball/904dca4eb10715b92569fbcd79e201d5c349b6bc",
-                "reference": "904dca4eb10715b92569fbcd79e201d5c349b6bc",
+                "url": "https://api.github.com/repos/doctrine/annotations/zipball/a6dbe784068ea77213109e499e91a0175898c26b",
+                "reference": "a6dbe784068ea77213109e499e91a0175898c26b",
                 "shasum": ""
             },
             "require": {
@@ -116,7 +116,7 @@
                 "docblock",
                 "parser"
             ],
-            "time": "2019-10-01T18:55:10+00:00"
+            "time": "2019-12-02T17:42:25+00:00"
         },
         {
             "name": "doctrine/cache",
@@ -951,12 +951,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/reflection.git",
-                "reference": "4a97a22032919548b932482f36172ae3ea976632"
+                "reference": "7a2c95aa7c75613045de09985b5ddfdec05b9e18"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/reflection/zipball/4a97a22032919548b932482f36172ae3ea976632",
-                "reference": "4a97a22032919548b932482f36172ae3ea976632",
+                "url": "https://api.github.com/repos/doctrine/reflection/zipball/7a2c95aa7c75613045de09985b5ddfdec05b9e18",
+                "reference": "7a2c95aa7c75613045de09985b5ddfdec05b9e18",
                 "shasum": ""
             },
             "require": {
@@ -991,16 +991,16 @@
             ],
             "authors": [
                 {
+                    "name": "Guilherme Blanco",
+                    "email": "guilhermeblanco@gmail.com"
+                },
+                {
                     "name": "Roman Borschel",
                     "email": "roman@code-factory.org"
                 },
                 {
                     "name": "Benjamin Eberlei",
                     "email": "kontakt@beberlei.de"
-                },
-                {
-                    "name": "Guilherme Blanco",
-                    "email": "guilhermeblanco@gmail.com"
                 },
                 {
                     "name": "Jonathan Wage",
@@ -1021,7 +1021,7 @@
                 "reflection",
                 "static"
             ],
-            "time": "2018-12-12T20:24:29+00:00"
+            "time": "2019-12-02T13:05:25+00:00"
         },
         {
             "name": "flowpack/jobqueue-common",
@@ -1678,16 +1678,16 @@
         },
         {
             "name": "neos/event-sourcing",
-            "version": "dev-master",
+            "version": "dev-standalone-usage-adjustments",
             "source": {
                 "type": "git",
                 "url": "https://github.com/neos/Neos.EventSourcing.git",
-                "reference": "15a7f3378d8878de33461b4bcdd104174a7469ca"
+                "reference": "05f62949b493b59b2e1a1b842c3f4392e8f92f74"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/neos/Neos.EventSourcing/zipball/15a7f3378d8878de33461b4bcdd104174a7469ca",
-                "reference": "15a7f3378d8878de33461b4bcdd104174a7469ca",
+                "url": "https://api.github.com/repos/neos/Neos.EventSourcing/zipball/05f62949b493b59b2e1a1b842c3f4392e8f92f74",
+                "reference": "05f62949b493b59b2e1a1b842c3f4392e8f92f74",
                 "shasum": ""
             },
             "require": {
@@ -1713,17 +1713,21 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "description": "Lean and opinionated way to integrate Event Sourcing and CQRS pattern in your Flow framework package",
-            "time": "2019-11-08T13:57:18+00:00"
+            "time": "2019-12-01T17:57:41+00:00"
         },
         {
-            "name": "neos/standalone-cr-shims",
+            "name": "neos/eventsourcedcontentrepository-standalone",
             "version": "dev-master",
             "dist": {
                 "type": "path",
-                "url": "./shims",
-                "reference": "5a5fdcd86c63062679faa0be320bd8909801affc"
+                "url": "../Neos.EventSourcedContentRepository.Standalone",
+                "reference": "9c77395f117f1d385ec2fd74eafc5792b7034820"
             },
             "require": {
+                "doctrine/dbal": "^2.9.0",
+                "neos/contentgraph-doctrinedbaladapter": "dev-draft-standalone-cr",
+                "neos/event-sourced-content-repository": "dev-draft-standalone-cr",
+                "neos/event-sourcing": "dev-standalone-usage-adjustments",
                 "ramsey/uuid": "^3.0",
                 "symfony/dependency-injection": "^4.3"
             },
@@ -1732,18 +1736,23 @@
                 "neos/flow": "self.version",
                 "neos/fluid-adaptor": "self.version"
             },
+            "suggest": {
+                "symfony/yaml": "*"
+            },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Neos\\Flow\\Utility\\": "src/NeosFlowUtility",
-                    "Neos\\Flow\\": "src/NeosFlow",
-                    "Neos\\Flow\\Persistence\\Doctrine\\DataTypes\\": "src/NeosFlowPersistenceDoctrineDataTypes",
-                    "Neos\\Eel\\": "src/NeosEel"
+                    "Neos\\EventSourcedContentRepository\\Standalone\\": "src",
+                    "Neos\\Flow\\Utility\\": "shims/src/NeosFlowUtility",
+                    "Neos\\Flow\\": "shims/src/NeosFlow",
+                    "Neos\\Flow\\Persistence\\Doctrine\\DataTypes\\": "shims/src/NeosFlowPersistenceDoctrineDataTypes",
+                    "Neos\\Eel\\": "shims/src/NeosEel"
                 }
             },
             "license": [
                 "GPL-3.0-or-later"
-            ]
+            ],
+            "description": "Event-Sourced Content Repository - Standalone Version"
         },
         {
             "name": "neos/utility-arrays",
@@ -1993,7 +2002,7 @@
         },
         {
             "name": "ocramius/proxy-manager",
-            "version": "2.2.x-dev",
+            "version": "2.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Ocramius/ProxyManager.git",
@@ -2063,16 +2072,16 @@
         },
         {
             "name": "paragonie/random_compat",
-            "version": "v9.99.99.x-dev",
+            "version": "v9.99.99",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paragonie/random_compat.git",
-                "reference": "0947f25b883d4172df340a0d95f1b7cdabc5368a"
+                "reference": "84b4dfb120c6f9b4ff7b3685f9b8f1aa365a0c95"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/0947f25b883d4172df340a0d95f1b7cdabc5368a",
-                "reference": "0947f25b883d4172df340a0d95f1b7cdabc5368a",
+                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/84b4dfb120c6f9b4ff7b3685f9b8f1aa365a0c95",
+                "reference": "84b4dfb120c6f9b4ff7b3685f9b8f1aa365a0c95",
                 "shasum": ""
             },
             "require": {
@@ -2081,6 +2090,9 @@
             "require-dev": {
                 "phpunit/phpunit": "4.*|5.*",
                 "vimeo/psalm": "^1"
+            },
+            "suggest": {
+                "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
             },
             "type": "library",
             "notification-url": "https://packagist.org/downloads/",
@@ -2101,7 +2113,7 @@
                 "pseudorandom",
                 "random"
             ],
-            "time": "2018-08-07T13:07:48+00:00"
+            "time": "2018-07-02T15:55:56+00:00"
         },
         {
             "name": "psr/cache",
@@ -2248,46 +2260,62 @@
         },
         {
             "name": "ramsey/uuid",
-            "version": "3.2.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ramsey/uuid.git",
-                "reference": "adee1ba4a6885ed800021a98dd69ae2394d695ec"
+                "reference": "242f83df0ca019bafc8293da30ab04fe8540a5e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ramsey/uuid/zipball/adee1ba4a6885ed800021a98dd69ae2394d695ec",
-                "reference": "adee1ba4a6885ed800021a98dd69ae2394d695ec",
+                "url": "https://api.github.com/repos/ramsey/uuid/zipball/242f83df0ca019bafc8293da30ab04fe8540a5e4",
+                "reference": "242f83df0ca019bafc8293da30ab04fe8540a5e4",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4"
+                "ext-json": "*",
+                "paragonie/random_compat": "^1 | ^2 | 9.99.99",
+                "php": "^5.4 | ^7",
+                "symfony/polyfill-ctype": "^1.8"
             },
             "replace": {
                 "rhumsaa/uuid": "self.version"
             },
             "require-dev": {
-                "apigen/apigen": "^4.1",
-                "ircmaxell/random-lib": "^1.1",
+                "codeception/aspect-mock": "^1 | ^2",
+                "doctrine/annotations": "^1.2",
+                "goaop/framework": "1.0.0-alpha.2 | ^1 | ^2.1",
                 "jakub-onderka/php-parallel-lint": "^0.9.0",
+                "mockery/mockery": "^0.9.9",
                 "moontoast/math": "^1.1",
-                "phpunit/phpunit": "^4.7|^5.0",
-                "satooshi/php-coveralls": "^0.6.1",
+                "paragonie/random-lib": "^2",
+                "php-mock/php-mock-phpunit": "^0.3 | ^1.1",
+                "phpunit/phpunit": "^4.8 | ^5.4 | ^6.5",
                 "squizlabs/php_codesniffer": "^2.3"
             },
             "suggest": {
+                "ext-ctype": "Provides support for PHP Ctype functions",
                 "ext-libsodium": "Provides the PECL libsodium extension for use with the SodiumRandomGenerator",
+                "ext-openssl": "Provides the OpenSSL extension for use with the OpenSslGenerator",
                 "ext-uuid": "Provides the PECL UUID extension for use with the PeclUuidTimeGenerator and PeclUuidRandomGenerator",
-                "ircmaxell/random-lib": "Provides RandomLib for use with the RandomLibAdapter",
                 "moontoast/math": "Provides support for converting UUID to 128-bit integer (in string form).",
+                "paragonie/random-lib": "Provides RandomLib for use with the RandomLibAdapter",
                 "ramsey/uuid-console": "A console application for generating UUIDs with ramsey/uuid",
                 "ramsey/uuid-doctrine": "Allows the use of Ramsey\\Uuid\\Uuid as Doctrine field type."
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Ramsey\\Uuid\\": "src/"
-                }
+                },
+                "files": [
+                    "src/functions.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -2295,17 +2323,17 @@
             ],
             "authors": [
                 {
+                    "name": "Ben Ramsey",
+                    "email": "ben@benramsey.com",
+                    "homepage": "https://benramsey.com"
+                },
+                {
                     "name": "Marijn Huizendveld",
                     "email": "marijn.huizendveld@gmail.com"
                 },
                 {
                     "name": "Thibaud Fabre",
                     "email": "thibaud@aztech.io"
-                },
-                {
-                    "name": "Ben Ramsey",
-                    "email": "ben@benramsey.com",
-                    "homepage": "https://benramsey.com"
                 }
             ],
             "description": "Formerly rhumsaa/uuid. A PHP 5.4+ library for generating RFC 4122 version 1, 3, 4, and 5 universally unique identifiers (UUID).",
@@ -2315,7 +2343,7 @@
                 "identifier",
                 "uuid"
             ],
-            "time": "2016-02-17T23:32:34+00:00"
+            "time": "2019-12-01T05:17:02+00:00"
         },
         {
             "name": "symfony/console",
@@ -2323,12 +2351,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "fde1e68df6bef9083883b061ba0019ba8b71e801"
+                "reference": "f0aea3df20d15635b3cb9730ca5eea1c65b7f201"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/fde1e68df6bef9083883b061ba0019ba8b71e801",
-                "reference": "fde1e68df6bef9083883b061ba0019ba8b71e801",
+                "url": "https://api.github.com/repos/symfony/console/zipball/f0aea3df20d15635b3cb9730ca5eea1c65b7f201",
+                "reference": "f0aea3df20d15635b3cb9730ca5eea1c65b7f201",
                 "shasum": ""
             },
             "require": {
@@ -2391,7 +2419,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2019-11-28T13:33:56+00:00"
+            "time": "2019-12-01T10:06:17+00:00"
         },
         {
             "name": "symfony/dependency-injection",
@@ -2399,12 +2427,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/dependency-injection.git",
-                "reference": "afd7f3bb933dc3e31d509961fd0fa8e3a2b9a2ae"
+                "reference": "ad46a4def1325befab696b49c839dffea3fc92bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/afd7f3bb933dc3e31d509961fd0fa8e3a2b9a2ae",
-                "reference": "afd7f3bb933dc3e31d509961fd0fa8e3a2b9a2ae",
+                "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/ad46a4def1325befab696b49c839dffea3fc92bd",
+                "reference": "ad46a4def1325befab696b49c839dffea3fc92bd",
                 "shasum": ""
             },
             "require": {
@@ -2464,7 +2492,7 @@
             ],
             "description": "Symfony DependencyInjection Component",
             "homepage": "https://symfony.com",
-            "time": "2019-11-28T13:33:56+00:00"
+            "time": "2019-12-01T10:19:36+00:00"
         },
         {
             "name": "symfony/inflector",
@@ -2764,12 +2792,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/property-access.git",
-                "reference": "5bd3b72aa0361a42c5d0316a6577892c6e04ca20"
+                "reference": "9ec5e220898a97b92b8784422396f4e244c04d29"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/property-access/zipball/5bd3b72aa0361a42c5d0316a6577892c6e04ca20",
-                "reference": "5bd3b72aa0361a42c5d0316a6577892c6e04ca20",
+                "url": "https://api.github.com/repos/symfony/property-access/zipball/9ec5e220898a97b92b8784422396f4e244c04d29",
+                "reference": "9ec5e220898a97b92b8784422396f4e244c04d29",
                 "shasum": ""
             },
             "require": {
@@ -2824,7 +2852,7 @@
                 "property path",
                 "reflection"
             ],
-            "time": "2019-08-26T07:52:58+00:00"
+            "time": "2019-12-01T10:45:41+00:00"
         },
         {
             "name": "symfony/serializer",
@@ -2966,6 +2994,65 @@
             "time": "2019-11-18T17:27:11+00:00"
         },
         {
+            "name": "symfony/yaml",
+            "version": "4.4.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/yaml.git",
+                "reference": "76de473358fe802578a415d5bb43c296cf09d211"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/76de473358fe802578a415d5bb43c296cf09d211",
+                "reference": "76de473358fe802578a415d5bb43c296cf09d211",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1.3",
+                "symfony/polyfill-ctype": "~1.8"
+            },
+            "conflict": {
+                "symfony/console": "<3.4"
+            },
+            "require-dev": {
+                "symfony/console": "^3.4|^4.0|^5.0"
+            },
+            "suggest": {
+                "symfony/console": "For validating YAML files using the lint command"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Yaml\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Yaml Component",
+            "homepage": "https://symfony.com",
+            "time": "2019-11-12T14:51:11+00:00"
+        },
+        {
             "name": "zendframework/zend-code",
             "version": "dev-develop",
             "source": {
@@ -3077,9 +3164,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "neos/standalone-cr-shims": 20,
-        "neos/event-sourced-content-repository": 20,
-        "neos/contentgraph-doctrinedbaladapter": 20
+        "neos/eventsourcedcontentrepository-standalone": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

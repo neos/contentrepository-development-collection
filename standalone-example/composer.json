@@ -15,11 +15,11 @@
     },
     {
       "type": "path",
-      "url": "../Neos.ContentGraph.DoctrineDbalAdapter/"
+      "url": "../Neos.EventSourcedContentRepository.Standalone/"
     },
     {
       "type": "path",
-      "url": "./shims/"
+      "url": "../Neos.ContentGraph.DoctrineDbalAdapter/"
     },
     {
       "type": "git",
@@ -27,10 +27,8 @@
     }
   ],
   "require": {
-    "doctrine/dbal": "^2.9.0",
-    "neos/standalone-cr-shims": "dev-master",
-    "neos/event-sourced-content-repository": "dev-draft-standalone-cr",
-    "neos/contentgraph-doctrinedbaladapter": "dev-draft-standalone-cr"
+    "neos/eventsourcedcontentrepository-standalone": "dev-master",
+    "symfony/yaml": "^4.3"
   },
   "minimum-stability": "dev",
   "autoload": {

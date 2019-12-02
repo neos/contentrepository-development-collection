@@ -1,11 +1,9 @@
 <?php
 
-namespace Neos\StandaloneCrExample;
+namespace Neos\EventSourcedContentRepository\Standalone\DependencyInjection;
 
 
-use Doctrine\DBAL\Connection;
 use Neos\Cache\Backend\NullBackend;
-use Neos\Cache\Frontend\StringFrontend;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
@@ -26,71 +24,21 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFind
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjector;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
-use Neos\EventSourcing\Event\EventTypeResolver;
-use Neos\EventSourcing\EventListener\EventListenerInvoker;
-use Neos\EventSourcing\EventListener\EventListenerLocator;
-use Neos\EventSourcing\EventStore\EventListenerTrigger\EventListenerTrigger;
-use Neos\EventSourcing\EventStore\EventNormalizer;
+use Neos\EventSourcedContentRepository\Standalone\Configuration\ContentRepositoryConfiguration;
+use Neos\EventSourcedContentRepository\Standalone\DependencyInjection\Overrides\SlimConfigurationManager;
 use Neos\EventSourcing\EventStore\EventStore;
-use Neos\EventSourcing\EventStore\EventStoreFactory;
 use Neos\EventSourcing\EventStore\Storage\Doctrine\Factory\ConnectionFactory;
-use Neos\EventSourcing\EventStore\Storage\EventStorageInterface;
 use Neos\Flow\Configuration\ConfigurationManager;
-use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class ContentRepositoryContainer
+final class ContentRepositoryContainerConfigurer
 {
-    /**
-     * @var Container
-     */
-    protected $container;
 
-    public function __construct()
+    public static function configure(ContainerBuilder $containerBuilder, ContentRepositoryConfiguration $contentRepositoryConfiguration)
     {
-        $containerBuilder = new ContainerBuilder();
-        self::configureEventSourcing($containerBuilder);
-        self::configureContentRepository($containerBuilder);
-        $containerBuilder->compile();
-        $this->container = $containerBuilder;
-    }
+        $containerBuilder->register(ContentRepositoryConfiguration::class, WorkspaceCommandHandler::class);
 
-    private static function configureEventSourcing(ContainerBuilder $containerBuilder): void
-    {
-        $containerBuilder->register(EventStore::class)
-            ->setFactory([EventSourcingFactories::class, 'buildEventStore'])
-            ->addArgument(new Reference(EventStorageInterface::class))
-            ->addArgument(new Reference(EventTypeResolver::class))
-            ->addArgument(new Reference(EventNormalizer::class))
-            ->addArgument(new Reference(EventListenerTrigger::class))
-            ->setPublic(true);
-
-        $containerBuilder
-            ->register(ConnectionFactory::class)
-            ->setFactory([EventSourcingFactories::class, 'buildConnectionFactory']);
-
-        $containerBuilder->register(EventStorageInterface::class)
-            ->setFactory([EventSourcingFactories::class, 'buildEventStorage'])
-            ->addArgument(new Reference(ConnectionFactory::class))
-            ->addArgument(new Reference(EventNormalizer::class));
-
-        $containerBuilder->register(EventTypeResolver::class, SlimEventTypeResolver::class);
-
-        $containerBuilder->register(EventNormalizer::class)
-            ->setFactory([EventSourcingFactories::class, 'buildEventNormalizer'])
-            ->addArgument(new Reference(EventTypeResolver::class));
-
-        $containerBuilder->register(EventListenerTrigger::class)
-            ->setFactory([EventSourcingFactories::class, 'buildEventListenerTrigger'])
-            ->addArgument(new Reference(EventListenerLocator::class));
-
-        $containerBuilder->register(EventListenerLocator::class)
-            ->setFactory([EventSourcingFactories::class, 'buildEventListenerLocator']);
-    }
-
-    private static function configureContentRepository(ContainerBuilder $containerBuilder): void
-    {
         $containerBuilder->register(WorkspaceCommandHandler::class, WorkspaceCommandHandler::class)
             ->setPublic(true)
             ->addArgument(new Reference(EventStore::class))
@@ -105,7 +53,7 @@ class ContentRepositoryContainer
 
         $containerBuilder->register(DbalClient::class, DbalClient::class)
             ->setFactory([ContentRepositoryFactories::class, 'buildDbalClient'])
-            ->addArgument(new Reference(EventTypeResolver::class));;
+            ->addArgument('%contentRepositoryConfiguration%');
 
         $containerBuilder->register(NodeAggregateCommandHandler::class, NodeAggregateCommandHandler::class)
             ->setPublic(true)
@@ -125,6 +73,7 @@ class ContentRepositoryContainer
         $containerBuilder->register(ReadSideMemoryCacheManager::class, ReadSideMemoryCacheManager::class)
             ->addArgument(new Reference(ContentGraphInterface::class))
             ->addArgument(new Reference(WorkspaceFinder::class));
+
         $containerBuilder->register(ContentStreamRepository::class, ContentStreamRepository::class)
             ->addArgument(new Reference(EventStore::class));
 
@@ -134,35 +83,33 @@ class ContentRepositoryContainer
             ->addArgument(new Reference(ConfigurationManager::class));
 
         $containerBuilder->register(ConfigurationManager::class, SlimConfigurationManager::class)
-            ->addArgument([
-                'Neos.ContentRepository:Root' => [
-
-                ],
-                'Example:Foo' => []
-            ]);
+            ->addArgument($contentRepositoryConfiguration->getNodeTypes()->getConfiguration());
 
         $containerBuilder->register('nodeTypeManagerCache', VariableFrontend::class)
             ->addArgument('nodeTypeManagerCache')
             ->addArgument(new Reference(NullBackend::class));
+
         $containerBuilder->register(NullBackend::class, NullBackend::class);
 
         $containerBuilder->register(ContentDimensionZookeeper::class, ContentDimensionZookeeper::class)
             ->addArgument(new Reference(ContentDimensionSourceInterface::class));
+
         $containerBuilder->register(ContentGraphInterface::class, ContentGraph::class)
             ->addArgument(new Reference(DbalClient::class))
             ->addArgument(new Reference(NodeFactory::class));
+
         $containerBuilder->register(NodeFactory::class, NodeFactory::class)
-            ->addArgument(new Reference(NodeTypeManager::class));
-        ;
+            ->addArgument(new Reference(NodeTypeManager::class));;
+
         $containerBuilder->register(InterDimensionalVariationGraph::class, InterDimensionalVariationGraph::class)
             ->addArgument(new Reference(ContentDimensionSourceInterface::class))
             ->addArgument(new Reference(ContentDimensionZookeeper::class));
+
         $containerBuilder->register(NodeAggregateEventPublisher::class, NodeAggregateEventPublisher::class)
             ->addArgument(new Reference(EventStore::class));
 
         $containerBuilder->register(ContentDimensionSourceInterface::class, ConfigurationBasedContentDimensionSource::class)
-            // TODO: add content dimension configuration here
-            ->addArgument([]);
+            ->addArgument($contentRepositoryConfiguration->getDimensions()->getConfiguration());
 
         $containerBuilder->register(GraphProjector::class, GraphProjector::class)
             ->addArgument(new Reference(ProjectionContentGraph::class))
@@ -175,42 +122,7 @@ class ContentRepositoryContainer
         $containerBuilder->register(WorkspaceProjector::class, WorkspaceProjector::class)
             ->setFactory([ContentRepositoryFactories::class, 'buildWorkspaceProjector'])
             ->addArgument(new Reference(ConnectionFactory::class))
+            ->addArgument('%contentRepositoryConfiguration%')
             ->setPublic(true);
-
-        $containerBuilder->register(EventListenerInvoker::class, SlimEventListenerInvoker::class)
-            ->setFactory([EventSourcingFactories::class, 'buildEventListenerInvoker'])
-            ->addArgument(new Reference(EventStore::class))
-            ->addArgument(new Reference(ConnectionFactory::class))
-            ->setPublic(true);
-    }
-
-    public function getEventStore(): EventStore
-    {
-        return $this->container->get(EventStore::class);
-    }
-
-    public function getWorkspaceCommandHandler(): WorkspaceCommandHandler
-    {
-        return $this->container->get(WorkspaceCommandHandler::class);
-    }
-
-    public function getGraphProjector(): GraphProjector
-    {
-        return $this->container->get(GraphProjector::class);
-    }
-
-    public function getWorkspaceProjector(): WorkspaceProjector
-    {
-        return $this->container->get(WorkspaceProjector::class);
-    }
-
-    public function getEventListenerInvoker(): EventListenerInvoker
-    {
-        return $this->container->get(EventListenerInvoker::class);
-    }
-
-    public function getNodeAggregateCommandHandler(): NodeAggregateCommandHandler
-    {
-        return $this->container->get(NodeAggregateCommandHandler::class);
     }
 }

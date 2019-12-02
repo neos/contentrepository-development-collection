@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\StandaloneCrExample;
+namespace Neos\EventSourcedContentRepository\Standalone\DependencyInjection\Overrides;
 
 use Doctrine\DBAL\Connection;
 use Neos\EventSourcing\EventListener\EventListenerInterface;
