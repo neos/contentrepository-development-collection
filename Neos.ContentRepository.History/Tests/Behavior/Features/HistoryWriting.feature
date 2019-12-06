@@ -13,6 +13,13 @@ Feature: Writing of history entries on node aggregate events
         text:
           type: string
     """
+    And the event RootWorkspaceWasCreated was published with payload:
+      | Key                            | Value                                  |
+      | workspaceName                  | "live"                                 |
+      | workspaceTitle                 | "Live"                                 |
+      | workspaceDescription           | "The live workspace"                   |
+      | initiatingUserIdentifier       | "00000000-0000-0000-0000-000000000000" |
+      | currentContentStreamIdentifier | "cs-identifier"                        |
 
   Scenario: Create a root node aggregate
     When the command CreateRootNodeAggregateWithNode is executed with payload:

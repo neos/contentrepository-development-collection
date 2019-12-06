@@ -14,7 +14,7 @@ namespace Neos\ContentRepository\History\Domain\History\Projection;
  */
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\History\Domain\History\AgentIdentifier;
 use Neos\ContentRepository\History\Domain\History\HistoryEntryIdentifier;
 use Neos\ContentRepository\History\Domain\History\HistoryEntryType;
@@ -93,7 +93,7 @@ final class HistoryEntryRecord
                 'payload' => json_encode($this->payload)
             ],
             [
-                'recordedat' => Type::DATETIME_IMMUTABLE,
+                'recordedat' => Types::DATETIME_IMMUTABLE,
             ]
         );
     }
@@ -117,7 +117,7 @@ final class HistoryEntryRecord
                 'identifier' => (string)$this->identifier,
             ],
             [
-                'recordedat' => Type::DATETIME_IMMUTABLE
+                'recordedat' => Types::DATETIME_IMMUTABLE
             ]
         );
     }

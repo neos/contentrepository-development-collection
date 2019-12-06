@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\Domain\Projection\History;
+namespace Neos\ContentRepository\History\Domain\History\Projection;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -19,7 +19,6 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\History\Domain\History\AgentIdentifier;
 use Neos\ContentRepository\History\Domain\History\HistoryEntryIdentifier;
 use Neos\ContentRepository\History\Domain\History\HistoryEntryType;
-use Neos\ContentRepository\History\Domain\History\Projection\HistoryEntryRecord;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateNameWasChanged;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateTypeWasChanged;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
@@ -314,7 +313,7 @@ class HistoryProjector implements ProjectorInterface
 
     private function transactional(callable $callable): void
     {
-        return $this->getDatabaseConnection()->transactional($callable);
+        $this->getDatabaseConnection()->transactional($callable);
     }
 
     private function getDatabaseConnection(): DatabaseConnection
