@@ -1,0 +1,3173 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "01c533ad39f8c435982f3e44823fe826",
+    "packages": [
+        {
+            "name": "behat/transliterator",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Behat/Transliterator.git",
+                "reference": "9eb1092ed2a3eb06d3c51f79f208fe8ac1cac553"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Behat/Transliterator/zipball/9eb1092ed2a3eb06d3c51f79f208fe8ac1cac553",
+                "reference": "9eb1092ed2a3eb06d3c51f79f208fe8ac1cac553",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "chuyskywalker/rolling-curl": "^3.1",
+                "php-yaoi/php-yaoi": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Behat\\Transliterator\\": "src/Behat/Transliterator"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Artistic-1.0"
+            ],
+            "description": "String transliterator",
+            "keywords": [
+                "i18n",
+                "slug",
+                "transliterator"
+            ],
+            "time": "2019-07-16T11:59:04+00:00"
+        },
+        {
+            "name": "doctrine/annotations",
+            "version": "1.9.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/doctrine/annotations.git",
+                "reference": "a6dbe784068ea77213109e499e91a0175898c26b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/doctrine/annotations/zipball/a6dbe784068ea77213109e499e91a0175898c26b",
+                "reference": "a6dbe784068ea77213109e499e91a0175898c26b",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/lexer": "1.*",
+                "php": "^7.1"
+            },
+            "require-dev": {
+                "doctrine/cache": "1.*",
+                "phpunit/phpunit": "^7.5"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.7.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Doctrine\\Common\\Annotations\\": "lib/Doctrine/Common/Annotations"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Guilherme Blanco",
+                    "email": "guilhermeblanco@gmail.com"
+                },
+                {
+                    "name": "Roman Borschel",
+                    "email": "roman@code-factory.org"
+                },
+                {
+                    "name": "Benjamin Eberlei",
+                    "email": "kontakt@beberlei.de"
+                },
+                {
+                    "name": "Jonathan Wage",
+                    "email": "jonwage@gmail.com"
+                },
+                {
+                    "name": "Johannes Schmitt",
+                    "email": "schmittjoh@gmail.com"
+                }
+            ],
+            "description": "Docblock Annotations Parser",
+            "homepage": "http://www.doctrine-project.org",
+            "keywords": [
+                "annotations",
+                "docblock",
+                "parser"
+            ],
+            "time": "2019-12-02T17:42:25+00:00"
+        },
+        {
+            "name": "doctrine/cache",
+            "version": "1.10.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/doctrine/cache.git",
+                "reference": "382e7f4db9a12dc6c19431743a2b096041bcdd62"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/doctrine/cache/zipball/382e7f4db9a12dc6c19431743a2b096041bcdd62",
+                "reference": "382e7f4db9a12dc6c19431743a2b096041bcdd62",
+                "shasum": ""
+            },
+            "require": {
+                "php": "~7.1"
+            },
+            "conflict": {
+                "doctrine/common": ">2.2,<2.4"
+            },
+            "require-dev": {
+                "alcaeus/mongo-php-adapter": "^1.1",
+                "doctrine/coding-standard": "^6.0",
+                "mongodb/mongodb": "^1.1",
+                "phpunit/phpunit": "^7.0",
+                "predis/predis": "~1.0"
+            },
+            "suggest": {
+                "alcaeus/mongo-php-adapter": "Required to use legacy MongoDB driver"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.9.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Doctrine\\Common\\Cache\\": "lib/Doctrine/Common/Cache"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Guilherme Blanco",
+                    "email": "guilhermeblanco@gmail.com"
+                },
+                {
+                    "name": "Roman Borschel",
+                    "email": "roman@code-factory.org"
+                },
+                {
+                    "name": "Benjamin Eberlei",
+                    "email": "kontakt@beberlei.de"
+                },
+                {
+                    "name": "Jonathan Wage",
+                    "email": "jonwage@gmail.com"
+                },
+                {
+                    "name": "Johannes Schmitt",
+                    "email": "schmittjoh@gmail.com"
+                }
+            ],
+            "description": "PHP Doctrine Cache library is a popular cache implementation that supports many different drivers such as redis, memcache, apc, mongodb and others.",
+            "homepage": "https://www.doctrine-project.org/projects/cache.html",
+            "keywords": [
+                "abstraction",
+                "apcu",
+                "cache",
+                "caching",
+                "couchdb",
+                "memcached",
+                "php",
+                "redis",
+                "xcache"
+            ],
+            "time": "2019-11-29T15:36:20+00:00"
+        },
+        {
+            "name": "doctrine/collections",
+            "version": "1.6.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/doctrine/collections.git",
+                "reference": "6b1e4b2b66f6d6e49983cebfe23a21b7ccc5b0d7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/doctrine/collections/zipball/6b1e4b2b66f6d6e49983cebfe23a21b7ccc5b0d7",
+                "reference": "6b1e4b2b66f6d6e49983cebfe23a21b7ccc5b0d7",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1.3"
+            },
+            "require-dev": {
+                "doctrine/coding-standard": "^6.0",
+                "phpstan/phpstan-shim": "^0.9.2",
+                "phpunit/phpunit": "^7.0",
+                "vimeo/psalm": "^3.2.2"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.6.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Doctrine\\Common\\Collections\\": "lib/Doctrine/Common/Collections"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Guilherme Blanco",
+                    "email": "guilhermeblanco@gmail.com"
+                },
+                {
+                    "name": "Roman Borschel",
+                    "email": "roman@code-factory.org"
+                },
+                {
+                    "name": "Benjamin Eberlei",
+                    "email": "kontakt@beberlei.de"
+                },
+                {
+                    "name": "Jonathan Wage",
+                    "email": "jonwage@gmail.com"
+                },
+                {
+                    "name": "Johannes Schmitt",
+                    "email": "schmittjoh@gmail.com"
+                }
+            ],
+            "description": "PHP Doctrine Collections library that adds additional functionality on top of PHP arrays.",
+            "homepage": "https://www.doctrine-project.org/projects/collections.html",
+            "keywords": [
+                "array",
+                "collections",
+                "iterators",
+                "php"
+            ],
+            "time": "2019-11-13T13:07:11+00:00"
+        },
+        {
+            "name": "doctrine/common",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/doctrine/common.git",
+                "reference": "cb3944b0cf7c61dfe815a3ccc2c3037fb361556e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/doctrine/common/zipball/cb3944b0cf7c61dfe815a3ccc2c3037fb361556e",
+                "reference": "cb3944b0cf7c61dfe815a3ccc2c3037fb361556e",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/annotations": "^1.0",
+                "doctrine/cache": "^1.0",
+                "doctrine/collections": "^1.0",
+                "doctrine/event-manager": "^1.0",
+                "doctrine/inflector": "^1.0",
+                "doctrine/lexer": "^1.0",
+                "doctrine/persistence": "^1.1",
+                "doctrine/reflection": "^1.0",
+                "php": "^7.1"
+            },
+            "require-dev": {
+                "doctrine/coding-standard": "^1.0",
+                "phpstan/phpstan": "^0.11",
+                "phpstan/phpstan-phpunit": "^0.11",
+                "phpunit/phpunit": "^7.0",
+                "squizlabs/php_codesniffer": "^3.0",
+                "symfony/phpunit-bridge": "^4.0.5"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.11.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Doctrine\\Common\\": "lib/Doctrine/Common"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Guilherme Blanco",
+                    "email": "guilhermeblanco@gmail.com"
+                },
+                {
+                    "name": "Roman Borschel",
+                    "email": "roman@code-factory.org"
+                },
+                {
+                    "name": "Benjamin Eberlei",
+                    "email": "kontakt@beberlei.de"
+                },
+                {
+                    "name": "Jonathan Wage",
+                    "email": "jonwage@gmail.com"
+                },
+                {
+                    "name": "Johannes Schmitt",
+                    "email": "schmittjoh@gmail.com"
+                },
+                {
+                    "name": "Marco Pivetta",
+                    "email": "ocramius@gmail.com"
+                }
+            ],
+            "description": "PHP Doctrine Common project is a library that provides additional functionality that other Doctrine projects depend on such as better reflection support, persistence interfaces, proxies, event system and much more.",
+            "homepage": "https://www.doctrine-project.org/projects/common.html",
+            "keywords": [
+                "common",
+                "doctrine",
+                "php"
+            ],
+            "time": "2019-10-05T05:12:03+00:00"
+        },
+        {
+            "name": "doctrine/dbal",
+            "version": "2.10.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/doctrine/dbal.git",
+                "reference": "70553dac3a60309336d07dc84e489a34216d962c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/70553dac3a60309336d07dc84e489a34216d962c",
+                "reference": "70553dac3a60309336d07dc84e489a34216d962c",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/cache": "^1.0",
+                "doctrine/event-manager": "^1.0",
+                "ext-pdo": "*",
+                "php": "^7.2"
+            },
+            "require-dev": {
+                "doctrine/coding-standard": "^6.0",
+                "jetbrains/phpstorm-stubs": "^2019.1",
+                "phpstan/phpstan": "^0.11.3",
+                "phpunit/phpunit": "^8.4.1",
+                "symfony/console": "^2.0.5|^3.0|^4.0|^5.0"
+            },
+            "suggest": {
+                "symfony/console": "For helpful console commands such as SQL execution and import of files."
+            },
+            "bin": [
+                "bin/doctrine-dbal"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.10.x-dev",
+                    "dev-develop": "3.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Doctrine\\DBAL\\": "lib/Doctrine/DBAL"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Guilherme Blanco",
+                    "email": "guilhermeblanco@gmail.com"
+                },
+                {
+                    "name": "Roman Borschel",
+                    "email": "roman@code-factory.org"
+                },
+                {
+                    "name": "Benjamin Eberlei",
+                    "email": "kontakt@beberlei.de"
+                },
+                {
+                    "name": "Jonathan Wage",
+                    "email": "jonwage@gmail.com"
+                }
+            ],
+            "description": "Powerful PHP database abstraction layer (DBAL) with many features for database schema introspection and management.",
+            "homepage": "https://www.doctrine-project.org/projects/dbal.html",
+            "keywords": [
+                "abstraction",
+                "database",
+                "db2",
+                "dbal",
+                "mariadb",
+                "mssql",
+                "mysql",
+                "oci8",
+                "oracle",
+                "pdo",
+                "pgsql",
+                "postgresql",
+                "queryobject",
+                "sasql",
+                "sql",
+                "sqlanywhere",
+                "sqlite",
+                "sqlserver",
+                "sqlsrv"
+            ],
+            "time": "2019-11-28T08:05:35+00:00"
+        },
+        {
+            "name": "doctrine/event-manager",
+            "version": "1.1.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/doctrine/event-manager.git",
+                "reference": "629572819973f13486371cb611386eb17851e85c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/doctrine/event-manager/zipball/629572819973f13486371cb611386eb17851e85c",
+                "reference": "629572819973f13486371cb611386eb17851e85c",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1"
+            },
+            "conflict": {
+                "doctrine/common": "<2.9@dev"
+            },
+            "require-dev": {
+                "doctrine/coding-standard": "^6.0",
+                "phpunit/phpunit": "^7.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Doctrine\\Common\\": "lib/Doctrine/Common"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Guilherme Blanco",
+                    "email": "guilhermeblanco@gmail.com"
+                },
+                {
+                    "name": "Roman Borschel",
+                    "email": "roman@code-factory.org"
+                },
+                {
+                    "name": "Benjamin Eberlei",
+                    "email": "kontakt@beberlei.de"
+                },
+                {
+                    "name": "Jonathan Wage",
+                    "email": "jonwage@gmail.com"
+                },
+                {
+                    "name": "Johannes Schmitt",
+                    "email": "schmittjoh@gmail.com"
+                },
+                {
+                    "name": "Marco Pivetta",
+                    "email": "ocramius@gmail.com"
+                }
+            ],
+            "description": "The Doctrine Event Manager is a simple PHP event system that was built to be used with the various Doctrine projects.",
+            "homepage": "https://www.doctrine-project.org/projects/event-manager.html",
+            "keywords": [
+                "event",
+                "event dispatcher",
+                "event manager",
+                "event system",
+                "events"
+            ],
+            "time": "2019-11-10T09:48:07+00:00"
+        },
+        {
+            "name": "doctrine/inflector",
+            "version": "1.3.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/doctrine/inflector.git",
+                "reference": "ec3a55242203ffa6a4b27c58176da97ff0a7aec1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/doctrine/inflector/zipball/ec3a55242203ffa6a4b27c58176da97ff0a7aec1",
+                "reference": "ec3a55242203ffa6a4b27c58176da97ff0a7aec1",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.2"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Doctrine\\Common\\Inflector\\": "lib/Doctrine/Common/Inflector"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Guilherme Blanco",
+                    "email": "guilhermeblanco@gmail.com"
+                },
+                {
+                    "name": "Roman Borschel",
+                    "email": "roman@code-factory.org"
+                },
+                {
+                    "name": "Benjamin Eberlei",
+                    "email": "kontakt@beberlei.de"
+                },
+                {
+                    "name": "Jonathan Wage",
+                    "email": "jonwage@gmail.com"
+                },
+                {
+                    "name": "Johannes Schmitt",
+                    "email": "schmittjoh@gmail.com"
+                }
+            ],
+            "description": "Common String Manipulations with regard to casing and singular/plural rules.",
+            "homepage": "http://www.doctrine-project.org",
+            "keywords": [
+                "inflection",
+                "pluralize",
+                "singularize",
+                "string"
+            ],
+            "time": "2019-10-30T19:59:35+00:00"
+        },
+        {
+            "name": "doctrine/instantiator",
+            "version": "1.3.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/doctrine/instantiator.git",
+                "reference": "ae466f726242e637cebdd526a7d991b9433bacf1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/doctrine/instantiator/zipball/ae466f726242e637cebdd526a7d991b9433bacf1",
+                "reference": "ae466f726242e637cebdd526a7d991b9433bacf1",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1"
+            },
+            "require-dev": {
+                "doctrine/coding-standard": "^6.0",
+                "ext-pdo": "*",
+                "ext-phar": "*",
+                "phpbench/phpbench": "^0.13",
+                "phpstan/phpstan-phpunit": "^0.11",
+                "phpstan/phpstan-shim": "^0.11",
+                "phpunit/phpunit": "^7.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Doctrine\\Instantiator\\": "src/Doctrine/Instantiator/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marco Pivetta",
+                    "email": "ocramius@gmail.com",
+                    "homepage": "http://ocramius.github.com/"
+                }
+            ],
+            "description": "A small, lightweight utility to instantiate objects in PHP without invoking their constructors",
+            "homepage": "https://www.doctrine-project.org/projects/instantiator.html",
+            "keywords": [
+                "constructor",
+                "instantiate"
+            ],
+            "time": "2019-10-21T16:45:58+00:00"
+        },
+        {
+            "name": "doctrine/lexer",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/doctrine/lexer.git",
+                "reference": "5242d66dbeb21a30dd8a3e66bf7a73b66e05e1f6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/doctrine/lexer/zipball/5242d66dbeb21a30dd8a3e66bf7a73b66e05e1f6",
+                "reference": "5242d66dbeb21a30dd8a3e66bf7a73b66e05e1f6",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2"
+            },
+            "require-dev": {
+                "doctrine/coding-standard": "^6.0",
+                "phpstan/phpstan": "^0.11.8",
+                "phpunit/phpunit": "^8.2"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Doctrine\\Common\\Lexer\\": "lib/Doctrine/Common/Lexer"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Guilherme Blanco",
+                    "email": "guilhermeblanco@gmail.com"
+                },
+                {
+                    "name": "Roman Borschel",
+                    "email": "roman@code-factory.org"
+                },
+                {
+                    "name": "Johannes Schmitt",
+                    "email": "schmittjoh@gmail.com"
+                }
+            ],
+            "description": "PHP Doctrine Lexer parser library that can be used in Top-Down, Recursive Descent Parsers.",
+            "homepage": "https://www.doctrine-project.org/projects/lexer.html",
+            "keywords": [
+                "annotations",
+                "docblock",
+                "lexer",
+                "parser",
+                "php"
+            ],
+            "time": "2019-10-30T14:39:59+00:00"
+        },
+        {
+            "name": "doctrine/migrations",
+            "version": "1.8.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/doctrine/migrations.git",
+                "reference": "75fc71e22d59210b4d3398455881147e85300a47"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/doctrine/migrations/zipball/75fc71e22d59210b4d3398455881147e85300a47",
+                "reference": "75fc71e22d59210b4d3398455881147e85300a47",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/dbal": "~2.6",
+                "ocramius/proxy-manager": "^1.0|^2.0",
+                "php": "^7.1",
+                "symfony/console": "~3.3|^4.0"
+            },
+            "require-dev": {
+                "doctrine/coding-standard": "^1.0",
+                "doctrine/orm": "~2.5",
+                "jdorn/sql-formatter": "~1.1",
+                "mikey179/vfsstream": "^1.6",
+                "phpunit/phpunit": "~7.0",
+                "squizlabs/php_codesniffer": "^3.0",
+                "symfony/yaml": "~3.3|^4.0"
+            },
+            "suggest": {
+                "jdorn/sql-formatter": "Allows to generate formatted SQL with the diff command.",
+                "symfony/yaml": "Allows the use of yaml for migration configuration files."
+            },
+            "bin": [
+                "bin/doctrine-migrations"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "v1.8.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Doctrine\\DBAL\\Migrations\\": "lib/Doctrine/DBAL/Migrations",
+                    "Doctrine\\Migrations\\": "lib/Doctrine/Migrations"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Benjamin Eberlei",
+                    "email": "kontakt@beberlei.de"
+                },
+                {
+                    "name": "Jonathan Wage",
+                    "email": "jonwage@gmail.com"
+                },
+                {
+                    "name": "Michael Simonson",
+                    "email": "contact@mikesimonson.com"
+                }
+            ],
+            "description": "Database Schema migrations using Doctrine DBAL",
+            "homepage": "https://www.doctrine-project.org/projects/migrations.html",
+            "keywords": [
+                "database",
+                "migrations"
+            ],
+            "time": "2019-01-08T16:39:26+00:00"
+        },
+        {
+            "name": "doctrine/orm",
+            "version": "2.8.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/doctrine/orm.git",
+                "reference": "a416a9a8b2cd2ea0f7b7b5638986e8b398f34df8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/doctrine/orm/zipball/a416a9a8b2cd2ea0f7b7b5638986e8b398f34df8",
+                "reference": "a416a9a8b2cd2ea0f7b7b5638986e8b398f34df8",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/annotations": "^1.8",
+                "doctrine/cache": "^1.9.1",
+                "doctrine/collections": "^1.5",
+                "doctrine/common": "^2.11",
+                "doctrine/dbal": "^2.9.3",
+                "doctrine/event-manager": "^1.1",
+                "doctrine/instantiator": "^1.3",
+                "doctrine/persistence": "^1.2",
+                "ext-pdo": "*",
+                "php": "^7.1",
+                "symfony/console": "^3.0|^4.0|^5.0"
+            },
+            "require-dev": {
+                "doctrine/coding-standard": "^5.0",
+                "phpunit/phpunit": "^7.5",
+                "symfony/yaml": "^3.4|^4.0|^5.0"
+            },
+            "suggest": {
+                "symfony/yaml": "If you want to use YAML Metadata Mapping Driver"
+            },
+            "bin": [
+                "bin/doctrine"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.7.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Doctrine\\ORM\\": "lib/Doctrine/ORM"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Guilherme Blanco",
+                    "email": "guilhermeblanco@gmail.com"
+                },
+                {
+                    "name": "Roman Borschel",
+                    "email": "roman@code-factory.org"
+                },
+                {
+                    "name": "Benjamin Eberlei",
+                    "email": "kontakt@beberlei.de"
+                },
+                {
+                    "name": "Jonathan Wage",
+                    "email": "jonwage@gmail.com"
+                },
+                {
+                    "name": "Marco Pivetta",
+                    "email": "ocramius@gmail.com"
+                }
+            ],
+            "description": "Object-Relational-Mapper for PHP",
+            "homepage": "https://www.doctrine-project.org/projects/orm.html",
+            "keywords": [
+                "database",
+                "orm"
+            ],
+            "time": "2019-11-19T08:43:57+00:00"
+        },
+        {
+            "name": "doctrine/persistence",
+            "version": "1.2.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/doctrine/persistence.git",
+                "reference": "43526ae63312942e5316100bb3ed589ba1aba491"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/doctrine/persistence/zipball/43526ae63312942e5316100bb3ed589ba1aba491",
+                "reference": "43526ae63312942e5316100bb3ed589ba1aba491",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/annotations": "^1.0",
+                "doctrine/cache": "^1.0",
+                "doctrine/collections": "^1.0",
+                "doctrine/event-manager": "^1.0",
+                "doctrine/reflection": "^1.0",
+                "php": "^7.1"
+            },
+            "conflict": {
+                "doctrine/common": "<2.10@dev"
+            },
+            "require-dev": {
+                "doctrine/coding-standard": "^5.0",
+                "phpstan/phpstan": "^0.8",
+                "phpunit/phpunit": "^7.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Doctrine\\Common\\": "lib/Doctrine/Common"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Roman Borschel",
+                    "email": "roman@code-factory.org"
+                },
+                {
+                    "name": "Benjamin Eberlei",
+                    "email": "kontakt@beberlei.de"
+                },
+                {
+                    "name": "Guilherme Blanco",
+                    "email": "guilhermeblanco@gmail.com"
+                },
+                {
+                    "name": "Jonathan Wage",
+                    "email": "jonwage@gmail.com"
+                },
+                {
+                    "name": "Johannes Schmitt",
+                    "email": "schmittjoh@gmail.com"
+                },
+                {
+                    "name": "Marco Pivetta",
+                    "email": "ocramius@gmail.com"
+                }
+            ],
+            "description": "The Doctrine Persistence project is a set of shared interfaces and functionality that the different Doctrine object mappers share.",
+            "homepage": "https://doctrine-project.org/projects/persistence.html",
+            "keywords": [
+                "mapper",
+                "object",
+                "odm",
+                "orm",
+                "persistence"
+            ],
+            "time": "2019-04-23T12:39:21+00:00"
+        },
+        {
+            "name": "doctrine/reflection",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/doctrine/reflection.git",
+                "reference": "7a2c95aa7c75613045de09985b5ddfdec05b9e18"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/doctrine/reflection/zipball/7a2c95aa7c75613045de09985b5ddfdec05b9e18",
+                "reference": "7a2c95aa7c75613045de09985b5ddfdec05b9e18",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/annotations": "^1.0",
+                "ext-tokenizer": "*",
+                "php": "^7.1"
+            },
+            "conflict": {
+                "doctrine/common": "<2.9@dev"
+            },
+            "require-dev": {
+                "doctrine/coding-standard": "^5.0",
+                "doctrine/common": "^2.8",
+                "phpstan/phpstan": "^0.9.2",
+                "phpstan/phpstan-phpunit": "^0.9.4",
+                "phpunit/phpunit": "^7.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Doctrine\\Common\\": "lib/Doctrine/Common"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Guilherme Blanco",
+                    "email": "guilhermeblanco@gmail.com"
+                },
+                {
+                    "name": "Roman Borschel",
+                    "email": "roman@code-factory.org"
+                },
+                {
+                    "name": "Benjamin Eberlei",
+                    "email": "kontakt@beberlei.de"
+                },
+                {
+                    "name": "Jonathan Wage",
+                    "email": "jonwage@gmail.com"
+                },
+                {
+                    "name": "Johannes Schmitt",
+                    "email": "schmittjoh@gmail.com"
+                },
+                {
+                    "name": "Marco Pivetta",
+                    "email": "ocramius@gmail.com"
+                }
+            ],
+            "description": "The Doctrine Reflection project is a simple library used by the various Doctrine projects which adds some additional functionality on top of the reflection functionality that comes with PHP. It allows you to get the reflection information about classes, methods and properties statically.",
+            "homepage": "https://www.doctrine-project.org/projects/reflection.html",
+            "keywords": [
+                "reflection",
+                "static"
+            ],
+            "time": "2019-12-02T13:05:25+00:00"
+        },
+        {
+            "name": "flowpack/jobqueue-common",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Flowpack/jobqueue-common.git",
+                "reference": "84094bc1ddf7c66d72d2942f3002f32170db2947"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Flowpack/jobqueue-common/zipball/84094bc1ddf7c66d72d2942f3002f32170db2947",
+                "reference": "84094bc1ddf7c66d72d2942f3002f32170db2947",
+                "shasum": ""
+            },
+            "require": {
+                "neos/cache": "*",
+                "neos/flow": "^4.0 || ^5.0 || ^6.0 || dev-master",
+                "php": "^7.1"
+            },
+            "type": "neos-package",
+            "extra": {
+                "neos": {
+                    "package-key": "Flowpack.JobQueue.Common"
+                },
+                "applied-flow-migrations": [
+                    "TYPO3.Flow-201209251426",
+                    "TYPO3.FLOW3-201209201112",
+                    "TYPO3.FLOW3-201201261636",
+                    "TYPO3.Fluid-201205031303",
+                    "TYPO3.FLOW3-201205292145",
+                    "TYPO3.FLOW3-201206271128",
+                    "TYPO3.Flow-201211151101",
+                    "TYPO3.Flow-201212051340",
+                    "TYPO3.TypoScript-130516234520",
+                    "TYPO3.TypoScript-130516235550",
+                    "TYPO3.TYPO3CR-130523180140",
+                    "TYPO3.Neos.NodeTypes-201309111655",
+                    "TYPO3.Flow-201310031523",
+                    "TYPO3.Flow-201405111147",
+                    "TYPO3.Neos-201407061038",
+                    "TYPO3.Neos-201409071922",
+                    "TYPO3.TYPO3CR-140911160326",
+                    "TYPO3.Neos-201410010000",
+                    "TYPO3.TYPO3CR-141101082142",
+                    "TYPO3.Neos-20141113115300",
+                    "TYPO3.Fluid-20141113120800",
+                    "TYPO3.Flow-20141113121400",
+                    "TYPO3.Fluid-20141121091700",
+                    "TYPO3.Neos-20141218134700",
+                    "TYPO3.Fluid-20150214130800",
+                    "TYPO3.Neos-20150303231600",
+                    "TYPO3.TYPO3CR-20150510103823",
+                    "TYPO3.Flow-20151113161300",
+                    "TYPO3.Flow-20161115140400",
+                    "TYPO3.Flow-20161115140430",
+                    "Neos.Flow-20161124204700",
+                    "Neos.Flow-20161124204701",
+                    "Neos.Flow-20161124224015",
+                    "Neos.Eel-20161124230101",
+                    "Neos.Kickstart-20161124230102",
+                    "Neos.Kickstarter-20161125110814",
+                    "Neos.Flow-20161125124112",
+                    "TYPO3.FluidAdaptor-20161130112935",
+                    "TYPO3.Form-20160601101500",
+                    "Neos.Twitter.Bootstrap-20161124204912",
+                    "Neos.Form-20161124205254",
+                    "Neos.Party-20161124225257",
+                    "Neos.Setup-20161124230842",
+                    "Neos.Imagine-20161124231742",
+                    "Neos.Media-20161124233100",
+                    "Neos.NodeTypes-20161125002300",
+                    "Neos.Neos-20161125002322",
+                    "Neos.ContentRepository-20161125012000",
+                    "Neos.Fusion-20161125013710",
+                    "Neos.Setup-20161125014759",
+                    "Neos.Fusion-20161125104701",
+                    "Neos.NodeTypes-20161125104800",
+                    "Neos.Neos-20161125104802",
+                    "Neos.Neos-20161125122412",
+                    "Neos.Fusion-20161201202543",
+                    "Neos.Neos-20161201222211",
+                    "Neos.Fusion-20161202215034",
+                    "Neos.Fusion-20161219092345",
+                    "Neos.ContentRepository-20161219093512",
+                    "Neos.Media-20161219094126",
+                    "Neos.Neos-20161219094403",
+                    "Neos.Neos-20161219122512",
+                    "Neos.Fusion-20161219130100",
+                    "Neos.Neos-20161220163741",
+                    "Neos.Neos-20170115114620",
+                    "Neos.Fusion-20170120013047",
+                    "Neos.Flow-20170125103800",
+                    "Neos.Seo-20170127154600",
+                    "Neos.Flow-20170127183102"
+                ]
+            },
+            "autoload": {
+                "psr-4": {
+                    "Flowpack\\JobQueue\\Common\\": "Classes"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Common functionality for a JobQueue in Flow applications.",
+            "time": "2019-11-08T11:32:35+00:00"
+        },
+        {
+            "name": "gedmo/doctrine-extensions",
+            "version": "v2.4.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Atlantic18/DoctrineExtensions.git",
+                "reference": "81681364331b131518060e4776300a5346df1eb5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Atlantic18/DoctrineExtensions/zipball/81681364331b131518060e4776300a5346df1eb5",
+                "reference": "81681364331b131518060e4776300a5346df1eb5",
+                "shasum": ""
+            },
+            "require": {
+                "behat/transliterator": "~1.2",
+                "doctrine/common": "~2.4",
+                "php": ">=5.3.2"
+            },
+            "conflict": {
+                "doctrine/annotations": "<1.2",
+                "doctrine/mongodb-odm": ">=2.0"
+            },
+            "require-dev": {
+                "doctrine/common": ">=2.5.0",
+                "doctrine/mongodb-odm": ">=1.0.2 <2.0",
+                "doctrine/orm": ">=2.5.0",
+                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.5",
+                "symfony/yaml": "~2.6 || ~3.0 || ~4.0"
+            },
+            "suggest": {
+                "doctrine/mongodb-odm": "to use the extensions with the MongoDB ODM",
+                "doctrine/orm": "to use the extensions with the ORM"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.4.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Gedmo\\": "lib/Gedmo"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gediminas Morkevicius",
+                    "email": "gediminas.morkevicius@gmail.com"
+                },
+                {
+                    "name": "Gustavo Falco",
+                    "email": "comfortablynumb84@gmail.com"
+                },
+                {
+                    "name": "David Buchmann",
+                    "email": "david@liip.ch"
+                }
+            ],
+            "description": "Doctrine2 behavioral extensions",
+            "homepage": "http://gediminasm.org/",
+            "keywords": [
+                "Blameable",
+                "behaviors",
+                "doctrine2",
+                "extensions",
+                "gedmo",
+                "loggable",
+                "nestedset",
+                "sluggable",
+                "sortable",
+                "timestampable",
+                "translatable",
+                "tree",
+                "uploadable"
+            ],
+            "time": "2019-11-08T22:33:07+00:00"
+        },
+        {
+            "name": "neos/cache",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/neos/cache.git",
+                "reference": "4761191c0118b8ea3824d6a103b008d20db9716c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/neos/cache/zipball/4761191c0118b8ea3824d6a103b008d20db9716c",
+                "reference": "4761191c0118b8ea3824d6a103b008d20db9716c",
+                "shasum": ""
+            },
+            "require": {
+                "neos/utility-files": "*",
+                "neos/utility-opcodecache": "*",
+                "neos/utility-pdo": "*",
+                "php": "^7.2",
+                "psr/cache": "~1.0",
+                "psr/simple-cache": "^1.0"
+            },
+            "provide": {
+                "psr/cache-implementation": "1.0",
+                "psr/simple-cache-implementation": "1.0"
+            },
+            "require-dev": {
+                "mikey179/vfsstream": "~1.6",
+                "phpunit/phpunit": "~8.1"
+            },
+            "suggest": {
+                "ext-memcache": "If you have a memcache server and want to use it for caching.",
+                "ext-memcached": "Alternative, if you have a memcache server and want to use it for caching.",
+                "ext-redis": "If you have a redis server and want to use it for caching."
+            },
+            "type": "library",
+            "extra": {
+                "neos": {
+                    "package-key": "Neos.Cache"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Neos\\Cache\\": "Classes"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Neos Cache Framework",
+            "homepage": "http://flow.neos.io",
+            "time": "2019-10-25T09:57:58+00:00"
+        },
+        {
+            "name": "neos/content-repository",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/neos/content-repository.git",
+                "reference": "ccaf8d7678290d580d6e1ec597bb5335b48b5ad0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/neos/content-repository/zipball/ccaf8d7678290d580d6e1ec597bb5335b48b5ad0",
+                "reference": "ccaf8d7678290d580d6e1ec597bb5335b48b5ad0",
+                "shasum": ""
+            },
+            "require": {
+                "behat/transliterator": "^1.0",
+                "doctrine/orm": "^2.6",
+                "gedmo/doctrine-extensions": "^2.4",
+                "neos/cache": "*",
+                "neos/eel": "*",
+                "neos/flow": "*",
+                "neos/fluid-adaptor": "*",
+                "neos/utility-arrays": "*",
+                "neos/utility-files": "*",
+                "neos/utility-objecthandling": "*"
+            },
+            "replace": {
+                "typo3/typo3cr": "self.version"
+            },
+            "suggest": {
+                "neos/utility-schema": "Validate NodeType schema."
+            },
+            "type": "neos-package",
+            "extra": {
+                "applied-flow-migrations": [
+                    "TYPO3.TYPO3CR-20150510103823",
+                    "TYPO3.FLOW3-201201261636",
+                    "TYPO3.Fluid-201205031303",
+                    "TYPO3.FLOW3-201205292145",
+                    "TYPO3.FLOW3-201206271128",
+                    "TYPO3.Flow-201211151101",
+                    "TYPO3.Neos.NodeTypes-130516220640",
+                    "TYPO3.TypoScript-130516234520",
+                    "TYPO3.TypoScript-130516235550",
+                    "TYPO3.TYPO3CR-130523180140",
+                    "TYPO3.Neos.NodeTypes-201309111655",
+                    "TYPO3.Neos-201310021548",
+                    "TYPO3.Flow-201310031523",
+                    "TYPO3.Flow-201405111147",
+                    "TYPO3.Neos-201409071922",
+                    "TYPO3.TYPO3CR-140911160326",
+                    "TYPO3.Neos-201410010000",
+                    "TYPO3.TYPO3CR-141101082142",
+                    "TYPO3.Neos-20141113115300",
+                    "TYPO3.Fluid-20141121091700",
+                    "TYPO3.Neos-20141218134700",
+                    "TYPO3.Fluid-20150214130800",
+                    "TYPO3.Neos-201407061038",
+                    "TYPO3.Flow-201212051340",
+                    "TYPO3.Fluid-20141113120800",
+                    "TYPO3.Flow-20141113121400",
+                    "Typo3.Neos.NodeTypes-201309111655",
+                    "TYPO3.TYPO3CR-20140911160326",
+                    "TYPO3.Flow-201209251426",
+                    "TYPO3.FLOW3-201209201112",
+                    "TYPO3.Neos-20150303231600",
+                    "TYPO3.Flow-20151113161300",
+                    "TYPO3.Form-20160601101500",
+                    "TYPO3.Flow-20161115140400",
+                    "TYPO3.Flow-20161115140430",
+                    "Neos.Flow-20161124204700",
+                    "Neos.Flow-20161124204701",
+                    "Neos.Twitter.Bootstrap-20161124204912",
+                    "Neos.Form-20161124205254",
+                    "Neos.Flow-20161124224015",
+                    "Neos.Party-20161124225257",
+                    "Neos.Eel-20161124230101",
+                    "Neos.Kickstart-20161124230102",
+                    "Neos.Setup-20161124230842",
+                    "Neos.Imagine-20161124231742",
+                    "Neos.Media-20161124233100",
+                    "Neos.NodeTypes-20161125002300",
+                    "Neos.SiteKickstarter-20161125002311",
+                    "Neos.Neos-20161125002322",
+                    "Neos.ContentRepository-20161125012000",
+                    "Neos.Fusion-20161125013710",
+                    "Neos.Setup-20161125014759",
+                    "Neos.SiteKickstarter-20161125095901",
+                    "Neos.Fusion-20161125104701",
+                    "Neos.NodeTypes-20161125104800",
+                    "Neos.Neos-20161125104802",
+                    "Neos.Kickstarter-20161125110814",
+                    "Neos.Flow-20161125124112",
+                    "Neos.Neos-20161125122412",
+                    "TYPO3.FluidAdaptor-20161130112935",
+                    "Neos.Fusion-20161201202543",
+                    "Neos.Neos-20161201222211",
+                    "Neos.Fusion-20161202215034",
+                    "Neos.ContentRepository-20161219093512",
+                    "Neos.Fusion-20170120013047",
+                    "Neos.Flow-20180415105700",
+                    "Neos.Fusion-20161219092345",
+                    "Neos.Media-20161219094126",
+                    "Neos.Neos-20161219094403",
+                    "Neos.Neos-20161219122512",
+                    "Neos.Fusion-20161219130100",
+                    "Neos.Neos-20161220163741",
+                    "Neos.Neos-20170115114620",
+                    "Neos.Flow-20170125103800",
+                    "Neos.Seo-20170127154600",
+                    "Neos.Flow-20170127183102",
+                    "Neos.Fusion-20180211175500",
+                    "Neos.Fusion-20180211184832"
+                ]
+            },
+            "autoload": {
+                "psr-4": {
+                    "Neos\\ContentRepository\\": "Classes"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-or-later"
+            ],
+            "description": "Content repository based on Flow, specifically made for Neos.",
+            "time": "2019-10-30T12:58:23+00:00"
+        },
+        {
+            "name": "neos/content-repository-dimensionspace",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/neos/content-repository-dimensionspace.git",
+                "reference": "b55a9fb5b873315be0f8483b2b1f7966306a1240"
+            },
+            "require": {
+                "neos/cache": "*",
+                "neos/utility-arrays": "*",
+                "php": "~7.1"
+            },
+            "type": "neos-package",
+            "extra": {
+                "applied-flow-migrations": [
+                    "TYPO3.TYPO3CR-20150510103823",
+                    "TYPO3.FLOW3-201201261636",
+                    "TYPO3.Fluid-201205031303",
+                    "TYPO3.FLOW3-201205292145",
+                    "TYPO3.FLOW3-201206271128",
+                    "TYPO3.Flow-201211151101",
+                    "TYPO3.Neos.NodeTypes-130516220640",
+                    "TYPO3.TypoScript-130516234520",
+                    "TYPO3.TypoScript-130516235550",
+                    "TYPO3.TYPO3CR-130523180140",
+                    "TYPO3.Neos.NodeTypes-201309111655",
+                    "TYPO3.Neos-201310021548",
+                    "TYPO3.Flow-201310031523",
+                    "TYPO3.Flow-201405111147",
+                    "TYPO3.Neos-201409071922",
+                    "TYPO3.TYPO3CR-140911160326",
+                    "TYPO3.Neos-201410010000",
+                    "TYPO3.TYPO3CR-141101082142",
+                    "TYPO3.Neos-20141113115300",
+                    "TYPO3.Fluid-20141121091700",
+                    "TYPO3.Neos-20141218134700",
+                    "TYPO3.Fluid-20150214130800",
+                    "TYPO3.Neos-201407061038",
+                    "TYPO3.Flow-201212051340",
+                    "TYPO3.Fluid-20141113120800",
+                    "TYPO3.Flow-20141113121400",
+                    "Typo3.Neos.NodeTypes-201309111655",
+                    "TYPO3.TYPO3CR-20140911160326",
+                    "TYPO3.Flow-201209251426",
+                    "TYPO3.FLOW3-201209201112",
+                    "TYPO3.Neos-20150303231600",
+                    "TYPO3.Flow-20151113161300",
+                    "TYPO3.Form-20160601101500",
+                    "TYPO3.Flow-20161115140400",
+                    "TYPO3.Flow-20161115140430",
+                    "Neos.Flow-20161124204700",
+                    "Neos.Flow-20161124204701",
+                    "Neos.Twitter.Bootstrap-20161124204912",
+                    "Neos.Form-20161124205254",
+                    "Neos.Flow-20161124224015",
+                    "Neos.Party-20161124225257",
+                    "Neos.Eel-20161124230101",
+                    "Neos.Kickstart-20161124230102",
+                    "Neos.Setup-20161124230842",
+                    "Neos.Imagine-20161124231742",
+                    "Neos.Media-20161124233100",
+                    "Neos.NodeTypes-20161125002300",
+                    "Neos.SiteKickstarter-20161125002311",
+                    "Neos.Neos-20161125002322",
+                    "Neos.ContentRepository-20161125012000",
+                    "Neos.Fusion-20161125013710",
+                    "Neos.Setup-20161125014759",
+                    "Neos.SiteKickstarter-20161125095901",
+                    "Neos.Fusion-20161125104701",
+                    "Neos.NodeTypes-20161125104800",
+                    "Neos.Neos-20161125104802",
+                    "Neos.Kickstarter-20161125110814",
+                    "Neos.Flow-20161125124112",
+                    "Neos.Neos-20161125122412",
+                    "TYPO3.FluidAdaptor-20161130112935",
+                    "Neos.Fusion-20161201202543",
+                    "Neos.Neos-20161201222211",
+                    "Neos.Fusion-20161202215034",
+                    "Neos.ContentRepository-20161219093512",
+                    "Neos.Fusion-20170120013047",
+                    "Neos.Flow-20180415105700",
+                    "Neos.Fusion-20161219092345",
+                    "Neos.Media-20161219094126",
+                    "Neos.Neos-20161219094403",
+                    "Neos.Neos-20161219122512",
+                    "Neos.Fusion-20161219130100",
+                    "Neos.Neos-20161220163741",
+                    "Neos.Neos-20170115114620",
+                    "Neos.Flow-20170125103800",
+                    "Neos.Seo-20170127154600",
+                    "Neos.Flow-20170127183102",
+                    "Neos.Fusion-20180211175500",
+                    "Neos.Fusion-20180211184832"
+                ]
+            },
+            "autoload": {
+                "psr-4": {
+                    "Neos\\ContentRepository\\DimensionSpace\\": "Classes"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Neos\\ContentRepository\\DimensionSpace\\Tests\\": "Tests"
+                }
+            },
+            "license": [
+                "GPL-3.0-or-later"
+            ],
+            "description": "The dimension space for the Neos content repository",
+            "time": "2019-10-17T06:40:24+00:00"
+        },
+        {
+            "name": "neos/contentgraph-doctrinedbaladapter",
+            "version": "dev-draft-standalone-cr",
+            "dist": {
+                "type": "path",
+                "url": "../Neos.ContentGraph.DoctrineDbalAdapter",
+                "reference": "db0d0289e89fdf64520fb9b3af4797f483d3a7da"
+            },
+            "require": {
+                "doctrine/dbal": "*",
+                "doctrine/migrations": "*",
+                "neos/event-sourced-content-repository": "*"
+            },
+            "type": "neos-package",
+            "autoload": {
+                "psr-4": {
+                    "Neos\\ContentGraph\\DoctrineDbalAdapter\\": "Classes"
+                }
+            },
+            "license": [
+                "GPL-3.0+"
+            ],
+            "description": "The Doctrine DBAL database backend for the Neos content graph"
+        },
+        {
+            "name": "neos/error-messages",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/neos/error-messages.git",
+                "reference": "0376f1bb3faaf799964e9bfa309e616297411ed4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/neos/error-messages/zipball/0376f1bb3faaf799964e9bfa309e616297411ed4",
+                "reference": "0376f1bb3faaf799964e9bfa309e616297411ed4",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~8.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Neos\\Error\\Messages\\": "Classes"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Flow error messages",
+            "homepage": "http://flow.neos.io",
+            "time": "2019-08-23T12:59:25+00:00"
+        },
+        {
+            "name": "neos/event-sourced-content-repository",
+            "version": "dev-draft-standalone-cr",
+            "dist": {
+                "type": "path",
+                "url": "../Neos.EventSourcedContentRepository",
+                "reference": "1639f889050fac1b62b3c51e0f5df06e863d6dcd"
+            },
+            "require": {
+                "doctrine/migrations": "^1.8",
+                "neos/content-repository": "*",
+                "neos/content-repository-dimensionspace": "*",
+                "neos/event-sourcing": "*"
+            },
+            "type": "neos-package",
+            "extra": {
+                "applied-flow-migrations": [
+                    "TYPO3.TYPO3CR-20150510103823",
+                    "TYPO3.FLOW3-201201261636",
+                    "TYPO3.Fluid-201205031303",
+                    "TYPO3.FLOW3-201205292145",
+                    "TYPO3.FLOW3-201206271128",
+                    "TYPO3.Flow-201211151101",
+                    "TYPO3.Neos.NodeTypes-130516220640",
+                    "TYPO3.TypoScript-130516234520",
+                    "TYPO3.TypoScript-130516235550",
+                    "TYPO3.TYPO3CR-130523180140",
+                    "TYPO3.Neos.NodeTypes-201309111655",
+                    "TYPO3.Neos-201310021548",
+                    "TYPO3.Flow-201310031523",
+                    "TYPO3.Flow-201405111147",
+                    "TYPO3.Neos-201409071922",
+                    "TYPO3.TYPO3CR-140911160326",
+                    "TYPO3.Neos-201410010000",
+                    "TYPO3.TYPO3CR-141101082142",
+                    "TYPO3.Neos-20141113115300",
+                    "TYPO3.Fluid-20141121091700",
+                    "TYPO3.Neos-20141218134700",
+                    "TYPO3.Fluid-20150214130800",
+                    "TYPO3.Neos-201407061038",
+                    "TYPO3.Flow-201212051340",
+                    "TYPO3.Fluid-20141113120800",
+                    "TYPO3.Flow-20141113121400",
+                    "Typo3.Neos.NodeTypes-201309111655",
+                    "TYPO3.TYPO3CR-20140911160326",
+                    "TYPO3.Flow-201209251426",
+                    "TYPO3.FLOW3-201209201112",
+                    "TYPO3.Neos-20150303231600",
+                    "TYPO3.Flow-20151113161300",
+                    "TYPO3.Form-20160601101500",
+                    "TYPO3.Flow-20161115140400",
+                    "TYPO3.Flow-20161115140430",
+                    "Neos.Flow-20161124204700",
+                    "Neos.Flow-20161124204701",
+                    "Neos.Twitter.Bootstrap-20161124204912",
+                    "Neos.Form-20161124205254",
+                    "Neos.Flow-20161124224015",
+                    "Neos.Party-20161124225257",
+                    "Neos.Eel-20161124230101",
+                    "Neos.Kickstart-20161124230102",
+                    "Neos.Setup-20161124230842",
+                    "Neos.Imagine-20161124231742",
+                    "Neos.Media-20161124233100",
+                    "Neos.NodeTypes-20161125002300",
+                    "Neos.SiteKickstarter-20161125002311",
+                    "Neos.Neos-20161125002322",
+                    "Neos.ContentRepository-20161125012000",
+                    "Neos.Fusion-20161125013710",
+                    "Neos.Setup-20161125014759",
+                    "Neos.SiteKickstarter-20161125095901",
+                    "Neos.Fusion-20161125104701",
+                    "Neos.NodeTypes-20161125104800",
+                    "Neos.Neos-20161125104802",
+                    "Neos.Kickstarter-20161125110814",
+                    "Neos.Flow-20161125124112",
+                    "Neos.Neos-20161125122412",
+                    "TYPO3.FluidAdaptor-20161130112935",
+                    "Neos.Fusion-20161201202543",
+                    "Neos.Neos-20161201222211",
+                    "Neos.Fusion-20161202215034",
+                    "Neos.ContentRepository-20161219093512",
+                    "Neos.Fusion-20170120013047",
+                    "Neos.Flow-20180415105700",
+                    "Neos.Fusion-20161219092345",
+                    "Neos.Media-20161219094126",
+                    "Neos.Neos-20161219094403",
+                    "Neos.Neos-20161219122512",
+                    "Neos.Fusion-20161219130100",
+                    "Neos.Neos-20161220163741",
+                    "Neos.Neos-20170115114620",
+                    "Neos.Flow-20170125103800",
+                    "Neos.Seo-20170127154600",
+                    "Neos.Flow-20170127183102",
+                    "Neos.Fusion-20180211175500",
+                    "Neos.Fusion-20180211184832"
+                ]
+            },
+            "autoload": {
+                "psr-4": {
+                    "Neos\\EventSourcedContentRepository\\": "Classes"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Neos\\EventSourcedContentRepository\\Tests\\": "Tests"
+                }
+            },
+            "license": [
+                "GPL-3.0-or-later"
+            ],
+            "description": "Event sourced Content repository based on Flow, specifically made for Neos."
+        },
+        {
+            "name": "neos/event-sourcing",
+            "version": "dev-standalone-usage-adjustments",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/neos/Neos.EventSourcing.git",
+                "reference": "05f62949b493b59b2e1a1b842c3f4392e8f92f74"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/neos/Neos.EventSourcing/zipball/05f62949b493b59b2e1a1b842c3f4392e8f92f74",
+                "reference": "05f62949b493b59b2e1a1b842c3f4392e8f92f74",
+                "shasum": ""
+            },
+            "require": {
+                "flowpack/jobqueue-common": "^3.0 || dev-master",
+                "neos/flow": "*",
+                "php": ">=7.1",
+                "symfony/property-access": "^3.4",
+                "symfony/serializer": "^4.2"
+            },
+            "suggest": {
+                "php-uuid": "For fast generation of UUIDs used in the persistence."
+            },
+            "type": "neos-package",
+            "extra": {
+                "neos": {
+                    "package-key": "Neos.EventSourcing"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Neos\\EventSourcing\\": "Classes"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "Lean and opinionated way to integrate Event Sourcing and CQRS pattern in your Flow framework package",
+            "time": "2019-12-01T17:57:41+00:00"
+        },
+        {
+            "name": "neos/eventsourcedcontentrepository-standalone",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "../Neos.EventSourcedContentRepository.Standalone",
+                "reference": "9c77395f117f1d385ec2fd74eafc5792b7034820"
+            },
+            "require": {
+                "doctrine/dbal": "^2.9.0",
+                "neos/contentgraph-doctrinedbaladapter": "dev-draft-standalone-cr",
+                "neos/event-sourced-content-repository": "dev-draft-standalone-cr",
+                "neos/event-sourcing": "dev-standalone-usage-adjustments",
+                "ramsey/uuid": "^3.0",
+                "symfony/dependency-injection": "^4.3"
+            },
+            "replace": {
+                "neos/eel": "self.version",
+                "neos/flow": "self.version",
+                "neos/fluid-adaptor": "self.version"
+            },
+            "suggest": {
+                "symfony/yaml": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Neos\\EventSourcedContentRepository\\Standalone\\": "src",
+                    "Neos\\Flow\\Utility\\": "shims/src/NeosFlowUtility",
+                    "Neos\\Flow\\": "shims/src/NeosFlow",
+                    "Neos\\Flow\\Persistence\\Doctrine\\DataTypes\\": "shims/src/NeosFlowPersistenceDoctrineDataTypes",
+                    "Neos\\Eel\\": "shims/src/NeosEel"
+                }
+            },
+            "license": [
+                "GPL-3.0-or-later"
+            ],
+            "description": "Event-Sourced Content Repository - Standalone Version"
+        },
+        {
+            "name": "neos/utility-arrays",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/neos/utility-arrays.git",
+                "reference": "20c8a7e3a7e61f856b562eeb660e2b05fca39e16"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/neos/utility-arrays/zipball/20c8a7e3a7e61f856b562eeb660e2b05fca39e16",
+                "reference": "20c8a7e3a7e61f856b562eeb660e2b05fca39e16",
+                "shasum": ""
+            },
+            "require": {
+                "neos/utility-objecthandling": "*",
+                "php": "^7.2"
+            },
+            "require-dev": {
+                "mikey179/vfsstream": "~1.6",
+                "phpunit/phpunit": "~8.1"
+            },
+            "type": "library",
+            "extra": {
+                "neos": {
+                    "package-key": "Neos.Utility.Arrays"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Neos\\Utility\\": "Classes"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Flow Array Utilities",
+            "homepage": "http://flow.neos.io",
+            "time": "2019-08-08T08:09:04+00:00"
+        },
+        {
+            "name": "neos/utility-files",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/neos/utility-files.git",
+                "reference": "bee92ab32faa855f18ffa6bcbcb9ab0775d2773a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/neos/utility-files/zipball/bee92ab32faa855f18ffa6bcbcb9ab0775d2773a",
+                "reference": "bee92ab32faa855f18ffa6bcbcb9ab0775d2773a",
+                "shasum": ""
+            },
+            "require": {
+                "neos/error-messages": "*",
+                "php": "^7.2"
+            },
+            "require-dev": {
+                "mikey179/vfsstream": "~1.6",
+                "phpunit/phpunit": "~8.1"
+            },
+            "type": "library",
+            "extra": {
+                "neos": {
+                    "package-key": "Neos.Utility.Files"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Neos\\Utility\\": "Classes"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Flow Files Utilities",
+            "homepage": "http://flow.neos.io",
+            "time": "2019-08-08T08:09:04+00:00"
+        },
+        {
+            "name": "neos/utility-objecthandling",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/neos/utility-objecthandling.git",
+                "reference": "eaed34b1c0560bedfd15bc69a8fe1393aad44cbd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/neos/utility-objecthandling/zipball/eaed34b1c0560bedfd15bc69a8fe1393aad44cbd",
+                "reference": "eaed34b1c0560bedfd15bc69a8fe1393aad44cbd",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2"
+            },
+            "require-dev": {
+                "doctrine/common": "^2.4",
+                "doctrine/orm": "^2.6",
+                "phpunit/phpunit": "~8.1"
+            },
+            "type": "library",
+            "extra": {
+                "neos": {
+                    "package-key": "Neos.Utility.ObjectHandling"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Neos\\Utility\\": "Classes"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Flow array/object property and type utilities",
+            "homepage": "http://flow.neos.io",
+            "time": "2019-09-20T08:29:45+00:00"
+        },
+        {
+            "name": "neos/utility-opcodecache",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/neos/utility-opcodecache.git",
+                "reference": "39b987a2cd620adc142b496a38797e817d3dcadb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/neos/utility-opcodecache/zipball/39b987a2cd620adc142b496a38797e817d3dcadb",
+                "reference": "39b987a2cd620adc142b496a38797e817d3dcadb",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2"
+            },
+            "type": "library",
+            "extra": {
+                "neos": {
+                    "package-key": "Neos.Utility.OpcodeCache"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Neos\\Utility\\": "Classes"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Flow Opcode Cache Utilities",
+            "homepage": "http://flow.neos.io",
+            "time": "2019-08-10T18:16:56+00:00"
+        },
+        {
+            "name": "neos/utility-pdo",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/neos/utility-pdo.git",
+                "reference": "4e851da92dc7ad686912391f7d7d539921d105d4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/neos/utility-pdo/zipball/4e851da92dc7ad686912391f7d7d539921d105d4",
+                "reference": "4e851da92dc7ad686912391f7d7d539921d105d4",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2"
+            },
+            "type": "library",
+            "extra": {
+                "neos": {
+                    "package-key": "Neos.Utility.Pdo"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Neos\\Utility\\": "Classes"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Flow PDO Utilities",
+            "homepage": "http://flow.neos.io",
+            "time": "2019-05-13T14:59:31+00:00"
+        },
+        {
+            "name": "ocramius/package-versions",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Ocramius/PackageVersions.git",
+                "reference": "3a7ca6eafde0eec1b964cf967e6e71bf27ecc737"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Ocramius/PackageVersions/zipball/3a7ca6eafde0eec1b964cf967e6e71bf27ecc737",
+                "reference": "3a7ca6eafde0eec1b964cf967e6e71bf27ecc737",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.0.0",
+                "php": "^7.3.0"
+            },
+            "require-dev": {
+                "composer/composer": "^1.8.6",
+                "doctrine/coding-standard": "^6.0.0",
+                "ext-zip": "*",
+                "infection/infection": "^0.13.4",
+                "phpunit/phpunit": "^8.2.5",
+                "vimeo/psalm": "^3.4.9"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "PackageVersions\\Installer",
+                "branch-alias": {
+                    "dev-master": "1.6.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "PackageVersions\\": "src/PackageVersions"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marco Pivetta",
+                    "email": "ocramius@gmail.com"
+                }
+            ],
+            "description": "Composer plugin that provides efficient querying for installed package versions (no runtime IO)",
+            "time": "2019-11-09T22:36:27+00:00"
+        },
+        {
+            "name": "ocramius/proxy-manager",
+            "version": "2.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Ocramius/ProxyManager.git",
+                "reference": "4d154742e31c35137d5374c998e8f86b54db2e2f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Ocramius/ProxyManager/zipball/4d154742e31c35137d5374c998e8f86b54db2e2f",
+                "reference": "4d154742e31c35137d5374c998e8f86b54db2e2f",
+                "shasum": ""
+            },
+            "require": {
+                "ocramius/package-versions": "^1.1.3",
+                "php": "^7.2.0",
+                "zendframework/zend-code": "^3.3.0"
+            },
+            "require-dev": {
+                "couscous/couscous": "^1.6.1",
+                "ext-phar": "*",
+                "humbug/humbug": "1.0.0-RC.0@RC",
+                "nikic/php-parser": "^3.1.1",
+                "padraic/phpunit-accelerator": "dev-master@DEV",
+                "phpbench/phpbench": "^0.12.2",
+                "phpstan/phpstan": "dev-master#856eb10a81c1d27c701a83f167dc870fd8f4236a as 0.9.999",
+                "phpstan/phpstan-phpunit": "dev-master#5629c0a1f4a9c417cb1077cf6693ad9753895761",
+                "phpunit/phpunit": "^6.4.3",
+                "squizlabs/php_codesniffer": "^2.9.1"
+            },
+            "suggest": {
+                "ocramius/generated-hydrator": "To have very fast object to array to object conversion for ghost objects",
+                "zendframework/zend-json": "To have the JsonRpc adapter (Remote Object feature)",
+                "zendframework/zend-soap": "To have the Soap adapter (Remote Object feature)",
+                "zendframework/zend-xmlrpc": "To have the XmlRpc adapter (Remote Object feature)"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "ProxyManager\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marco Pivetta",
+                    "email": "ocramius@gmail.com",
+                    "homepage": "http://ocramius.github.io/"
+                }
+            ],
+            "description": "A library providing utilities to generate, instantiate and generally operate with Object Proxies",
+            "homepage": "https://github.com/Ocramius/ProxyManager",
+            "keywords": [
+                "aop",
+                "lazy loading",
+                "proxy",
+                "proxy pattern",
+                "service proxies"
+            ],
+            "time": "2019-08-10T08:37:15+00:00"
+        },
+        {
+            "name": "paragonie/random_compat",
+            "version": "v9.99.99",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/paragonie/random_compat.git",
+                "reference": "84b4dfb120c6f9b4ff7b3685f9b8f1aa365a0c95"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/84b4dfb120c6f9b4ff7b3685f9b8f1aa365a0c95",
+                "reference": "84b4dfb120c6f9b4ff7b3685f9b8f1aa365a0c95",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*|5.*",
+                "vimeo/psalm": "^1"
+            },
+            "suggest": {
+                "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Paragon Initiative Enterprises",
+                    "email": "security@paragonie.com",
+                    "homepage": "https://paragonie.com"
+                }
+            ],
+            "description": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7",
+            "keywords": [
+                "csprng",
+                "polyfill",
+                "pseudorandom",
+                "random"
+            ],
+            "time": "2018-07-02T15:55:56+00:00"
+        },
+        {
+            "name": "psr/cache",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/cache.git",
+                "reference": "b9aa2cd4dd36cec02779bee07ee9dab8bd2d07d7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/cache/zipball/b9aa2cd4dd36cec02779bee07ee9dab8bd2d07d7",
+                "reference": "b9aa2cd4dd36cec02779bee07ee9dab8bd2d07d7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Cache\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for caching libraries",
+            "keywords": [
+                "cache",
+                "psr",
+                "psr-6"
+            ],
+            "time": "2019-10-04T14:04:41+00:00"
+        },
+        {
+            "name": "psr/container",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/container.git",
+                "reference": "fc1bc363ecf887921e3897c7b1dad3587ae154eb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/container/zipball/fc1bc363ecf887921e3897c7b1dad3587ae154eb",
+                "reference": "fc1bc363ecf887921e3897c7b1dad3587ae154eb",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Container\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common Container Interface (PHP FIG PSR-11)",
+            "homepage": "https://github.com/php-fig/container",
+            "keywords": [
+                "PSR-11",
+                "container",
+                "container-interface",
+                "container-interop",
+                "psr"
+            ],
+            "time": "2019-10-04T14:07:35+00:00"
+        },
+        {
+            "name": "psr/simple-cache",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/simple-cache.git",
+                "reference": "408d5eafb83c57f6365a3ca330ff23aa4a5fa39b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/simple-cache/zipball/408d5eafb83c57f6365a3ca330ff23aa4a5fa39b",
+                "reference": "408d5eafb83c57f6365a3ca330ff23aa4a5fa39b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\SimpleCache\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interfaces for simple caching",
+            "keywords": [
+                "cache",
+                "caching",
+                "psr",
+                "psr-16",
+                "simple-cache"
+            ],
+            "time": "2017-10-23T01:57:42+00:00"
+        },
+        {
+            "name": "ramsey/uuid",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ramsey/uuid.git",
+                "reference": "242f83df0ca019bafc8293da30ab04fe8540a5e4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ramsey/uuid/zipball/242f83df0ca019bafc8293da30ab04fe8540a5e4",
+                "reference": "242f83df0ca019bafc8293da30ab04fe8540a5e4",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "paragonie/random_compat": "^1 | ^2 | 9.99.99",
+                "php": "^5.4 | ^7",
+                "symfony/polyfill-ctype": "^1.8"
+            },
+            "replace": {
+                "rhumsaa/uuid": "self.version"
+            },
+            "require-dev": {
+                "codeception/aspect-mock": "^1 | ^2",
+                "doctrine/annotations": "^1.2",
+                "goaop/framework": "1.0.0-alpha.2 | ^1 | ^2.1",
+                "jakub-onderka/php-parallel-lint": "^0.9.0",
+                "mockery/mockery": "^0.9.9",
+                "moontoast/math": "^1.1",
+                "paragonie/random-lib": "^2",
+                "php-mock/php-mock-phpunit": "^0.3 | ^1.1",
+                "phpunit/phpunit": "^4.8 | ^5.4 | ^6.5",
+                "squizlabs/php_codesniffer": "^2.3"
+            },
+            "suggest": {
+                "ext-ctype": "Provides support for PHP Ctype functions",
+                "ext-libsodium": "Provides the PECL libsodium extension for use with the SodiumRandomGenerator",
+                "ext-openssl": "Provides the OpenSSL extension for use with the OpenSslGenerator",
+                "ext-uuid": "Provides the PECL UUID extension for use with the PeclUuidTimeGenerator and PeclUuidRandomGenerator",
+                "moontoast/math": "Provides support for converting UUID to 128-bit integer (in string form).",
+                "paragonie/random-lib": "Provides RandomLib for use with the RandomLibAdapter",
+                "ramsey/uuid-console": "A console application for generating UUIDs with ramsey/uuid",
+                "ramsey/uuid-doctrine": "Allows the use of Ramsey\\Uuid\\Uuid as Doctrine field type."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Ramsey\\Uuid\\": "src/"
+                },
+                "files": [
+                    "src/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ben Ramsey",
+                    "email": "ben@benramsey.com",
+                    "homepage": "https://benramsey.com"
+                },
+                {
+                    "name": "Marijn Huizendveld",
+                    "email": "marijn.huizendveld@gmail.com"
+                },
+                {
+                    "name": "Thibaud Fabre",
+                    "email": "thibaud@aztech.io"
+                }
+            ],
+            "description": "Formerly rhumsaa/uuid. A PHP 5.4+ library for generating RFC 4122 version 1, 3, 4, and 5 universally unique identifiers (UUID).",
+            "homepage": "https://github.com/ramsey/uuid",
+            "keywords": [
+                "guid",
+                "identifier",
+                "uuid"
+            ],
+            "time": "2019-12-01T05:17:02+00:00"
+        },
+        {
+            "name": "symfony/console",
+            "version": "4.4.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/console.git",
+                "reference": "f0aea3df20d15635b3cb9730ca5eea1c65b7f201"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/console/zipball/f0aea3df20d15635b3cb9730ca5eea1c65b7f201",
+                "reference": "f0aea3df20d15635b3cb9730ca5eea1c65b7f201",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1.3",
+                "symfony/polyfill-mbstring": "~1.0",
+                "symfony/polyfill-php73": "^1.8",
+                "symfony/service-contracts": "^1.1|^2"
+            },
+            "conflict": {
+                "symfony/dependency-injection": "<3.4",
+                "symfony/event-dispatcher": "<4.3|>=5",
+                "symfony/lock": "<4.4",
+                "symfony/process": "<3.3"
+            },
+            "provide": {
+                "psr/log-implementation": "1.0"
+            },
+            "require-dev": {
+                "psr/log": "~1.0",
+                "symfony/config": "^3.4|^4.0|^5.0",
+                "symfony/dependency-injection": "^3.4|^4.0|^5.0",
+                "symfony/event-dispatcher": "^4.3",
+                "symfony/lock": "^4.4|^5.0",
+                "symfony/process": "^3.4|^4.0|^5.0",
+                "symfony/var-dumper": "^4.3|^5.0"
+            },
+            "suggest": {
+                "psr/log": "For using the console logger",
+                "symfony/event-dispatcher": "",
+                "symfony/lock": "",
+                "symfony/process": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Console\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Console Component",
+            "homepage": "https://symfony.com",
+            "time": "2019-12-01T10:06:17+00:00"
+        },
+        {
+            "name": "symfony/dependency-injection",
+            "version": "4.4.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/dependency-injection.git",
+                "reference": "ad46a4def1325befab696b49c839dffea3fc92bd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/ad46a4def1325befab696b49c839dffea3fc92bd",
+                "reference": "ad46a4def1325befab696b49c839dffea3fc92bd",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1.3",
+                "psr/container": "^1.0",
+                "symfony/service-contracts": "^1.1.6|^2"
+            },
+            "conflict": {
+                "symfony/config": "<4.3|>=5.0",
+                "symfony/finder": "<3.4",
+                "symfony/proxy-manager-bridge": "<3.4",
+                "symfony/yaml": "<3.4"
+            },
+            "provide": {
+                "psr/container-implementation": "1.0",
+                "symfony/service-implementation": "1.0"
+            },
+            "require-dev": {
+                "symfony/config": "^4.3",
+                "symfony/expression-language": "^3.4|^4.0|^5.0",
+                "symfony/yaml": "^3.4|^4.0|^5.0"
+            },
+            "suggest": {
+                "symfony/config": "",
+                "symfony/expression-language": "For using expressions in service container configuration",
+                "symfony/finder": "For using double-star glob patterns or when GLOB_BRACE portability is required",
+                "symfony/proxy-manager-bridge": "Generate service proxies to lazy load them",
+                "symfony/yaml": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\DependencyInjection\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony DependencyInjection Component",
+            "homepage": "https://symfony.com",
+            "time": "2019-12-01T10:19:36+00:00"
+        },
+        {
+            "name": "symfony/inflector",
+            "version": "4.4.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/inflector.git",
+                "reference": "98581481d9ddabe4db3a66e10202fe1fa08d791b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/inflector/zipball/98581481d9ddabe4db3a66e10202fe1fa08d791b",
+                "reference": "98581481d9ddabe4db3a66e10202fe1fa08d791b",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1.3",
+                "symfony/polyfill-ctype": "~1.8"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Inflector\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bernhard Schussek",
+                    "email": "bschussek@gmail.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Inflector Component",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "inflection",
+                "pluralize",
+                "singularize",
+                "string",
+                "symfony",
+                "words"
+            ],
+            "time": "2019-11-06T12:02:32+00:00"
+        },
+        {
+            "name": "symfony/polyfill-ctype",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-ctype.git",
+                "reference": "f8f0b461be3385e56d6de3dbb5a0df24c0c275e3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/f8f0b461be3385e56d6de3dbb5a0df24c0c275e3",
+                "reference": "f8f0b461be3385e56d6de3dbb5a0df24c0c275e3",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "suggest": {
+                "ext-ctype": "For best performance"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.13-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Ctype\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gert de Pagter",
+                    "email": "BackEndTea@gmail.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill for ctype functions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "ctype",
+                "polyfill",
+                "portable"
+            ],
+            "time": "2019-11-27T13:56:44+00:00"
+        },
+        {
+            "name": "symfony/polyfill-mbstring",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-mbstring.git",
+                "reference": "7b4aab9743c30be783b73de055d24a39cf4b954f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/7b4aab9743c30be783b73de055d24a39cf4b954f",
+                "reference": "7b4aab9743c30be783b73de055d24a39cf4b954f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "suggest": {
+                "ext-mbstring": "For best performance"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.13-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Mbstring\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill for the Mbstring extension",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "mbstring",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "time": "2019-11-27T14:18:11+00:00"
+        },
+        {
+            "name": "symfony/polyfill-php70",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php70.git",
+                "reference": "af23c7bb26a73b850840823662dda371484926c4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-php70/zipball/af23c7bb26a73b850840823662dda371484926c4",
+                "reference": "af23c7bb26a73b850840823662dda371484926c4",
+                "shasum": ""
+            },
+            "require": {
+                "paragonie/random_compat": "~1.0|~2.0|~9.99",
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.13-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Php70\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ],
+                "classmap": [
+                    "Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 7.0+ features to lower PHP versions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "time": "2019-11-27T13:56:44+00:00"
+        },
+        {
+            "name": "symfony/polyfill-php73",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php73.git",
+                "reference": "4b0e2222c55a25b4541305a053013d5647d3a25f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-php73/zipball/4b0e2222c55a25b4541305a053013d5647d3a25f",
+                "reference": "4b0e2222c55a25b4541305a053013d5647d3a25f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.13-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Php73\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ],
+                "classmap": [
+                    "Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 7.3+ features to lower PHP versions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "time": "2019-11-27T16:25:15+00:00"
+        },
+        {
+            "name": "symfony/property-access",
+            "version": "3.4.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/property-access.git",
+                "reference": "9ec5e220898a97b92b8784422396f4e244c04d29"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/property-access/zipball/9ec5e220898a97b92b8784422396f4e244c04d29",
+                "reference": "9ec5e220898a97b92b8784422396f4e244c04d29",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.5.9|>=7.0.8",
+                "symfony/inflector": "~3.1|~4.0",
+                "symfony/polyfill-php70": "~1.0"
+            },
+            "require-dev": {
+                "symfony/cache": "~3.1|~4.0"
+            },
+            "suggest": {
+                "psr/cache-implementation": "To cache access methods."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\PropertyAccess\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony PropertyAccess Component",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "access",
+                "array",
+                "extraction",
+                "index",
+                "injection",
+                "object",
+                "property",
+                "property path",
+                "reflection"
+            ],
+            "time": "2019-12-01T10:45:41+00:00"
+        },
+        {
+            "name": "symfony/serializer",
+            "version": "4.4.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/serializer.git",
+                "reference": "842637bdcbed31c7dc62b3c30dfc8949f6457968"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/serializer/zipball/842637bdcbed31c7dc62b3c30dfc8949f6457968",
+                "reference": "842637bdcbed31c7dc62b3c30dfc8949f6457968",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1.3",
+                "symfony/polyfill-ctype": "~1.8"
+            },
+            "conflict": {
+                "phpdocumentor/type-resolver": "<0.2.1",
+                "symfony/dependency-injection": "<3.4",
+                "symfony/property-access": "<3.4",
+                "symfony/property-info": "<3.4",
+                "symfony/yaml": "<3.4"
+            },
+            "require-dev": {
+                "doctrine/annotations": "~1.0",
+                "doctrine/cache": "~1.0",
+                "phpdocumentor/reflection-docblock": "^3.2|^4.0",
+                "symfony/cache": "^3.4|^4.0|^5.0",
+                "symfony/config": "^3.4|^4.0|^5.0",
+                "symfony/dependency-injection": "^3.4|^4.0|^5.0",
+                "symfony/error-handler": "^4.4|^5.0",
+                "symfony/http-foundation": "^3.4|^4.0|^5.0",
+                "symfony/property-access": "^3.4|^4.0|^5.0",
+                "symfony/property-info": "^3.4.13|~4.0|^5.0",
+                "symfony/validator": "^3.4|^4.0|^5.0",
+                "symfony/yaml": "^3.4|^4.0|^5.0"
+            },
+            "suggest": {
+                "doctrine/annotations": "For using the annotation mapping. You will also need doctrine/cache.",
+                "doctrine/cache": "For using the default cached annotation reader and metadata cache.",
+                "psr/cache-implementation": "For using the metadata cache.",
+                "symfony/config": "For using the XML mapping loader.",
+                "symfony/http-foundation": "For using a MIME type guesser within the DataUriNormalizer.",
+                "symfony/property-access": "For using the ObjectNormalizer.",
+                "symfony/property-info": "To deserialize relations.",
+                "symfony/yaml": "For using the default YAML mapping loader."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Serializer\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Serializer Component",
+            "homepage": "https://symfony.com",
+            "time": "2019-11-28T13:33:56+00:00"
+        },
+        {
+            "name": "symfony/service-contracts",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/service-contracts.git",
+                "reference": "144c5e51266b281231e947b51223ba14acf1a749"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/144c5e51266b281231e947b51223ba14acf1a749",
+                "reference": "144c5e51266b281231e947b51223ba14acf1a749",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2.5",
+                "psr/container": "^1.0"
+            },
+            "suggest": {
+                "symfony/service-implementation": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Contracts\\Service\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Generic abstractions related to writing services",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "abstractions",
+                "contracts",
+                "decoupling",
+                "interfaces",
+                "interoperability",
+                "standards"
+            ],
+            "time": "2019-11-18T17:27:11+00:00"
+        },
+        {
+            "name": "symfony/yaml",
+            "version": "4.4.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/yaml.git",
+                "reference": "76de473358fe802578a415d5bb43c296cf09d211"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/76de473358fe802578a415d5bb43c296cf09d211",
+                "reference": "76de473358fe802578a415d5bb43c296cf09d211",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1.3",
+                "symfony/polyfill-ctype": "~1.8"
+            },
+            "conflict": {
+                "symfony/console": "<3.4"
+            },
+            "require-dev": {
+                "symfony/console": "^3.4|^4.0|^5.0"
+            },
+            "suggest": {
+                "symfony/console": "For validating YAML files using the lint command"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Yaml\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Yaml Component",
+            "homepage": "https://symfony.com",
+            "time": "2019-11-12T14:51:11+00:00"
+        },
+        {
+            "name": "zendframework/zend-code",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zendframework/zend-code.git",
+                "reference": "a189f105e7ff0a4b257b682be81cf298ffd70d01"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zendframework/zend-code/zipball/a189f105e7ff0a4b257b682be81cf298ffd70d01",
+                "reference": "a189f105e7ff0a4b257b682be81cf298ffd70d01",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1",
+                "zendframework/zend-eventmanager": "^2.6 || ^3.0"
+            },
+            "require-dev": {
+                "doctrine/annotations": "^1.0",
+                "ext-phar": "*",
+                "phpunit/phpunit": "^7.5.16 || ^8.4",
+                "zendframework/zend-coding-standard": "^1.0",
+                "zendframework/zend-stdlib": "^2.7 || ^3.0"
+            },
+            "suggest": {
+                "doctrine/annotations": "Doctrine\\Common\\Annotations >=1.0 for annotation features",
+                "zendframework/zend-stdlib": "Zend\\Stdlib component"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.4.x-dev",
+                    "dev-develop": "3.5.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Zend\\Code\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Extensions to the PHP Reflection API, static code scanning, and code generation",
+            "keywords": [
+                "ZendFramework",
+                "code",
+                "zf"
+            ],
+            "time": "2019-10-05T23:29:04+00:00"
+        },
+        {
+            "name": "zendframework/zend-eventmanager",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zendframework/zend-eventmanager.git",
+                "reference": "3ad808d60d0df54e16440a71fb9c8a33988e4d78"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zendframework/zend-eventmanager/zipball/3ad808d60d0df54e16440a71fb9c8a33988e4d78",
+                "reference": "3ad808d60d0df54e16440a71fb9c8a33988e4d78",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.6 || ^7.0"
+            },
+            "require-dev": {
+                "container-interop/container-interop": "^1.1.0",
+                "phpbench/phpbench": "^0.13",
+                "phpunit/phpunit": "^5.7.27 || ^6.5.8 || ^7.1.2",
+                "zendframework/zend-coding-standard": "~1.0.0",
+                "zendframework/zend-stdlib": "^2.7.3 || ^3.0"
+            },
+            "suggest": {
+                "container-interop/container-interop": "^1.1.0, to use the lazy listeners feature",
+                "zendframework/zend-stdlib": "^2.7.3 || ^3.0, to use the FilterChain feature"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.2-dev",
+                    "dev-develop": "3.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Zend\\EventManager\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Trigger and listen to events within a PHP application",
+            "homepage": "https://github.com/zendframework/zend-eventmanager",
+            "keywords": [
+                "event",
+                "eventmanager",
+                "events",
+                "zf2"
+            ],
+            "time": "2019-10-18T07:10:41+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "neos/eventsourcedcontentrepository-standalone": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}

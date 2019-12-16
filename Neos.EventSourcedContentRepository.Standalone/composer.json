@@ -1,0 +1,33 @@
+{
+  "name": "neos/eventsourcedcontentrepository-standalone",
+  "type": "library",
+  "description": "Event-Sourced Content Repository - Standalone Version",
+  "license": [
+    "GPL-3.0-or-later"
+  ],
+  "replace": {
+    "neos/flow": "self.version",
+    "neos/eel": "self.version",
+    "neos/fluid-adaptor": "self.version"
+  },
+  "require": {
+    "neos/event-sourced-content-repository": "dev-master",
+    "neos/contentgraph-doctrinedbaladapter": "dev-master",
+    "neos/event-sourcing": "dev-standalone-usage-adjustments",
+    "doctrine/dbal": "^2.9.0",
+    "ramsey/uuid": "^3.0",
+    "symfony/dependency-injection": "^4.3"
+  },
+  "suggest": {
+    "symfony/yaml": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Neos\\EventSourcedContentRepository\\Standalone\\": "src",
+      "Neos\\Flow\\Utility\\": "shims/src/NeosFlowUtility",
+      "Neos\\Flow\\": "shims/src/NeosFlow",
+      "Neos\\Flow\\Persistence\\Doctrine\\DataTypes\\": "shims/src/NeosFlowPersistenceDoctrineDataTypes",
+      "Neos\\Eel\\": "shims/src/NeosEel"
+    }
+  }
+}

@@ -35,11 +35,18 @@ use Neos\Flow\Annotations as Flow;
 class ProjectionContentGraph
 {
     /**
-     * @Flow\Inject
      * @var DbalClient
      */
     protected $client;
 
+    /**
+     * ProjectionContentGraph constructor.
+     * @param DbalClient $client
+     */
+    public function __construct(DbalClient $client)
+    {
+        $this->client = $client;
+    }
 
     /**
      * @return bool

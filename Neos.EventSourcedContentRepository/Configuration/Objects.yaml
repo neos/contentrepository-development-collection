@@ -27,6 +27,10 @@ Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGr
 
 
 Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjector:
+  arguments:
+    1:
+      object:
+        factoryObjectName: Neos\EventSourcedContentRepository\Service\Infrastructure\DatabaseConnectionFactory
   properties:
     'processedEventsCache':
       object:
