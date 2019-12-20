@@ -23,7 +23,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * @Flow\Proxy(false)
  */
-final class NodeAggregateTypeWasChanged implements DomainEventInterface, CopyableAcrossContentStreamsInterface
+final class NodeAggregateWasRetyped implements DomainEventInterface, CopyableAcrossContentStreamsInterface
 {
     /**
      * @var ContentStreamIdentifier
@@ -79,7 +79,7 @@ final class NodeAggregateTypeWasChanged implements DomainEventInterface, Copyabl
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new NodeAggregateTypeWasChanged(
+        return new static(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->newNodeTypeName,

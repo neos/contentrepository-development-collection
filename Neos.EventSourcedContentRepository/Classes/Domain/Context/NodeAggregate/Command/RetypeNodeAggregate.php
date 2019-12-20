@@ -15,11 +15,14 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Comman
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyIsUnknown;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWithNodeAddressInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
-final class ChangeNodeAggregateType
+final class RetypeNodeAggregate implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
 {
     /**
      * @var ContentStreamIdentifier
@@ -62,7 +65,7 @@ final class ChangeNodeAggregateType
 
     /**
      * @param array $array
-     * @return ChangeNodeAggregateType
+     * @return RetypeNodeAggregate
      * @throws NodeAggregateTypeChangeChildConstraintConflictResolutionStrategyIsUnknown
      */
     public static function fromArray(array $array): self
@@ -116,5 +119,35 @@ final class ChangeNodeAggregateType
     public function getInitiatingUserIdentifier(): UserIdentifier
     {
         return $this->initiatingUserIdentifier;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'newNodeTypeName' => $this->newNodeTypeName,
+            'strategy' => $this->strategy,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
+        ];
+    }
+
+    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
+    {
+        return new static(
+            $targetContentStreamIdentifier,
+            $this->nodeAggregateIdentifier,
+            $this->newNodeTypeName,
+            $this->strategy,
+            $this->initiatingUserIdentifier
+        );
+    }
+
+    public function matchesNodeAddress(NodeAddress $nodeAddress): bool
+    {
+        return (
+            $this->getContentStreamIdentifier()->equals($nodeAddress->getContentStreamIdentifier())
+            && $this->getNodeAggregateIdentifier()->equals($nodeAddress->getNodeAggregateIdentifier())
+        );
     }
 }

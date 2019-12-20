@@ -14,20 +14,20 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Featur
 
 use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RetypeNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeNotFound;
 
 trait NodeRetyping
 {
     /**
-     * @param ChangeNodeAggregateType $command
+     * @param RetypeNodeAggregate $command
      * @throws NodeTypeNotFound
      * @throws NodeConstraintException
      * @throws NodeTypeNotFoundException
      * @throws NodeAggregatesTypeIsAmbiguous
      */
-    public function handleChangeNodeAggregateType(ChangeNodeAggregateType $command)
+    public function handleRetypeNodeAggregate(RetypeNodeAggregate $command)
     {
         throw new \DomainException('Changing the type of a node aggregate is not yet supported', 1554555107);
         $this->readSideMemoryCacheManager->disableCache();

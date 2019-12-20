@@ -13,8 +13,8 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Featur
  */
 
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateNameWasChanged;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RenameNodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRenamed;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
@@ -29,10 +29,10 @@ trait NodeRenaming
     abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
 
     /**
-     * @param ChangeNodeAggregateName $command
+     * @param RenameNodeAggregate $command
      * @return CommandResult
      */
-    public function handleChangeNodeAggregateName(ChangeNodeAggregateName $command): CommandResult
+    public function handleRenameNodeAggregate(RenameNodeAggregate $command): CommandResult
     {
         // TODO: check if CS exists
         // TODO: check if aggregate exists and delegate to it
@@ -41,7 +41,7 @@ trait NodeRenaming
         $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$events) {
             $events = DomainEvents::withSingleEvent(
                 DecoratedEvent::addIdentifier(
-                    new NodeAggregateNameWasChanged(
+                    new NodeAggregateWasRenamed(
                         $command->getContentStreamIdentifier(),
                         $command->getNodeAggregateIdentifier(),
                         $command->getNewNodeName(),

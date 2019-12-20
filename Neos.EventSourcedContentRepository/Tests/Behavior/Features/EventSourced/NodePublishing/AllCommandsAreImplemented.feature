@@ -170,7 +170,7 @@ Feature: Publishing hide/show scenario of nodes
 
     # @todo check why these won't run
 
-  #Scenario: (ChangeNodeAggregateName) It is possible to publish changing the node name.
+  #Scenario: (RenameNodeAggregate) It is possible to publish changing the node name.
   #  Given the command CreateWorkspace is executed with payload:
   #    | Key                     | Value                |
    ##   | workspaceName           | "user-test"          |
@@ -179,12 +179,12 @@ Feature: Publishing hide/show scenario of nodes
    # And the graph projection is fully up to date
 
     # SETUP: change two node names in USER workspace
-    #Given the command "ChangeNodeAggregateName" is executed with payload:
+    #Given the command "RenameNodeAggregate" is executed with payload:
     #  | Key                     | Value                    |
     #  | contentStreamIdentifier | "user-cs-identifier"     |
     #  | nodeAggregateIdentifier | "sir-david-nodenborough" |
     #  | newNodeName             | "text1mod"               |
-    #Given the command "ChangeNodeAggregateName" is executed with payload:
+    #Given the command "RenameNodeAggregate" is executed with payload:
     #  | Key                     | Value                        |
     #  | contentStreamIdentifier | "user-cs-identifier"         |
     #  | nodeAggregateIdentifier | "sir-nodeward-nodington-iii" |

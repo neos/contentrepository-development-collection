@@ -175,15 +175,15 @@ final class NodeAggregateCommandHandler
     }
 
     /**
-     * @todo perhaps reuse when ChangeNodeAggregateType is reimplemented
-     *
-     * @param Command\ChangeNodeAggregateType $command
-     * @throws NodeConstraintException
-     * @throws NodeTypeNotFoundException
-     * @throws NodeAggregatesTypeIsAmbiguous
+     * @param Command\RetypeNodeAggregate $command
      * @return void
+     *@throws NodeTypeNotFoundException
+     * @throws NodeAggregatesTypeIsAmbiguous
+     * @throws NodeConstraintException
+     * @todo perhaps reuse when RetypeNodeAggregate is reimplemented
+     *
      */
-    protected function checkConstraintsImposedByAncestors(Command\ChangeNodeAggregateType $command): void
+    protected function checkConstraintsImposedByAncestors(Command\RetypeNodeAggregate $command): void
     {
         $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
         $newNodeType = $this->nodeTypeManager->getNodeType((string)$command->getNewNodeTypeName());
@@ -210,14 +210,14 @@ final class NodeAggregateCommandHandler
     }
 
     /**
-     * @todo perhaps reuse when ChangeNodeAggregateType is reimplemented
-     *
-     * @param Command\ChangeNodeAggregateType $command
-     * @throws NodeConstraintException
-     * @throws NodeTypeNotFoundException
+     * @param Command\RetypeNodeAggregate $command
      * @return \void
+     *@throws NodeTypeNotFoundException
+     * @throws NodeConstraintException
+     * @todo perhaps reuse when RetypeNodeAggregate is reimplemented
+     *
      */
-    protected function checkConstraintsImposedOnAlreadyPresentDescendants(Command\ChangeNodeAggregateType $command): void
+    protected function checkConstraintsImposedOnAlreadyPresentDescendants(Command\RetypeNodeAggregate $command): void
     {
         $newNodeType = $this->nodeTypeManager->getNodeType((string)$command->getNewNodeTypeName());
 

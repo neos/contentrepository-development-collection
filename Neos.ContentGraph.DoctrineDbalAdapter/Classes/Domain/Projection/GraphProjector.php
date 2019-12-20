@@ -132,10 +132,10 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
     }
 
     /**
-     * @param Event\NodeAggregateNameWasChanged $event
+     * @param Event\NodeAggregateWasRenamed $event
      * @throws \Throwable
      */
-    final public function whenNodeAggregateNameWasChanged(Event\NodeAggregateNameWasChanged $event)
+    final public function whenNodeAggregateWasRenamed(Event\NodeAggregateWasRenamed $event)
     {
         $this->transactional(function () use ($event) {
             $this->getDatabaseConnection()->executeUpdate('

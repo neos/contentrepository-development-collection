@@ -20,7 +20,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\MatchableWit
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 
-final class ChangeNodeAggregateName implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
+final class RenameNodeAggregate implements \JsonSerializable, CopyableAcrossContentStreamsInterface, MatchableWithNodeAddressInterface
 {
     /**
      * @var ContentStreamIdentifier
@@ -96,7 +96,7 @@ final class ChangeNodeAggregateName implements \JsonSerializable, CopyableAcross
 
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
-        return new ChangeNodeAggregateName(
+        return new RenameNodeAggregate(
             $targetContentStreamIdentifier,
             $this->nodeAggregateIdentifier,
             $this->newNodeName,

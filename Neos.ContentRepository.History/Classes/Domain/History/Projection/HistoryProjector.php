@@ -19,8 +19,8 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\History\Domain\History\AgentIdentifier;
 use Neos\ContentRepository\History\Domain\History\HistoryEntryIdentifier;
 use Neos\ContentRepository\History\Domain\History\HistoryEntryType;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateNameWasChanged;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateTypeWasChanged;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRenamed;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRetyped;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasDisabled;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasEnabled;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasMoved;
@@ -114,7 +114,7 @@ class HistoryProjector implements ProjectorInterface
         }
     }
 
-    public function whenNodeAggregateWasRenamed(NodeAggregateNameWasChanged $event): void
+    public function whenNodeAggregateWasRenamed(NodeAggregateWasRenamed $event): void
     {
         if ($this->isLiveWorkspaceAffected($event->getContentStreamIdentifier())) {
             $historyEntryRecord = new HistoryEntryRecord(
@@ -131,7 +131,7 @@ class HistoryProjector implements ProjectorInterface
         }
     }
 
-    public function whenNodeAggregateWasRetyped(NodeAggregateTypeWasChanged $event): void
+    public function whenNodeAggregateWasRetyped(NodeAggregateWasRetyped $event): void
     {
         if ($this->isLiveWorkspaceAffected($event->getContentStreamIdentifier())) {
             $historyEntryRecord = new HistoryEntryRecord(

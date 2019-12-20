@@ -31,14 +31,14 @@ Feature: Change node name
       | nodeAggregateClassification   | "regular"                                |
 
     And the graph projection is fully up to date
-    When the command "ChangeNodeAggregateName" is executed with payload:
+    When the command "RenameNodeAggregate" is executed with payload:
       | Key                     | Value              |
       | contentStreamIdentifier | "cs-identifier"    |
       | nodeAggregateIdentifier | "nody-mc-nodeface" |
       | newNodeName             | "cat"              |
 
     Then I expect exactly 3 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 2 is of type "Neos.EventSourcedContentRepository:NodeAggregateNameWasChanged" with payload:
+    And event at index 2 is of type "Neos.EventSourcedContentRepository:NodeAggregateWasRenamed" with payload:
       | Key                     | Expected           |
       | contentStreamIdentifier | "cs-identifier"    |
       | nodeAggregateIdentifier | "nody-mc-nodeface" |
@@ -56,7 +56,7 @@ Feature: Change node name
    #   | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
    #   | nodeName                      | "dog"                                  |
    # And the graph projection is fully up to date
-   # When the command "ChangeNodeAggregateName" is executed with payload:
+   # When the command "RenameNodeAggregate" is executed with payload:
    #   | Key                     | Value              |
    #   | contentStreamIdentifier | "cs-identifier"    |
    #   | nodeAggregateIdentifier | "nody-mc-nodeface" |

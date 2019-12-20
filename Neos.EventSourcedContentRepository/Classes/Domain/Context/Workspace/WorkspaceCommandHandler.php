@@ -21,7 +21,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Event\ContentStreamWasForked;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamAlreadyExists;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateName;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RenameNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
@@ -501,8 +501,8 @@ final class WorkspaceCommandHandler
     private function applyCommand($command): CommandResult
     {
         switch (get_class($command)) {
-            case ChangeNodeAggregateName::class:
-                return $this->nodeAggregateCommandHandler->handleChangeNodeAggregateName($command);
+            case RenameNodeAggregate::class:
+                return $this->nodeAggregateCommandHandler->handleRenameNodeAggregate($command);
                 break;
             case CreateNodeAggregateWithNode::class:
                 return $this->nodeAggregateCommandHandler->handleCreateNodeAggregateWithNode($command);

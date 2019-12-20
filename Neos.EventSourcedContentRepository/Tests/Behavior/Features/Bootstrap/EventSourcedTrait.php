@@ -38,7 +38,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Enab
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyExists;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateName;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RenameNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeVariant;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\MoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\DimensionSpacePointIsAlreadyOccupied;
@@ -66,7 +66,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\ContentStream\ContentSt
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\Workspace;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\ChangeNodeAggregateType;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RetypeNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\CreateRootNodeAggregateWithNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateCommandHandler;
@@ -696,31 +696,31 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Given /^the command ChangeNodeAggregateType was published with payload:$/
+     * @Given /^the command RetypeNodeAggregate was published with payload:$/
      * @param TableNode $payloadTable
      * @throws Exception
      */
-    public function theCommandChangeNodeAggregateTypeIsExecutedWithPayload(TableNode $payloadTable)
+    public function theCommandRetypeNodeAggregateIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
 
-        $command = ChangeNodeAggregateType::fromArray($commandArguments);
+        $command = RetypeNodeAggregate::fromArray($commandArguments);
 
         /** @var NodeAggregateCommandHandler $commandHandler */
         $commandHandler = $this->getObjectManager()->get(NodeAggregateCommandHandler::class);
 
-        $commandHandler->handleChangeNodeAggregateType($command);
+        $commandHandler->handleRetypeNodeAggregate($command);
     }
 
     /**
-     * @Given /^the command ChangeNodeAggregateType was published with payload and exceptions are caught:$/
+     * @Given /^the command RetypeNodeAggregate was published with payload and exceptions are caught:$/
      * @param TableNode $payloadTable
      * @throws Exception
      */
-    public function theCommandChangeNodeAggregateTypeIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
+    public function theCommandRetypeNodeAggregateIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
     {
         try {
-            $this->theCommandChangeNodeAggregateTypeIsExecutedWithPayload($payloadTable);
+            $this->theCommandRetypeNodeAggregateIsExecutedWithPayload($payloadTable);
         } catch (\Exception $exception) {
             $this->lastCommandException = $exception;
         }
@@ -889,7 +889,7 @@ trait EventSourcedTrait
     /**
      * @When /^the command CopyNodesRecursively is executed, copying the current node aggregate with payload:$/
      */
-    public function theCommandCopynodesrecursivelyIsExecutedCopyingTheCurrentNodeAggregateWithPayload(TableNode $payloadTable)
+    public function theCommandCopyNodesRecursivelyIsExecutedCopyingTheCurrentNodeAggregateWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
@@ -1005,11 +1005,11 @@ trait EventSourcedTrait
                     ContentStreamCommandHandler::class,
                     'handleForkContentStream'
                 ];
-            case 'ChangeNodeAggregateName':
+            case 'RenameNodeAggregate':
                 return [
-                    ChangeNodeAggregateName::class,
+                    RenameNodeAggregate::class,
                     NodeAggregateCommandHandler::class,
-                    'handleChangeNodeAggregateName'
+                    'handleRenameNodeAggregate'
                 ];
             case 'SetNodeProperties':
                 return [

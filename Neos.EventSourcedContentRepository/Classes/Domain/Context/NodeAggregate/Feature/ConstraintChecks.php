@@ -171,7 +171,7 @@ trait ConstraintChecks
                 }
             } catch (NodeTypeNotFound $e) {
                 // skip constraint check; Once the parent is changed to be of an available type,
-                // the constraint checks are executed again. See handleChangeNodeAggregateType
+                // the constraint checks are executed again. See handleRetypeNodeAggregate
             }
 
             foreach ($this->getContentGraph()->findParentNodeAggregates($contentStreamIdentifier, $parentNodeAggregateIdentifier) as $grandParentNodeAggregate) {
@@ -185,7 +185,7 @@ trait ConstraintChecks
                     }
                 } catch (NodeTypeNotFound $e) {
                     // skip constraint check; Once the grand parent is changed to be of an available type,
-                    // the constraint checks are executed again. See handleChangeNodeAggregateType
+                    // the constraint checks are executed again. See handleRetypeNodeAggregate
                 }
             }
         }

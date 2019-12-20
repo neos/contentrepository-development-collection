@@ -48,7 +48,7 @@ Feature: Change node aggregate type
     And the graph projection is fully up to date
 
   #Scenario: Try to change the node aggregate type on a non-existing content stream
-  #  When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
+  #  When the command RetypeNodeAggregate was published with payload and exceptions are caught:
   #    | Key                     | Value                                             |
   #    | contentStreamIdentifier | "non-existing"                                    |
   #    | nodeAggregateIdentifier | "sir-david-nodenborough"                          |
@@ -56,7 +56,7 @@ Feature: Change node aggregate type
   #  Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
 
   #Scenario: Try to change the type on a non-existing node aggregate
-  #  When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
+  #  When the command RetypeNodeAggregate was published with payload and exceptions are caught:
   #    | Key                     | Value                                             |
   #    | contentStreamIdentifier | "cs-identifier"                                   |
   #    | nodeAggregateIdentifier | "nody-mc-nodeface"                                |
@@ -64,7 +64,7 @@ Feature: Change node aggregate type
   #  Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
   Scenario: Try to change a node aggregate to a non existing type
-    When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
+    When the command RetypeNodeAggregate was published with payload and exceptions are caught:
       | Key                     | Value                                      |
       | contentStreamIdentifier | "cs-identifier"                            |
       | nodeAggregateIdentifier | "sir-david-nodenborough"                   |
@@ -89,7 +89,7 @@ Feature: Change node aggregate type
       | coveredDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]   |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                   |
     And the graph projection is fully up to date
-    When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
+    When the command RetypeNodeAggregate was published with payload and exceptions are caught:
       | Key                     | Value                                      |
       | contentStreamIdentifier | "cs-identifier"                            |
       | nodeAggregateIdentifier | "nody-mc-nodeface"                         |
@@ -128,7 +128,7 @@ Feature: Change node aggregate type
       | parentNodeAggregateIdentifier | "autocreated-child"                        |
     And the graph projection is fully up to date
 
-    When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
+    When the command RetypeNodeAggregate was published with payload and exceptions are caught:
       | Key                     | Value                                      |
       | contentStreamIdentifier | "cs-identifier"                            |
       | nodeAggregateIdentifier | "nody-mc-nodeface"                         |
@@ -155,7 +155,7 @@ Feature: Change node aggregate type
       | nodeName                      | "autocreated"                                |
     And the graph projection is fully up to date
 
-    When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
+    When the command RetypeNodeAggregate was published with payload and exceptions are caught:
       | Key                     | Value                                           |
       | contentStreamIdentifier | "cs-identifier"                                 |
       | nodeAggregateIdentifier | "nody-mc-nodeface"                              |
@@ -180,7 +180,7 @@ Feature: Change node aggregate type
       | coveredDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]   |
       | parentNodeAggregateIdentifier | "sir-david-nodenborough"                     |
     And the graph projection is fully up to date
-    When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
+    When the command RetypeNodeAggregate was published with payload and exceptions are caught:
       | Key                     | Value                                            |
       | contentStreamIdentifier | "cs-identifier"                                  |
       | nodeAggregateIdentifier | "sir-david-nodenborough"                         |
@@ -226,7 +226,7 @@ Feature: Change node aggregate type
       | coveredDimensionSpacePoints | [{"language": "de"},{"language": "gsw"}]   |
       | parentNodeAggregateIdentifier | "autocreated-child"                        |
     And the graph projection is fully up to date
-    When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
+    When the command RetypeNodeAggregate was published with payload and exceptions are caught:
       | Key                     | Value                                            |
       | contentStreamIdentifier | "cs-identifier"                                  |
       | nodeAggregateIdentifier | "sir-david-nodenborough"                         |
