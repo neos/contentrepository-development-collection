@@ -13,10 +13,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
  */
 
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
@@ -42,7 +42,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Cop
     /**
      * The origin dimension space point the node aggregate and its node were created in
      *
-     * @var DimensionSpacePoint
+     * @var OriginDimensionSpacePoint
      */
     private $originDimensionSpacePoint;
 
@@ -113,7 +113,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Cop
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
      * @param NodeTypeName $nodeTypeName
-     * @param DimensionSpacePoint $originDimensionSpacePoint
+     * @param OriginDimensionSpacePoint $originDimensionSpacePoint
      * @param DimensionSpacePointSet $coveredDimensionSpacePoints
      * @param UserIdentifier $initiatingUserIdentifier
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
@@ -126,7 +126,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Cop
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         NodeTypeName $nodeTypeName,
-        DimensionSpacePoint $originDimensionSpacePoint,
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
         UserIdentifier $initiatingUserIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
@@ -163,7 +163,7 @@ final class NodeAggregateWithNodeWasCreated implements DomainEventInterface, Cop
         return $this->nodeTypeName;
     }
 
-    public function getOriginDimensionSpacePoint(): DimensionSpacePoint
+    public function getOriginDimensionSpacePoint(): OriginDimensionSpacePoint
     {
         return $this->originDimensionSpacePoint;
     }

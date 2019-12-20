@@ -21,6 +21,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 
 /**
  * The interface to be implemented by content graphs
@@ -42,13 +43,13 @@ interface ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $originDimensionSpacePoint
+     * @param OriginDimensionSpacePoint $originDimensionSpacePoint
      * @return NodeInterface|null
      */
     public function findNodeByIdentifiers(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $originDimensionSpacePoint
+        OriginDimensionSpacePoint $originDimensionSpacePoint
     ): ?NodeInterface;
 
     /**
@@ -57,6 +58,13 @@ interface ContentGraphInterface
      * @return NodeAggregate|null
      */
     public function findRootNodeAggregateByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): ?NodeAggregate;
+
+    /**
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeTypeName $nodeTypeName
+     * @return NodeAggregate[]|\Iterator
+     */
+    public function findNodeAggregatesByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): \Iterator;
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
@@ -72,7 +80,7 @@ interface ContentGraphInterface
     public function findParentNodeAggregateByChildOriginDimensionSpacePoint(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $childNodeAggregateIdentifier,
-        DimensionSpacePoint $childOriginDimensionSpacePoint
+        OriginDimensionSpacePoint $childOriginDimensionSpacePoint
     ): ?NodeAggregate;
 
     /**
@@ -120,17 +128,22 @@ interface ContentGraphInterface
         NodeAggregateIdentifier $parentNodeAggregateIdentifier
     ): array;
 
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeName $nodeName
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @param DimensionSpacePoint $parentNodeOriginDimensionSpacePoints
-     * @param DimensionSpacePointSet $dimensionSpacePointsToCheck
-     * @return DimensionSpacePointSet
-     */
-    public function getDimensionSpacePointsOccupiedByChildNodeName(ContentStreamIdentifier $contentStreamIdentifier, NodeName $nodeName, NodeAggregateIdentifier $parentNodeAggregateIdentifier, DimensionSpacePoint $parentNodeOriginDimensionSpacePoints, DimensionSpacePointSet $dimensionSpacePointsToCheck);
+    public function getDimensionSpacePointsOccupiedByChildNodeName(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeName $nodeName,
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        OriginDimensionSpacePoint $parentNodeOriginOriginDimensionSpacePoint,
+        DimensionSpacePointSet $dimensionSpacePointsToCheck
+    ): DimensionSpacePointSet;
 
     public function countNodes(): int;
+
+    /**
+     * Returns all content stream identifiers
+     *
+     * @return ContentStreamIdentifier[]
+     */
+    public function findContentStreamIdentifiers(): array;
 
     /**
      * Enable all caches. All READ requests should enable the cache.

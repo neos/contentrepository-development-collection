@@ -12,10 +12,10 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event;
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\CopyableAcrossContentStreamsInterface;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DomainEventInterface;
@@ -39,7 +39,7 @@ final class NodePropertiesWereSet implements DomainEventInterface, CopyableAcros
     private $nodeAggregateIdentifier;
 
     /**
-     * @var DimensionSpacePoint
+     * @var OriginDimensionSpacePoint
      */
     private $originDimensionSpacePoint;
 
@@ -56,7 +56,7 @@ final class NodePropertiesWereSet implements DomainEventInterface, CopyableAcros
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $originDimensionSpacePoint,
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
         PropertyValues $propertyValues,
         UserIdentifier $initiatingUserIdentifier
     ) {
@@ -84,9 +84,9 @@ final class NodePropertiesWereSet implements DomainEventInterface, CopyableAcros
     }
 
     /**
-     * @return DimensionSpacePoint
+     * @return OriginDimensionSpacePoint
      */
-    public function getOriginDimensionSpacePoint(): DimensionSpacePoint
+    public function getOriginDimensionSpacePoint(): OriginDimensionSpacePoint
     {
         return $this->originDimensionSpacePoint;
     }

@@ -35,14 +35,24 @@ class WorkspaceWasRebased implements DomainEventInterface
     private $currentContentStreamIdentifier;
 
     /**
+     * The old content stream identifier (which is not active anymore now)
+     *
+     * @var ContentStreamIdentifier
+     */
+    private $previousContentStreamIdentifier;
+
+
+    /**
      * WorkspaceWasRebased constructor.
      * @param WorkspaceName $workspaceName
      * @param ContentStreamIdentifier $currentContentStreamIdentifier
+     * @param ContentStreamIdentifier $previousContentStreamIdentifier
      */
-    public function __construct(WorkspaceName $workspaceName, ContentStreamIdentifier $currentContentStreamIdentifier)
+    public function __construct(WorkspaceName $workspaceName, ContentStreamIdentifier $currentContentStreamIdentifier, ContentStreamIdentifier $previousContentStreamIdentifier)
     {
         $this->workspaceName = $workspaceName;
         $this->currentContentStreamIdentifier = $currentContentStreamIdentifier;
+        $this->previousContentStreamIdentifier = $previousContentStreamIdentifier;
     }
 
     /**
@@ -59,5 +69,13 @@ class WorkspaceWasRebased implements DomainEventInterface
     public function getCurrentContentStreamIdentifier(): ContentStreamIdentifier
     {
         return $this->currentContentStreamIdentifier;
+    }
+
+    /**
+     * @return ContentStreamIdentifier
+     */
+    public function getPreviousContentStreamIdentifier(): ContentStreamIdentifier
+    {
+        return $this->previousContentStreamIdentifier;
     }
 }

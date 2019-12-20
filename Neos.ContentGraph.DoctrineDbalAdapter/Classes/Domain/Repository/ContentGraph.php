@@ -19,6 +19,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPo
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcedContentRepository\Domain;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
@@ -79,14 +80,14 @@ final class ContentGraph implements ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param DimensionSpacePoint $originDimensionSpacePoint
+     * @param OriginDimensionSpacePoint $originDimensionSpacePoint
      * @return NodeInterface|null
      * @throws DBALException
      */
     public function findNodeByIdentifiers(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
-        DimensionSpacePoint $originDimensionSpacePoint
+        OriginDimensionSpacePoint $originDimensionSpacePoint
     ): ?NodeInterface {
         $connection = $this->client->getConnection();
 
@@ -137,6 +138,26 @@ final class ContentGraph implements ContentGraphInterface
         }
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate([$nodeRow]);
+    }
+
+    public function findNodeAggregatesByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): \Iterator
+    {
+        $connection = $this->client->getConnection();
+
+        $query = 'SELECT n.*, h.contentstreamidentifier, h.name, h.dimensionspacepoint AS covereddimensionspacepoint FROM neos_contentgraph_node n
+                      JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                      WHERE h.contentstreamidentifier = :contentStreamIdentifier
+                      AND n.nodetypename = :nodeTypeName';
+
+        $parameters = [
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'nodeTypeName' => (string)$nodeTypeName,
+        ];
+
+        $resultStatement = $connection->executeQuery($query, $parameters);
+        while ($nodeRow = $resultStatement->fetch()) {
+            yield $this->nodeFactory->mapNodeRowsToNodeAggregate([$nodeRow]);
+        }
     }
 
     /**
@@ -215,7 +236,7 @@ final class ContentGraph implements ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $childNodeAggregateIdentifier
-     * @param DimensionSpacePoint $childOriginDimensionSpacePoint
+     * @param OriginDimensionSpacePoint $childOriginDimensionSpacePoint
      * @return NodeAggregate|null
      * @throws DBALException
      * @throws \Exception
@@ -223,7 +244,7 @@ final class ContentGraph implements ContentGraphInterface
     public function findParentNodeAggregateByChildOriginDimensionSpacePoint(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $childNodeAggregateIdentifier,
-        DimensionSpacePoint $childOriginDimensionSpacePoint
+        OriginDimensionSpacePoint $childOriginDimensionSpacePoint
     ): ?NodeAggregate {
         $connection = $this->client->getConnection();
 
@@ -361,7 +382,7 @@ final class ContentGraph implements ContentGraphInterface
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeName $nodeName
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @param DimensionSpacePoint $parentNodeDimensionSpacePoint
+     * @param OriginDimensionSpacePoint $parentNodeOriginDimensionSpacePoint
      * @param DimensionSpacePointSet $dimensionSpacePointsToCheck
      * @return DimensionSpacePointSet
      * @throws DBALException
@@ -370,23 +391,23 @@ final class ContentGraph implements ContentGraphInterface
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeName $nodeName,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
-        DimensionSpacePoint $parentNodeDimensionSpacePoint,
+        OriginDimensionSpacePoint $parentNodeOriginDimensionSpacePoint,
         DimensionSpacePointSet $dimensionSpacePointsToCheck
-    ) {
+    ): DimensionSpacePointSet {
         $connection = $this->client->getConnection();
 
         $query = 'SELECT h.dimensionspacepoint, h.dimensionspacepointhash FROM neos_contentgraph_hierarchyrelation h
                       INNER JOIN neos_contentgraph_node n ON h.parentnodeanchor = n.relationanchorpoint
                       INNER JOIN neos_contentgraph_hierarchyrelation ph ON ph.childnodeanchor = n.relationanchorpoint
                       WHERE n.nodeaggregateidentifier = :parentNodeAggregateIdentifier
-                      AND n.origindimensionspacepointhash = :parentNodeDimensionSpacePoint
+                      AND n.origindimensionspacepointhash = :parentNodeOriginDimensionSpacePointHash
                       AND ph.contentstreamidentifier = :contentStreamIdentifier
                       AND h.contentstreamidentifier = :contentStreamIdentifier
                       AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)
                       AND h.name = :nodeName';
         $parameters = [
             'parentNodeAggregateIdentifier' => (string)$parentNodeAggregateIdentifier,
-            'parentNodeDimensionSpacePoint' => $parentNodeDimensionSpacePoint->getHash(),
+            'parentNodeOriginDimensionSpacePointHash' => $parentNodeOriginDimensionSpacePoint->getHash(),
             'contentStreamIdentifier' => (string) $contentStreamIdentifier,
             'dimensionSpacePointHashes' => $dimensionSpacePointsToCheck->getPointHashes(),
             'nodeName' => (string) $nodeName
@@ -408,6 +429,21 @@ final class ContentGraph implements ContentGraphInterface
         $query = 'SELECT COUNT(*) FROM neos_contentgraph_node';
 
         return (int) $connection->executeQuery($query)->fetch()['COUNT(*)'];
+    }
+
+    /**
+     * Returns all content stream identifiers
+     *
+     * @return ContentStreamIdentifier[]
+     */
+    public function findContentStreamIdentifiers(): array
+    {
+        $connection = $this->client->getConnection();
+
+        $rows = $connection->executeQuery('SELECT DISTINCT contentstreamidentifier FROM neos_contentgraph_hierarchyrelation')->fetchAll();
+        return array_map(function (array $row) {
+            return ContentStreamIdentifier::fromString($row['contentstreamidentifier']);
+        }, $rows);
     }
 
     public function enableCache(): void
