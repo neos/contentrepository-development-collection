@@ -28,6 +28,7 @@ use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInt
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyValues;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\Flow\Annotations as Flow;
@@ -79,7 +80,8 @@ final class IntegrityViolationCommandHandler
         $nodeTypeName = NodeTypeName::fromString($nodeType->getName());
         $initialTetheredNodePropertyValues = $this->getDefaultPropertyValues($tetheredNodeNodeType);
         foreach ($this->nodesOfType($nodeTypeName) as $contentStreamIdentifier => $nodeAggregate) {
-            $tetheredNodeAggregateIdentifier = NodeAggregateIdentifier::forAutoCreatedChildNode($tetheredNodeName, $nodeAggregate->getIdentifier());
+            /** @var ContentStreamIdentifier $contentStreamIdentifier */
+            $tetheredNodeAggregateIdentifier = NodeAggregateIdentifier::create();
             foreach ($nodeAggregate->getNodesByOccupiedDimensionSpacePoint() as $node) {
                 if ($this->tetheredNodeExists($contentStreamIdentifier, $node->getNodeAggregateIdentifier(), $tetheredNodeName)) {
                     continue;
@@ -101,6 +103,7 @@ final class IntegrityViolationCommandHandler
                     NodeTypeName::fromString($tetheredNodeNodeType->getName()),
                     $node->getOriginDimensionSpacePoint(),
                     $nodeAggregate->getCoveredDimensionSpacePoints(),
+                    UserIdentifier::forSystemUser(),
                     $nodeAggregate->getIdentifier(),
                     $tetheredNodeName,
                     $initialTetheredNodePropertyValues,

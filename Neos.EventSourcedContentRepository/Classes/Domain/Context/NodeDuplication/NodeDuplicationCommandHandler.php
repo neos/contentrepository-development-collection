@@ -25,8 +25,10 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWithNodeWasCreated;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\ConstraintChecks;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\Dto\NodeAggregateIdentifierMapping;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -178,6 +180,7 @@ final class NodeDuplicationCommandHandler
                 $command->getContentStreamIdentifier(),
                 $command->getTargetDimensionSpacePoint(),
                 $coveredDimensionSpacePoints,
+                $command->getInitiatingUserIdentifier(),
                 $command->getTargetParentNodeAggregateIdentifier(),
                 $command->getTargetSucceedingSiblingNodeAggregateIdentifier(),
                 $command->getTargetNodeName(),
@@ -203,16 +206,27 @@ final class NodeDuplicationCommandHandler
         }
     }
 
-    private function createEventsForNodeToInsert(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, DimensionSpacePointSet $coveredDimensionSpacePoints, NodeAggregateIdentifier $targetParentNodeAggregateIdentifier, ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier, NodeName $targetNodeName, Command\Dto\NodeSubtreeSnapshot $nodeToInsert, NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping, DomainEvents &$events)
-    {
+    private function createEventsForNodeToInsert(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
+        DimensionSpacePointSet $coveredDimensionSpacePoints,
+        UserIdentifier $initiatingUserIdentifier,
+        NodeAggregateIdentifier $targetParentNodeAggregateIdentifier,
+        ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier,
+        NodeName $targetNodeName,
+        Command\Dto\NodeSubtreeSnapshot $nodeToInsert,
+        NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping,
+        DomainEvents &$events
+    ) :void {
         $events = $events->appendEvent(
             DecoratedEvent::addIdentifier(
                 new NodeAggregateWithNodeWasCreated(
                     $contentStreamIdentifier,
                     $nodeAggregateIdentifierMapping->getNewNodeAggregateIdentifier($nodeToInsert->getNodeAggregateIdentifier()),
                     $nodeToInsert->getNodeTypeName(),
-                    $dimensionSpacePoint,
+                    $originDimensionSpacePoint,
                     $coveredDimensionSpacePoints,
+                    $initiatingUserIdentifier,
                     $targetParentNodeAggregateIdentifier,
                     $targetNodeName,
                     $nodeToInsert->getPropertyValues(),
@@ -226,8 +240,9 @@ final class NodeDuplicationCommandHandler
         foreach ($nodeToInsert->getChildNodesToInsert() as $childNodeToInsert) {
             $this->createEventsForNodeToInsert(
                 $contentStreamIdentifier,
-                $dimensionSpacePoint,
+                $originDimensionSpacePoint,
                 $coveredDimensionSpacePoints,
+                $initiatingUserIdentifier,
                 $nodeAggregateIdentifierMapping->getNewNodeAggregateIdentifier($nodeToInsert->getNodeAggregateIdentifier()), // the just-inserted node becomes the new parent node Identifier
                 null, // $childNodesToInsert is already in the correct order; so appending only is fine.
                 $childNodeToInsert->getNodeName(),
