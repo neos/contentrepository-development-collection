@@ -68,8 +68,8 @@ final class CreateNodeVariant implements \JsonSerializable
         return new static(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            new OriginDimensionSpacePoint($array['sourceOrigin']),
-            new OriginDimensionSpacePoint($array['targetOrigin']),
+            OriginDimensionSpacePoint::fromArray($array['sourceOrigin']),
+            OriginDimensionSpacePoint::fromArray($array['targetOrigin']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }

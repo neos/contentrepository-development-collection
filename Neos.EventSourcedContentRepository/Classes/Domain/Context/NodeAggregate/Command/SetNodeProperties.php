@@ -67,7 +67,7 @@ final class SetNodeProperties implements \JsonSerializable, CopyableAcrossConten
         return new static(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            new OriginDimensionSpacePoint($array['originDimensionSpacePoint']),
+            OriginDimensionSpacePoint::fromArray($array['originDimensionSpacePoint']),
             PropertyValues::fromArray($array['propertyValues']),
             UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );

@@ -60,7 +60,7 @@ final class NodeDiscriminator implements CacheAwareInterface, \JsonSerializable
         return new NodeDiscriminator(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            new OriginDimensionSpacePoint($array['originDimensionSpacePoint'])
+            OriginDimensionSpacePoint::fromArray($array['originDimensionSpacePoint'])
         );
     }
 

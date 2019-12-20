@@ -109,7 +109,7 @@ class Change
         return new static(
             ContentStreamIdentifier::fromString($databaseRow['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($databaseRow['nodeAggregateIdentifier']),
-            new OriginDimensionSpacePoint(json_decode($databaseRow['originDimensionSpacePoint'], true)),
+            OriginDimensionSpacePoint::fromArray(json_decode($databaseRow['originDimensionSpacePoint'], true)),
             (bool)$databaseRow['changed'],
             (bool)$databaseRow['moved'],
             (bool)$databaseRow['deleted']

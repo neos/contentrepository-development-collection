@@ -147,7 +147,7 @@ final class CreateNodeAggregateWithNode implements \JsonSerializable, CopyableAc
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             NodeTypeName::fromString($array['nodeTypeName']),
-            new OriginDimensionSpacePoint($array['originDimensionSpacePoint']),
+            OriginDimensionSpacePoint::fromArray($array['originDimensionSpacePoint']),
             UserIdentifier::fromString($array['initiatingUserIdentifier']),
             NodeAggregateIdentifier::fromString($array['parentNodeAggregateIdentifier']),
             isset($array['succeedingSiblingNodeAggregateIdentifier'])

@@ -481,7 +481,7 @@ trait EventSourcedTrait
     {
         $dimensionSpacePoints = [];
         foreach (json_decode($serializedDimensionSpacePoints, true) as $coordinates) {
-            $dimensionSpacePoints[] = new OriginDimensionSpacePoint($coordinates);
+            $dimensionSpacePoints[] = OriginDimensionSpacePoint::fromArray($coordinates);
         }
 
         return new OriginDimensionSpacePointSet($dimensionSpacePoints);

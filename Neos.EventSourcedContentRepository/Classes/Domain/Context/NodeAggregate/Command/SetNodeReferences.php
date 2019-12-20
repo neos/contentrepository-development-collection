@@ -68,7 +68,7 @@ final class SetNodeReferences implements \JsonSerializable, CopyableAcrossConten
         return new static(
             ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($array['sourceNodeAggregateIdentifier']),
-            new OriginDimensionSpacePoint($array['sourceOriginDimensionSpacePoint']),
+            OriginDimensionSpacePoint::fromArray($array['sourceOriginDimensionSpacePoint']),
             array_map(function ($identifier) {
                 return NodeAggregateIdentifier::fromString($identifier);
             }, $array['destinationNodeAggregateIdentifiers']),
