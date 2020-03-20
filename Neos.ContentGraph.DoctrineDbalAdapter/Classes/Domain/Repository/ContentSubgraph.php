@@ -112,8 +112,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         string $markerToReplaceInQuery = null,
         string $tableReference = 'c',
         string $concatenation = 'AND'
-    ): void
-    {
+    ): void {
         if ($nodeTypeConstraints) {
             if (!empty($nodeTypeConstraints->getExplicitlyAllowedNodeTypeNames())) {
                 $allowanceQueryPart = ($tableReference ? $tableReference . '.' : '') . 'nodetypename IN (:explicitlyAllowedNodeTypeNames)';
@@ -146,8 +145,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         string $markerToReplaceInQuery = null,
         string $tableReference = 'c',
         string $concatenation = 'AND'
-    ): void
-    {
+    ): void {
         if ($searchTerm) {
             // Magic copied from legacy NodeSearchService.
 
@@ -185,8 +183,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array
-    {
+    ): array {
         if ($limit !== null || $offset !== null) {
             throw new \RuntimeException("TODO: Limit/Offset not yet supported in findChildNodes");
         }
@@ -292,8 +289,7 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
     public function countChildNodes(
         NodeAggregateIdentifier $parentNodeNodeAggregateIdentifier,
         NodeTypeConstraints $nodeTypeConstraints = null
-    ): int
-    {
+    ): int {
         $query = new SqlQueryBuilder();
         $query->addToQuery('SELECT COUNT(*) FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
@@ -500,8 +496,7 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
     public function findChildNodeConnectedThroughEdgeName(
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeName $edgeName
-    ): ?NodeInterface
-    {
+    ): ?NodeInterface {
         $cache = $this->inMemoryCache->getNamedChildNodeByNodeIdentifierCache();
         if ($cache->contains($parentNodeAggregateIdentifier, $edgeName)) {
             return $cache->get($parentNodeAggregateIdentifier, $edgeName);
@@ -602,8 +597,7 @@ WHERE
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array
-    {
+    ): array {
         $query = new SqlQueryBuilder();
         $query->addToQuery($this->getSiblingBaseQuery() . '
             AND n.nodeaggregateidentifier != :siblingNodeAggregateIdentifier')
@@ -653,8 +647,7 @@ WHERE
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array
-    {
+    ): array {
         $query = new SqlQueryBuilder();
         $query->addToQuery($this->getSiblingBaseQuery() . '
             AND n.nodeaggregateidentifier != :siblingNodeAggregateIdentifier')
@@ -779,8 +772,7 @@ WHERE
         array $entryNodeAggregateIdentifiers,
         int $maximumLevels,
         NodeTypeConstraints $nodeTypeConstraints
-    ): SubtreeInterface
-    {
+    ): SubtreeInterface {
         $query = new SqlQueryBuilder();
         $query->addToQuery('
 -- ContentSubgraph::findSubtrees
@@ -875,7 +867,7 @@ order by level asc, position asc;')
                 $parentNodeAggregateIdentifier = NodeAggregateIdentifier::fromString($nodeData['parentNodeAggregateIdentifier']);
                 $parentNodePath = $nodePathCache->get($parentNodeAggregateIdentifier);
 
-                if ($parentNodePath === NULL) {
+                if ($parentNodePath === null) {
                     throw new \RuntimeException('TODO: parent node path not filled in cache. SHOULD NEVER HAPPEN!!!!');
                 }
                 $nodePath = $parentNodePath->appendPathSegment($node->getNodeName());
