@@ -13,7 +13,7 @@ namespace Neos\ContentGraph\RedisGraphAdapter\Domain\Repository;
  * source code.
  */
 use Doctrine\DBAL\Connection;
-use Neos\ContentGraph\RedisGraphAdapter\Redis\RedisClient\RedisClient;
+use Neos\ContentGraph\RedisGraphAdapter\Redis\RedisClient;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;

@@ -13,6 +13,7 @@ namespace Neos\ContentGraph\RedisGraphAdapter\Domain\Projection;
  * source code.
  */
 use Doctrine\DBAL\Connection;
+use Neos\ContentGraph\RedisGraphAdapter\Redis\RedisClient\Graph\CypherConversion;
 use Neos\ContentGraph\RedisGraphAdapter\Redis\RedisClient\Graph\Graph;
 use Neos\ContentGraph\RedisGraphAdapter\Redis\RedisClient\Graph\GraphNode;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
@@ -62,10 +63,6 @@ class NodeRecord
      * @var NodeAggregateClassification
      */
     public $classification;
-    /**
-     * @var GraphNode
-     */
-    private $graphNode;
 
     public function __construct(
         NodeAggregateIdentifier $nodeAggregateIdentifier,
@@ -83,19 +80,23 @@ class NodeRecord
         $this->nodeTypeName = $nodeTypeName;
         $this->classification = $classification;
         $this->nodeName = $nodeName;
-
-        $this->graphNode = GraphNode::create('node', [
-            'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
-            'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
-            'origindimensionspacepointhash' => (string) $this->originDimensionSpacePointHash,
-            'properties' => json_encode($this->properties),
-            'nodetypename' => (string) $this->nodeTypeName,
-            'classification' => (string) $this->classification
-        ])
     }
 
-    public function toGraphNode(): GraphNode {
-        return $this->graphNode;
+    public function toCypherProperties(): string {
+        CypherConversion::propertiesToCypher([
+            'nodeAggregateIdentifier' => (string) $this->nodeAggregateIdentifier,
+            'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
+            'originDimensionSpacePointHash' => (string) $this->originDimensionSpacePointHash,
+            'properties' => json_encode($this->properties),
+            'nodeTypeName' => (string) $this->nodeTypeName,
+            'classification' => (string) $this->classification
+        ]);
+    }
+
+    public function nodeAggregateIdentifierToCypherProperties(): string {
+        CypherConversion::propertiesToCypher([
+            'nodeAggregateIdentifier' => (string) $this->nodeAggregateIdentifier
+        ]);
     }
 
     /**

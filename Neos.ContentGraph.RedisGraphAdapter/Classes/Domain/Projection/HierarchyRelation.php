@@ -14,6 +14,7 @@ namespace Neos\ContentGraph\RedisGraphAdapter\Domain\Projection;
  */
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentGraph\RedisGraphAdapter\Redis\RedisClient\Graph\CypherConversion;
 use Neos\ContentGraph\RedisGraphAdapter\Redis\RedisClient\Graph\GraphEdge;
 use Neos\ContentGraph\RedisGraphAdapter\Redis\RedisClient\Graph\GraphNode;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -25,15 +26,6 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
  */
 class HierarchyRelation
 {
-    /**
-     * @var GraphNode
-     */
-    public $parentNodeAnchor;
-
-    /**
-     * @var GraphNode
-     */
-    public $childNodeAnchor;
 
     /**
      * @var NodeName
@@ -70,27 +62,22 @@ class HierarchyRelation
      * @param int $position
      */
     public function __construct(
-        GraphNode $parentNodeAnchor,
-        GraphNode $childNodeAnchor,
         ?NodeName $name,
         DimensionSpacePoint $dimensionSpacePoint,
         string $dimensionSpacePointHash,
         int $position
     ) {
-        $this->parentNodeAnchor = $parentNodeAnchor;
-        $this->childNodeAnchor = $childNodeAnchor;
         $this->name = $name;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->dimensionSpacePointHash = $dimensionSpacePointHash;
         $this->position = $position;
     }
 
-    public function toGraphEdge(): GraphEdge
-    {
-        GraphEdge::create($this->parentNodeAnchor, $this->childNodeAnchor, 'hierarchy', [
-            'name' => $this->name,
-            'dimensionspacepoint' => json_encode($this->dimensionSpacePoint),
-            'dimensionspacepointhash' => $this->dimensionSpacePointHash,
+    public function toCypherProperties(): string {
+        CypherConversion::propertiesToCypher([
+            'name' => (string) $this->name,
+            'dimensionSpacePoint' => json_encode($this->dimensionSpacePoint),
+            'dimensionSpacePointHash' => (string) $this->dimensionSpacePointHash,
             'position' => $this->position
         ]);
     }

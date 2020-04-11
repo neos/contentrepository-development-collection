@@ -15,13 +15,10 @@ namespace Neos\ContentGraph\RedisGraphAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
-use Neos\ContentGraph\RedisGraphAdapter\Domain\Projection\NodeRelationAnchorPoint;
-use Neos\ContentGraph\RedisGraphAdapter\Redis\RedisClient\RedisClient;
+use Neos\ContentGraph\RedisGraphAdapter\Redis\RedisClient;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\EventSourcedContentRepository\Domain;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
@@ -121,7 +118,25 @@ final class ContentGraph implements ContentGraphInterface
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): ?NodeAggregate {
-        throw new \RuntimeException("TODO implement");
+
+        $a = "
+            MATCH
+                ()
+                    -[h:HIERARCHY]->
+                (n:Node {nodeAggregateIdentifier: '{$nodeAggregateIdentifier->jsonSerialize()}'})
+            RETURN
+                n.originDimensionSpacePoint,
+                n.nodeAggregateIdentifier,
+                n.nodeTypeName,
+                n.classification,
+
+                h.name,
+                h.dimensionSpacePoint as coveredDimensionSpacePoint
+        ";
+
+        // TODO: disabled handling?? -> vermutlich OPTIONAL MATCH notwendig?
+
+        return $this->nodeFactory->mapNodeRowsToNodeAggregate($nodeRows);
     }
 
     /**

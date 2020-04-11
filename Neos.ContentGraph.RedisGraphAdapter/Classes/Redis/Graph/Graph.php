@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\ContentGraph\RedisGraphAdapter\Redis\RedisClient\Graph;
+namespace Neos\ContentGraph\RedisGraphAdapter\Redis\Graph;
 
 // Taken and adapted from https://github.com/kjdev/php-redis-graph
 class Graph
@@ -35,40 +35,9 @@ class Graph
         }
     }
 
-    public function addNode(GraphNode $node)
+    public function execute($command)
     {
-        $this->nodes[$node->alias] = $node;
-        return $this;
-    }
-
-    public function addEdge(GraphEdge $edge)
-    {
-        assert(isset($this->nodes[$edge->src->alias]));
-        assert(isset($this->nodes[$edge->dest->alias]));
-        $this->edges[] = $edge;
-        return $this;
-    }
-
-    public function commit()
-    {
-        $query = 'CREATE ';
-        foreach ($this->nodes as $node) {
-            $query .= (string)$node . ',';
-        }
-        foreach ($this->edges as $edge) {
-            $query .= (string)$edge . ',';
-        }
-
-        // Discard leading comma.
-        $query = rtrim($query, ',');
-
-        return $this->query($query);
-    }
-
-    public function query($command)
-    {
-        $response = $this->redisCommand('GRAPH.QUERY', $this->name, $command);
-        return new Graph\Query\Result($response);
+        return $this->redisCommand('GRAPH.QUERY', $this->name, $command);
     }
 
     public function explain($query)

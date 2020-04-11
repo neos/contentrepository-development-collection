@@ -9,4 +9,4 @@ Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector:
             value: Neos_ContentGraph_DoctrineDbal_ProcessedEvents
 
 #Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface:
-#  class: Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph
+#  className: Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph
