@@ -1,0 +1,15 @@
+{
+  "name": "neos/contentgraph-redisgraphadapter",
+  "type": "neos-package",
+  "description": "A testing Redis Graph backend for the Neos content graph",
+  "license": "GPL-3.0+",
+  "require": {
+    "neos/event-sourced-content-repository": "*",
+    "ext-redis": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Neos\\ContentGraph\\RedisGraphAdapter\\": "Classes"
+    }
+  }
+}

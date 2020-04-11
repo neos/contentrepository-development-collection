@@ -1,0 +1,2 @@
+Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface:
+  class: Neos\ContentGraph\RedisGraphAdapter\Domain\Repository\ContentGraph
