@@ -247,30 +247,29 @@ final class ContentGraph implements ContentGraphInterface
         OriginDimensionSpacePoint $parentNodeOriginDimensionSpacePoint,
         DimensionSpacePointSet $dimensionSpacePointsToCheck
     ): DimensionSpacePointSet {
-        $connection = $this->client->getConnection();
 
-        $query = 'SELECT h.dimensionspacepoint, h.dimensionspacepointhash FROM neos_contentgraph_hierarchyrelation h
-                      INNER JOIN neos_contentgraph_node n ON h.parentnodeanchor = n.relationanchorpoint
-                      INNER JOIN neos_contentgraph_hierarchyrelation ph ON ph.childnodeanchor = n.relationanchorpoint
-                      WHERE n.nodeaggregateidentifier = :parentNodeAggregateIdentifier
-                      AND n.origindimensionspacepointhash = :parentNodeOriginDimensionSpacePointHash
-                      AND ph.contentstreamidentifier = :contentStreamIdentifier
-                      AND h.contentstreamidentifier = :contentStreamIdentifier
-                      AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)
-                      AND h.name = :nodeName';
-        $parameters = [
-            'parentNodeAggregateIdentifier' => (string)$parentNodeAggregateIdentifier,
-            'parentNodeOriginDimensionSpacePointHash' => $parentNodeOriginDimensionSpacePoint->getHash(),
-            'contentStreamIdentifier' => (string) $contentStreamIdentifier,
-            'dimensionSpacePointHashes' => $dimensionSpacePointsToCheck->getPointHashes(),
-            'nodeName' => (string) $nodeName
-        ];
-        $types = [
-            'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
-        ];
+
+        $hashes = [];
+        foreach ($dimensionSpacePointsToCheck->getPointHashes() as $hash) {
+            $hashes[] = "'" . $hash . "'";
+        }
+        $hashStrings = '[' . implode(', ', $hashes) . ']';
+
+        $rows = $this->redisClient->getGraphForReading($contentStreamIdentifier)->executeAndGet("
+            MATCH
+                (p:Node {nodeAggregateIdentifier: '{$parentNodeAggregateIdentifier->jsonSerialize()}', originDimensionSpacePointHash: '{$parentNodeOriginDimensionSpacePoint->getHash()}'})
+                    -[h:HIERARCHY {name: '{$nodeName->jsonSerialize()}'}]->()
+            WHERE
+                h.dimensionSpacePointHash IN {$hashStrings}
+            RETURN
+                h.dimensionSpacePointHash,
+                h.dimensionSpacePoint
+        ");
+
+
         $dimensionSpacePoints = [];
-        foreach ($connection->executeQuery($query, $parameters, $types)->fetchAll() as $hierarchyRelationData) {
-            $dimensionSpacePoints[$hierarchyRelationData['dimensionspacepointhash']] = new DimensionSpacePoint(json_decode($hierarchyRelationData['dimensionspacepoint'], true));
+        foreach ($rows as $hierarchyRelationData) {
+            $dimensionSpacePoints[$hierarchyRelationData['h.dimensionSpacePointHash']] = new DimensionSpacePoint(json_decode($hierarchyRelationData['h.dimensionSpacePoint'], true));
         }
 
         return new DimensionSpacePointSet($dimensionSpacePoints);

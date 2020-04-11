@@ -71,7 +71,7 @@ final class NodeFactory
 
         $originDimensionSpacePoint = OriginDimensionSpacePoint::fromJsonString($nodeRow['n.originDimensionSpacePoint']);
 
-        $properties = json_decode($nodeRow['n.properties'], true);
+        $properties = json_decode(base64_decode($nodeRow['n.properties']), true);
 
         // Reference and References "are no properties" anymore by definition; so Node does not know
         // anything about it.

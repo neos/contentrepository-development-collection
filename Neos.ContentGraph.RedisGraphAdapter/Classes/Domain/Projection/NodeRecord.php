@@ -83,9 +83,9 @@ class NodeRecord
     public function toCypherProperties(): string {
         return CypherConversion::propertiesToCypher([
             'nodeAggregateIdentifier' => (string) $this->nodeAggregateIdentifier,
-            'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
+            'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint,  JSON_FORCE_OBJECT),
             'originDimensionSpacePointHash' => (string) $this->originDimensionSpacePointHash,
-            'properties' => json_encode($this->properties),
+            'properties' => base64_encode(json_encode($this->properties)),
             'nodeTypeName' => (string) $this->nodeTypeName,
             'classification' => (string) $this->classification
         ]);

@@ -51,7 +51,7 @@ class Graph
         foreach ($data as $row) {
             $transformedRow = [];
             foreach ($row as $i => $value) {
-                $transformedRow[$header[$i]] = $value;
+                $transformedRow[$header[$i]] = CypherConversion::decodeStrings($value);
             }
             $transformedData[] = $transformedRow;
         }

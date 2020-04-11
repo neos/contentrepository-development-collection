@@ -316,7 +316,8 @@ class RedisGraphProjector extends AbstractProcessedEventsAwareProjector
                         MATCH
                             (child:Node {$node->nodeAggregateIdentifierToCypherProperties()})
                     ",
-                    $dimensionSpacePoint,
+                    // TODO: looks strange, we can probably change this....
+                    new DimensionSpacePointSet([$dimensionSpacePoint]),
                     null,
                     $nodeName
                 );
@@ -513,10 +514,9 @@ class RedisGraphProjector extends AbstractProcessedEventsAwareProjector
      */
     public function whenNodeReferencesWereSet(NodeReferencesWereSet $event)
     {
+        // TODO: implement references later.
+        return;
         $this->transactional(function () use ($event) {
-            $this->updateNodeWithCopyOnWrite($event, function (NodeRecord $node) use ($event) {
-            });
-
             $nodeAnchorPoint = $this->projectionContentGraph->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
                 $event->getSourceNodeAggregateIdentifier(),
                 $event->getSourceOriginDimensionSpacePoint(),
