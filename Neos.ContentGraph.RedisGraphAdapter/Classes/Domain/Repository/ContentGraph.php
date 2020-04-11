@@ -15,6 +15,7 @@ namespace Neos\ContentGraph\RedisGraphAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
+use Neos\ContentGraph\RedisGraphAdapter\Redis\Graph\Graph;
 use Neos\ContentGraph\RedisGraphAdapter\Redis\RedisClient;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
@@ -44,7 +45,7 @@ final class ContentGraph implements ContentGraphInterface
      * @Flow\Inject
      * @var RedisClient
      */
-    protected $client;
+    protected $redisClient;
 
     /**
      * @Flow\Inject
@@ -119,7 +120,7 @@ final class ContentGraph implements ContentGraphInterface
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): ?NodeAggregate {
 
-        $a = "
+        $nodeRows = $this->redisClient->getGraphForReading($contentStreamIdentifier)->executeAndGet("
             MATCH
                 ()
                     -[h:HIERARCHY]->
@@ -128,15 +129,15 @@ final class ContentGraph implements ContentGraphInterface
                 n.originDimensionSpacePoint,
                 n.nodeAggregateIdentifier,
                 n.nodeTypeName,
+                n.properties,
                 n.classification,
-
                 h.name,
-                h.dimensionSpacePoint as coveredDimensionSpacePoint
-        ";
+                h.dimensionSpacePoint
+        ");
 
-        // TODO: disabled handling?? -> vermutlich OPTIONAL MATCH notwendig?
+        // TODO: disabled handling?? -> vermutlich OPTIONAL MATCH notwendig? -> disableddimensionspacepointhash
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregate($nodeRows);
+        return $this->nodeFactory->mapNodeRowsToNodeAggregate($contentStreamIdentifier, $nodeRows);
     }
 
     /**

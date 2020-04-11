@@ -13,6 +13,7 @@ namespace Neos\EventSourcedNeosAdjustments\NodeImportFromLegacyCR\Command;
  */
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
+use Neos\ContentGraph\RedisGraphAdapter\Domain\Projection\RedisGraphProjector;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
@@ -46,7 +47,7 @@ class ContentRepositoryMigrateCommandController extends CommandController
 
     /**
      * @Flow\Inject(lazy=false)
-     * @var GraphProjector
+     * @var RedisGraphProjector
      */
     protected $graphProjector;
 

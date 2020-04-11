@@ -30,11 +30,11 @@ final class RedisClient
     /**
      * @var \Redis
      */
-    private $redis;
+    protected $redis;
 
     public function getRedisClient()
     {
-        if ($this->redis) {
+        if ($this->redis === null) {
             $this->redis = new \Redis();
             $this->redis->pconnect('127.0.0.1', 6379);
         }
@@ -44,8 +44,8 @@ final class RedisClient
 
     public function transactionalForContentStream(ContentStreamIdentifier $contentStreamIdentifier, \Closure $callback): void
     {
-        $graphName = $contentStreamIdentifier->jsonSerialize();
-        $graph = new Graph($graphName, $this->redis);
+        $graphName = 'contentStream:' . $contentStreamIdentifier->jsonSerialize();
+        $graph = new Graph($graphName, $this->getRedisClient());
 
         $this->redis->multi();
         try {
@@ -55,5 +55,11 @@ final class RedisClient
             throw $e;
         }
         $this->redis->exec();
+    }
+
+    public function getGraphForReading(ContentStreamIdentifier $contentStreamIdentifier): Graph
+    {
+        $graphName = 'contentStream:' . $contentStreamIdentifier->jsonSerialize();
+        return new Graph($graphName, $this->getRedisClient());
     }
 }

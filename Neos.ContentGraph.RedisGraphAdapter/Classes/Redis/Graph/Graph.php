@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Neos\ContentGraph\RedisGraphAdapter\Redis\Graph;
 
 // Taken and adapted from https://github.com/kjdev/php-redis-graph
@@ -38,6 +39,23 @@ class Graph
     public function execute($command)
     {
         return $this->redisCommand('GRAPH.QUERY', $this->name, $command);
+    }
+
+    public function executeAndGet($command): array
+    {
+        $result = $this->execute($command);
+        assert(count($result) === 3, 'count($result) === 3');
+        [$header, $data, $statistics] = $result;
+
+        $transformedData = [];
+        foreach ($data as $row) {
+            $transformedRow = [];
+            foreach ($row as $i => $value) {
+                $transformedRow[$header[$i]] = $value;
+            }
+            $transformedData[] = $transformedRow;
+        }
+        return $transformedData;
     }
 
     public function explain($query)

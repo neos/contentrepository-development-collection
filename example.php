@@ -70,26 +70,6 @@ var_dump($r->rawCommand('GRAPH.QUERY', 'test', "
 visualizeGraph($r->rawCommand('GRAPH.QUERY', 'test', 'MATCH (m)-[h]->(n) RETURN m, h, n'));
 
 
-function visualizeGraph(array $result)
-{
-    [$header, $data, $statistics] = $result;
-
-    assert($header[0] === 'm', 'header[0] === m');
-    assert($header[1] === 'h', 'header[1] === h');
-    assert($header[2] === 'n', 'header[2] === n');
-
-    $line = [];
-    foreach ($data as $row) {
-        [$m, $h, $n] = $row;
-        $line[] = Node::fromResult($m) . Edge::fromResult($h) . Node::fromResult($n) . "\n";
-    }
-
-    // we sort alphabetically because it looks nicer and more stable
-    asort($line);
-    foreach ($line as $l) {
-        echo $l;
-    }
-}
 
 class Node
 {

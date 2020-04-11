@@ -14,9 +14,7 @@ namespace Neos\ContentGraph\RedisGraphAdapter\Domain\Projection;
  */
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentGraph\RedisGraphAdapter\Redis\RedisClient\Graph\CypherConversion;
-use Neos\ContentGraph\RedisGraphAdapter\Redis\RedisClient\Graph\GraphEdge;
-use Neos\ContentGraph\RedisGraphAdapter\Redis\RedisClient\Graph\GraphNode;
+use Neos\ContentGraph\RedisGraphAdapter\Redis\Graph\CypherConversion;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
@@ -74,7 +72,7 @@ class HierarchyRelation
     }
 
     public function toCypherProperties(): string {
-        CypherConversion::propertiesToCypher([
+        return CypherConversion::propertiesToCypher([
             'name' => (string) $this->name,
             'dimensionSpacePoint' => json_encode($this->dimensionSpacePoint),
             'dimensionSpacePointHash' => (string) $this->dimensionSpacePointHash,

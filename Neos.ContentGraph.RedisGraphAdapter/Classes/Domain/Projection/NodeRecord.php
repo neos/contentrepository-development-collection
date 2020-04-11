@@ -13,9 +13,7 @@ namespace Neos\ContentGraph\RedisGraphAdapter\Domain\Projection;
  * source code.
  */
 use Doctrine\DBAL\Connection;
-use Neos\ContentGraph\RedisGraphAdapter\Redis\RedisClient\Graph\CypherConversion;
-use Neos\ContentGraph\RedisGraphAdapter\Redis\RedisClient\Graph\Graph;
-use Neos\ContentGraph\RedisGraphAdapter\Redis\RedisClient\Graph\GraphNode;
+use Neos\ContentGraph\RedisGraphAdapter\Redis\Graph\CypherConversion;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
@@ -83,7 +81,7 @@ class NodeRecord
     }
 
     public function toCypherProperties(): string {
-        CypherConversion::propertiesToCypher([
+        return CypherConversion::propertiesToCypher([
             'nodeAggregateIdentifier' => (string) $this->nodeAggregateIdentifier,
             'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
             'originDimensionSpacePointHash' => (string) $this->originDimensionSpacePointHash,
@@ -94,7 +92,7 @@ class NodeRecord
     }
 
     public function nodeAggregateIdentifierToCypherProperties(): string {
-        CypherConversion::propertiesToCypher([
+        return CypherConversion::propertiesToCypher([
             'nodeAggregateIdentifier' => (string) $this->nodeAggregateIdentifier
         ]);
     }

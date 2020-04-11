@@ -17,6 +17,7 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\RedisGraphAdapter\Domain\Projection\Feature\NodeMove;
 use Neos\ContentGraph\RedisGraphAdapter\Domain\Projection\Feature\NodeRemoval;
 use Neos\ContentGraph\RedisGraphAdapter\Domain\Projection\Feature\RestrictionRelations;
+use Neos\ContentGraph\RedisGraphAdapter\Redis\Graph\Graph;
 use Neos\ContentGraph\RedisGraphAdapter\Redis\RedisClient;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
@@ -63,7 +64,7 @@ class RedisGraphProjector extends AbstractProcessedEventsAwareProjector
      */
     public function reset(): void
     {
-        throw new \RuntimeException("TODO Implement");
+        $this->redisClient->getRedisClient()->flushDB();
     }
 
     /**
