@@ -1,0 +1,13 @@
+Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface:
+  className: Neos\ContentGraph\RedisGraphAdapter\Domain\Repository\ContentGraph
+
+# TODO use Redis natively here
+Neos\ContentGraph\RedisGraphAdapter\Domain\Projection\RedisGraphProjector:
+  properties:
+    'processedEventsCache':
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Neos_ContentGraph_RedisGraph_ProcessedEvents
