@@ -44,8 +44,7 @@ final class RedisClient
 
     public function transactionalForContentStream(ContentStreamIdentifier $contentStreamIdentifier, \Closure $callback): void
     {
-        $graphName = 'contentStream:' . $contentStreamIdentifier->jsonSerialize();
-        $graph = new Graph($graphName, $this->getRedisClient());
+        $graph = new Graph($this->getGraphName($contentStreamIdentifier), $this->getRedisClient());
 
         $this->redis->multi();
         try {
@@ -59,7 +58,11 @@ final class RedisClient
 
     public function getGraphForReading(ContentStreamIdentifier $contentStreamIdentifier): Graph
     {
-        $graphName = 'contentStream:' . $contentStreamIdentifier->jsonSerialize();
-        return new Graph($graphName, $this->getRedisClient());
+        return new Graph($this->getGraphName($contentStreamIdentifier), $this->getRedisClient());
+    }
+
+    public function getGraphName(ContentStreamIdentifier $contentStreamIdentifier): string
+    {
+        return 'contentStream:' . $contentStreamIdentifier->jsonSerialize();
     }
 }

@@ -148,7 +148,7 @@ $script = '
         local row = getFirstRow(queryResult)
         if row then
             local node = parseNodeProperties(row[1])
-            local childNodes = findChildNodes(node["nodeAggregateIdentifier"], 1, maximumLevels, dimensionSpacePointHash, nodeTypeConstraintsQueryPart)
+            local childNodes = findChildNodes(node["nodeAggregateIdentifier"], 0, maximumLevels, dimensionSpacePointHash, nodeTypeConstraintsQueryPart)
 
             table.insert(result, {
                 node = node,

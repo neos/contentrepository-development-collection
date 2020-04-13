@@ -12,6 +12,7 @@ namespace Neos\ContentGraph\RedisGraphAdapter\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\RedisGraphAdapter\Redis\RedisClient;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
@@ -123,7 +124,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array {
+    ): array
+    {
         if ($limit !== null || $offset !== null) {
             throw new \RuntimeException("TODO: Limit/Offset not yet supported in findChildNodes");
         }
@@ -230,7 +232,8 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
     public function countChildNodes(
         NodeAggregateIdentifier $parentNodeNodeAggregateIdentifier,
         NodeTypeConstraints $nodeTypeConstraints = null
-    ): int {
+    ): int
+    {
         $query = new SqlQueryBuilder();
         $query->addToQuery('SELECT COUNT(*) FROM neos_contentgraph_node p
  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.parentnodeanchor = p.relationanchorpoint
@@ -307,7 +310,7 @@ SELECT d.*, dh.contentstreamidentifier, dh.name FROM neos_contentgraph_hierarchy
      * @return NodeInterface[]
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function findReferencingNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, PropertyName $name = null) :array
+    public function findReferencingNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, PropertyName $name = null): array
     {
         $query = new SqlQueryBuilder();
         $query->addToQuery(
@@ -435,7 +438,8 @@ SELECT s.*, sh.contentstreamidentifier, sh.name FROM neos_contentgraph_hierarchy
     public function findChildNodeConnectedThroughEdgeName(
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeName $edgeName
-    ): ?NodeInterface {
+    ): ?NodeInterface
+    {
         $cache = $this->inMemoryCache->getNamedChildNodeByNodeIdentifierCache();
         if ($cache->contains($parentNodeAggregateIdentifier, $edgeName)) {
             return $cache->get($parentNodeAggregateIdentifier, $edgeName);
@@ -536,7 +540,8 @@ WHERE
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array {
+    ): array
+    {
         $query = new SqlQueryBuilder();
         $query->addToQuery($this->getSiblingBaseQuery() . '
             AND n.nodeaggregateidentifier != :siblingNodeAggregateIdentifier')
@@ -586,7 +591,8 @@ WHERE
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array {
+    ): array
+    {
         $query = new SqlQueryBuilder();
         $query->addToQuery($this->getSiblingBaseQuery() . '
             AND n.nodeaggregateidentifier != :siblingNodeAggregateIdentifier')
@@ -698,6 +704,100 @@ WHERE
         ];
     }
 
+    const SUBTREE_REDIS_QUERY = '
+        ----------------------------------
+        -- HELPERS: Parse RedisGraph results
+        ----------------------------------
+
+        -- Parse the property structure from https://oss.redislabs.com/redisgraph/result_structure/#nodes
+        -- into a table (propertyName -> propertyValue)
+        local parseProperties = function(properties)
+            local parsedProperties = {}
+            for i, row in pairs(properties) do
+                local propertyName = row[1]
+                local propertyValue = row[2]
+                parsedProperties[propertyName] = propertyValue
+            end
+
+            return parsedProperties
+        end
+
+        -- Parse node properties
+        local parseNodeProperties = function(node)
+            assert(node[3][1] == "properties", "node properties assertion, found " .. node[3][1])
+            local properties = node[3][2]
+
+            return parseProperties(properties)
+        end
+
+        -- extract rows from graph result
+        local getRows = function(queryResult)
+            -- Index 1: Table Headers
+            -- Index 2: Result Data
+            -- Index 3: Statistics
+            return queryResult[2]
+        end
+
+        -- extract first row from graph result
+        local getFirstRow = function(queryResult)
+            -- return the first row
+            return getRows(queryResult)[1]
+        end
+
+
+        ----------------------------------
+        -- RECURSIVE QUERY
+        ----------------------------------
+        local findChildNodes = nil
+        findChildNodes = function(parentNodeAggregateIdentifier, levelsSoFar, maximumLevels, dimensionSpacePointHash, nodeTypeConstraintsQueryPart, graphName)
+            if levelsSoFar >= maximumLevels then
+                return {}
+            end
+
+            local rows = getRows(redis.call("GRAPH.QUERY", graphName, "MATCH () -[:HIERARCHY {dimensionSpacePointHash: \'" .. dimensionSpacePointHash .. "\'}]-> (:Node {nodeAggregateIdentifier: \'" .. parentNodeAggregateIdentifier .. "\'}) -[:HIERARCHY {dimensionSpacePointHash: \'" .. dimensionSpacePointHash .. "\'}] -> (node:Node) RETURN node"))
+            local result = {}
+            for i, row in ipairs(rows) do
+                local node = parseNodeProperties(row[1])
+
+                local childNodes = findChildNodes(node["nodeAggregateIdentifier"], levelsSoFar + 1, maximumLevels, dimensionSpacePointHash, nodeTypeConstraintsQueryPart, graphName)
+                result[i] = {
+                    node = node,
+                    childNodes = childNodes
+                }
+            end
+
+            return result
+        end
+
+        ----------------------------------
+        -- INITIAL QUERY
+        ----------------------------------
+        local graphName = KEYS[1]
+        local entryPointNodeAggregateIdentifiers = cjson.decode(ARGV[1]) -- list of root Node Aggregate Identifiers
+        local nodeTypeConstraintsQueryPart = ARGV[2]
+        local dimensionSpacePointHash = ARGV[3]
+        local maximumLevels = ARGV[4]
+
+        local result = {}
+        for i, entryPointNodeAggregateIdentifier in ipairs(entryPointNodeAggregateIdentifiers) do
+            local queryResult = redis.call("GRAPH.QUERY", graphName, "MATCH () -[:HIERARCHY {dimensionSpacePointHash: \'" .. dimensionSpacePointHash .. "\'}]-> (node:Node {nodeAggregateIdentifier: \'" .. entryPointNodeAggregateIdentifier .. "\'}) WHERE " .. nodeTypeConstraintsQueryPart .. " RETURN node")
+            -- [1] is the "node" result (1st RETURN value)
+
+            local row = getFirstRow(queryResult)
+            if row then
+                local node = parseNodeProperties(row[1])
+                local childNodes = findChildNodes(node["nodeAggregateIdentifier"], 0, maximumLevels, dimensionSpacePointHash, nodeTypeConstraintsQueryPart, graphName)
+
+                table.insert(result, {
+                    node = node,
+                    childNodes = childNodes
+                })
+            end
+        end
+
+        return cjson.encode(result)
+    ';
+
     /**
      * @param array $entryNodeAggregateIdentifiers
      * @param int $maximumLevels
@@ -711,102 +811,85 @@ WHERE
         array $entryNodeAggregateIdentifiers,
         int $maximumLevels,
         NodeTypeConstraints $nodeTypeConstraints
-    ): SubtreeInterface {
-        $query = new SqlQueryBuilder();
-        $query->addToQuery('
--- ContentSubgraph::findSubtrees
+    ): SubtreeInterface
+    {
+        $graphName = $this->redisClient->getGraphName($this->getContentStreamIdentifier());
+        $entryNodeAggregateIdentifiersAsStringArray = array_map(function (NodeAggregateIdentifier $nodeAggregateIdentifier) {
+            return (string)$nodeAggregateIdentifier;
+        }, $entryNodeAggregateIdentifiers);
 
--- we build a set of recursive trees, ready to be rendered e.g. in a menu. Because the menu supports starting at multiple nodes, we also support starting at multiple nodes at once.
-with recursive tree as (
-     -- --------------------------------
-     -- INITIAL query: select the root nodes of the tree; as given in $menuLevelNodeIdentifiers
-     -- --------------------------------
-     select
-     	n.*,
-     	h.contentstreamidentifier,
-     	h.name,
+        $result = $this->redisClient->getRedisClient()->eval(self::SUBTREE_REDIS_QUERY, [
+            $graphName,
+            json_encode($entryNodeAggregateIdentifiersAsStringArray),
+            self::buildNodeTypeConstraintsCypherQueryPart($nodeTypeConstraints),
+            $this->getDimensionSpacePoint()->getHash(),
+            $maximumLevels
+        ], 1);
 
-     	-- see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
-     	CAST("ROOT" AS CHAR(50)) as parentNodeAggregateIdentifier,
-     	0 as level,
-     	0 as position
-     from
-        neos_contentgraph_node n
-     -- we need to join with the hierarchy relation, because we need the node name.
-     inner join neos_contentgraph_hierarchyrelation h
-        on h.childnodeanchor = n.relationanchorpoint
-     where
-        n.nodeaggregateidentifier in (:entryNodeAggregateIdentifiers)
-        and h.contentstreamidentifier = :contentStreamIdentifier
-		AND h.dimensionspacepointhash = :dimensionSpacePointHash
-		###VISIBILITY_CONSTRAINTS_INITIAL###
-union
-     -- --------------------------------
-     -- RECURSIVE query: do one "child" query step, taking into account the depth and node type constraints
-     -- --------------------------------
-     select
-        c.*,
-        h.contentstreamidentifier,
-        h.name,
+        //self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'n', 'h', '###VISIBILITY_CONSTRAINTS_INITIAL###');
+        //self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'c', 'h', '###VISIBILITY_CONSTRAINTS_RECURSION###');
 
-     	p.nodeaggregateidentifier as parentNodeAggregateIdentifier,
-     	p.level + 1 as level,
-     	h.position
-     from
-        tree p
-	 inner join neos_contentgraph_hierarchyrelation h
-        on h.parentnodeanchor = p.relationanchorpoint
-	 inner join neos_contentgraph_node c
-	    on h.childnodeanchor = c.relationanchorpoint
-	 where
-	 	h.contentstreamidentifier = :contentStreamIdentifier
-		AND h.dimensionspacepointhash = :dimensionSpacePointHash
-		and p.level + 1 <= :maximumLevels
-        ###NODE_TYPE_CONSTRAINTS###
-        ###VISIBILITY_CONSTRAINTS_RECURSION###
+        $result = json_decode($result);
 
-   -- select relationanchorpoint from neos_contentgraph_node
-)
-select * from tree
-order by level asc, position asc;')
-            ->parameter('entryNodeAggregateIdentifiers', array_map(function (NodeAggregateIdentifier $nodeAggregateIdentifier) {
-                return (string)$nodeAggregateIdentifier;
-            }, $entryNodeAggregateIdentifiers), Connection::PARAM_STR_ARRAY)
-            ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
-            ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash())
-            ->parameter('maximumLevels', $maximumLevels);
-
-        self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraints, '###NODE_TYPE_CONSTRAINTS###');
-
-        self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'n', 'h', '###VISIBILITY_CONSTRAINTS_INITIAL###');
-        self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'c', 'h', '###VISIBILITY_CONSTRAINTS_RECURSION###');
-
-        $result = $query->execute($this->getDatabaseConnection())->fetchAll();
-
-        $subtreesByNodeIdentifier = [];
-        $subtreesByNodeIdentifier['ROOT'] = new Subtree(0);
-
-        foreach ($result as $nodeData) {
-            $node = $this->nodeFactory->mapNodeRowToNode($nodeData);
-            $this->getInMemoryCache()->getNodeByNodeAggregateIdentifierCache()->add($node->getNodeAggregateIdentifier(), $node);
-
-            if (!isset($subtreesByNodeIdentifier[$nodeData['parentNodeAggregateIdentifier']])) {
-                throw new \Exception('TODO: must not happen');
-            }
-
-            $subtree = new Subtree($nodeData['level'], $node);
-            $subtreesByNodeIdentifier[$nodeData['parentNodeAggregateIdentifier']]->add($subtree);
-            $subtreesByNodeIdentifier[$nodeData['nodeaggregateidentifier']] = $subtree;
-
-            // also add the parents to the child -> parent cache.
-            /* @var $parentSubtree Subtree */
-            $parentSubtree = $subtreesByNodeIdentifier[$nodeData['parentNodeAggregateIdentifier']];
-            if ($parentSubtree->getNode() !== null) {
-                $this->getInMemoryCache()->getParentNodeIdentifierByChildNodeIdentifierCache()->add($node->getNodeAggregateIdentifier(), $parentSubtree->getNode()->getNodeAggregateIdentifier());
-            }
+        $subtree = new Subtree(0);
+        foreach ($result as $resultElement) {
+            $subtree->add($this->convertResultToSubtree($resultElement, 1, $subtree));
         }
 
-        return $subtreesByNodeIdentifier['ROOT'];
+        return $subtree;
+    }
+
+    private function convertResultToSubtree(array $result, int $level, SubtreeInterface $parentSubtree): SubtreeInterface
+    {
+        $node = $this->nodeFactory->mapNodeRowToNode($this->getContentStreamIdentifier(), $result['node']);
+        $this->getInMemoryCache()->getNodeByNodeAggregateIdentifierCache()->add($node->getNodeAggregateIdentifier(), $node);
+
+        $subtree = new Subtree($level, $node);
+        if ($parentSubtree->getNode() !== null) {
+            $this->getInMemoryCache()->getParentNodeIdentifierByChildNodeIdentifierCache()->add($node->getNodeAggregateIdentifier(), $parentSubtree->getNode()->getNodeAggregateIdentifier());
+        }
+
+        foreach ($result['childNodes'] as $childNodeResult) {
+            $subtree->add($this->convertResultToSubtree($childNodeResult, $level + 1, $subtree));
+        }
+
+        return $subtree;
+    }
+
+    private static function arrayOfObjToCypherArray($input): string
+    {
+        $converted = [];
+        foreach ($input as $value) {
+            $converted[] = "'" . $value . "'";
+        }
+
+        return '[' . implode(', ', $converted) . ']';
+    }
+
+    private static function buildNodeTypeConstraintsCypherQueryPart(NodeTypeConstraints $nodeTypeConstraints, string $tableReference = 'n'): string
+    {
+        $concatenation = 'AND';
+
+        if (!empty($nodeTypeConstraints->getExplicitlyAllowedNodeTypeNames())) {
+            $allowanceQueryPart = $tableReference . '.nodeTypeName IN ' . self::arrayOfObjToCypherArray($nodeTypeConstraints->getExplicitlyAllowedNodeTypeNames());
+        } else {
+            $allowanceQueryPart = '';
+        }
+        if (!empty($nodeTypeConstraints->getExplicitlyDisallowedNodeTypeNames())) {
+            $disAllowanceQueryPart = $tableReference . '.nodeTypeName NOT IN ' . self::arrayOfObjToCypherArray($nodeTypeConstraints->getExplicitlyDisallowedNodeTypeNames());
+        } else {
+            $disAllowanceQueryPart = '';
+        }
+
+        if ($allowanceQueryPart && $disAllowanceQueryPart) {
+            return ' ' . $concatenation . ' (' . $allowanceQueryPart . ($nodeTypeConstraints->isWildcardAllowed() ? ' OR ' : ' AND ') . $disAllowanceQueryPart . ')';
+        } elseif ($allowanceQueryPart && !$nodeTypeConstraints->isWildcardAllowed()) {
+            return ' ' . $concatenation . ' ' . $allowanceQueryPart;
+        } elseif ($disAllowanceQueryPart) {
+            return ' ' . $concatenation . ' ' . $disAllowanceQueryPart;
+        } else {
+            return '';
+        }
     }
 
     /**
@@ -919,7 +1002,7 @@ SELECT COUNT(*) FROM neos_contentgraph_node n
             ->parameter('contentStreamIdentifier', (string)$this->getContentStreamIdentifier())
             ->parameter('dimensionSpacePointHash', $this->getDimensionSpacePoint()->getHash());
 
-        return (int) $query->execute($this->getDatabaseConnection())->fetch()['COUNT(*)'];
+        return (int)$query->execute($this->getDatabaseConnection())->fetch()['COUNT(*)'];
     }
 
     public function getInMemoryCache(): InMemoryCache
