@@ -69,7 +69,116 @@ var_dump($r->rawCommand('GRAPH.QUERY', 'test', "
 
 visualizeGraph($r->rawCommand('GRAPH.QUERY', 'test', 'MATCH (m)-[h]->(n) RETURN m, h, n'));
 
+$script = '
+    -- Parse the property structure from https://oss.redislabs.com/redisgraph/result_structure/#nodes
+    -- into a table (propertyName -> propertyValue)
+    local parseProperties = function(properties)
+        local parsedProperties = {}
+        for i, row in pairs(properties) do
+            local propertyName = row[1]
+            local propertyValue = row[2]
+            parsedProperties[propertyName] = propertyValue
+        end
 
+        return parsedProperties
+    end
+
+    -- Parse node properties
+    local parseNodeProperties = function(node)
+        assert(node[3][1] == "properties", "node properties assertion, found " .. node[3][1])
+        local properties = node[3][2]
+
+        return parseProperties(properties)
+    end
+
+    -- Parse edge properties
+    local parseEdgeProperties = function(edge)
+        assert(edge[5][1] == "properties", "edge properties assertion, found " .. edge[3][1])
+        local properties = edge[5][2]
+
+        return parseProperties(properties)
+    end
+
+    local getRows = function(queryResult)
+        -- Index 1: Table Headers
+        -- Index 2: Result Data
+        -- Index 3: Statistics
+        return queryResult[2]
+    end
+    local getFirstRow = function(queryResult)
+        -- return the first row
+        return getRows(queryResult)[1]
+    end
+
+
+    local findChildNodes = nil
+    findChildNodes = function(parentNodeAggregateIdentifier, levelsSoFar, maximumLevels, dimensionSpacePointHash, nodeTypeConstraintsQueryPart)
+        redis.log(redis.LOG_WARNING, parentNodeAggregateIdentifier)
+        if levelsSoFar >= maximumLevels then
+            return {}
+        end
+
+        local rows = getRows(redis.call("GRAPH.QUERY", "test", "MATCH () -[:HIERARCHY {dimensionSpacePointHash: \'" .. dimensionSpacePointHash .. "\'}]-> (:Node {nodeAggregateIdentifier: \'" .. parentNodeAggregateIdentifier .. "\'}) -[:HIERARCHY {dimensionSpacePointHash: \'" .. dimensionSpacePointHash .. "\'}] -> (node:Node) RETURN node"))
+        local result = {}
+        for i, row in ipairs(rows) do
+            local node = parseNodeProperties(row[1])
+
+            local childNodes = findChildNodes(node["nodeAggregateIdentifier"], levelsSoFar + 1, maximumLevels, dimensionSpacePointHash, nodeTypeConstraintsQueryPart)
+            result[i] = {
+                node = node,
+                childNodes = childNodes
+            }
+        end
+
+        return result
+    end
+
+
+    -- ARGS
+    local nodeTypeConstraintsQueryPart = "true"
+    local dimensionSpacePointHash = "d1"
+    local entryPointNodeAggregateIdentifiers = {"r"}
+    local maximumLevels = 3
+
+    local result = {}
+    for i, entryPointNodeAggregateIdentifier in ipairs(entryPointNodeAggregateIdentifiers) do
+        local queryResult = redis.call("GRAPH.QUERY", "test", "MATCH () -[:HIERARCHY {dimensionSpacePointHash: \'" .. dimensionSpacePointHash .. "\'}]-> (node:Node {nodeAggregateIdentifier: \'" .. entryPointNodeAggregateIdentifier .. "\'}) WHERE " .. nodeTypeConstraintsQueryPart .. " RETURN node")
+        -- [1] is the "node" result (1st RETURN value)
+
+        local row = getFirstRow(queryResult)
+        if row then
+            local node = parseNodeProperties(row[1])
+            local childNodes = findChildNodes(node["nodeAggregateIdentifier"], 1, maximumLevels, dimensionSpacePointHash, nodeTypeConstraintsQueryPart)
+
+            table.insert(result, {
+                node = node,
+                childNodes = childNodes
+            })
+        end
+    end
+
+    return cjson.encode(result)
+';
+var_export($r->eval($script, [], 0));
+var_dump($r->getLastError());
+
+function visualizeGraph(array $result) {
+    [$header, $data, $statistics] = $result;
+
+    assert($header[0] === 'm', 'header[0] === m');
+    assert($header[1] === 'h', 'header[1] === h');
+    assert($header[2] === 'n', 'header[2] === n');
+
+    $line = [];
+    foreach ($data as $row) {
+        [$m, $h, $n] = $row;
+        $line[] = Node::fromResult($m) . Edge::fromResult($h) . Node::fromResult($n) . "\n";
+    }
+
+    // we sort alphabetically because it looks nicer and more stable
+    asort($line);
+    echo implode("\n", $line);
+}
 
 class Node
 {
