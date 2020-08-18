@@ -22,12 +22,12 @@ Feature: Tethered Nodes integrity violations
     'Neos.ContentRepository.Testing:TetheredLeaf': []
     """
     And the event RootWorkspaceWasCreated was published with payload:
-      | Key                            | Value                |
-      | workspaceName                  | "live"               |
-      | workspaceTitle                 | "Live"               |
-      | workspaceDescription           | "The live workspace" |
-      | newContentStreamIdentifier     | "cs-identifier"      |
-      | initiatingUserIdentifier       | "system-user"        |
+      | Key                        | Value                |
+      | workspaceName              | "live"               |
+      | workspaceTitle             | "Live"               |
+      | workspaceDescription       | "The live workspace" |
+      | newContentStreamIdentifier | "cs-identifier"      |
+      | initiatingUserIdentifier   | "system-user"        |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                                                                                                                                                                     |
       | contentStreamIdentifier     | "cs-identifier"                                                                                                                                                                                           |
@@ -73,7 +73,7 @@ Feature: Tethered Nodes integrity violations
       | nodeName                      | "tethered-leaf"                               |
       | nodeAggregateClassification   | "tethered"                                    |
     And the graph projection is fully up to date
-    And I expect no tethered node violations for type "Neos.ContentRepository.Testing:Document"
+    Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
   Scenario: Adjusting the schema adding a new tethered node leads to a MissingTetheredNode integrity violation
     Given I have the following additional NodeTypes configuration:
@@ -83,9 +83,9 @@ Feature: Tethered Nodes integrity violations
         'new-tethered-node':
           type: 'Neos.ContentRepository.Testing:Tethered'
     """
-    Then I expect the following tethered node violations for type "Neos.ContentRepository.Testing:Document":
-      | Violation           | Parameters                       |
-      | MissingTetheredNode | {"nodeName":"new-tethered-node"} |
+    Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
+      | Type                  | nodeAggregateIdentifier |
+      | TETHERED_NODE_MISSING | sir-david-nodenborough  |
 
 
   Scenario: Adding missing tethered nodes resolves the corresponding integrity violations
@@ -96,9 +96,8 @@ Feature: Tethered Nodes integrity violations
         'some-new-child':
           type: 'Neos.ContentRepository.Testing:Tethered'
     """
-    When I add missing tethered nodes for node type "Neos.ContentRepository.Testing:Document" and node name "some-new-child"
-    And the graph projection is fully up to date
-    Then I expect no tethered node violations for type "Neos.ContentRepository.Testing:Document"
+    When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
+    Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
   Scenario: Adding the same
     Given I have the following additional NodeTypes configuration:
@@ -108,10 +107,9 @@ Feature: Tethered Nodes integrity violations
         'some-new-child':
           type: 'Neos.ContentRepository.Testing:Tethered'
     """
-    And I add missing tethered nodes for node type "Neos.ContentRepository.Testing:Document" and node name "some-new-child"
-    And the graph projection is fully up to date
+    When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect exactly 6 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
-    When I add missing tethered nodes for node type "Neos.ContentRepository.Testing:Document" and node name "some-new-child"
+    When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect exactly 6 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
 
   Scenario: Adjusting the schema removing a tethered node leads to a DisallowedTetheredNode integrity violation
@@ -121,7 +119,7 @@ Feature: Tethered Nodes integrity violations
       childNodes:
         'tethered-node': ~
     """
-    Then I expect the following tethered node violations for type "Neos.ContentRepository.Testing:Document":
+    Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
       | Violation              | Parameters                   |
       | DisallowedTetheredNode | {"nodeName":"tethered-node"} |
 
@@ -133,7 +131,7 @@ Feature: Tethered Nodes integrity violations
         'tethered-node':
           type: 'Neos.ContentRepository.Testing:TetheredLeaf'
     """
-    Then I expect the following tethered node violations for type "Neos.ContentRepository.Testing:Document":
+    Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
       | Violation               | Parameters                                                                                                                                               |
       | InvalidTetheredNodeType | {"nodeName":"tethered-node","expectedNodeType":"Neos.ContentRepository.Testing:TetheredLeaf","actualNodeType":"Neos.ContentRepository.Testing:Tethered"} |
 

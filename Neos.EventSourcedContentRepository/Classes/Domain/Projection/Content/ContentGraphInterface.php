@@ -146,6 +146,13 @@ interface ContentGraphInterface
     public function findContentStreamIdentifiers(): array;
 
     /**
+     * Returns all content stream identifiers
+     *
+     * @return NodeTypeName[]
+     */
+    public function findProjectedNodeTypes(): iterable;
+
+    /**
      * Enable all caches. All READ requests should enable the cache.
      * By default, caches are enabled!
      */
