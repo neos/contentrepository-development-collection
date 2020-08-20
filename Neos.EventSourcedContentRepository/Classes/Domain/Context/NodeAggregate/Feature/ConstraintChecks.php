@@ -39,6 +39,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\No
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyExists;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeNameIsAlreadyCovered;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeNameIsAlreadyOccupied;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeDoesNotDeclareProperty;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeIsNotOfTypeRoot;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeIsOfTypeRoot;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeTypeNotFound;
@@ -46,6 +47,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimens
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 
 trait ConstraintChecks
 {
@@ -113,6 +115,18 @@ trait ConstraintChecks
     {
         if ($nodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
             throw new NodeTypeIsOfTypeRoot('Node type "' . $nodeType->getName() . '" is of type root.', 1541765806);
+        }
+    }
+
+    /**
+     * @param NodeType $nodeType
+     * @param PropertyName $propertyName
+     * @throws NodeTypeDoesNotDeclareProperty
+     */
+    protected function requireNodeTypeToDeclareProperty(NodeType $nodeType, PropertyName $propertyName): void
+    {
+        if (!isset($nodeType->getProperties()[(string) $propertyName])) {
+            throw NodeTypeDoesNotDeclareProperty::butWasSupposedTo(NodeTypeName::fromString($nodeType->getName()), $propertyName);
         }
     }
 

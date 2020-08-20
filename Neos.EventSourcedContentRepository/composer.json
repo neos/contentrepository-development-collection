@@ -8,7 +8,8 @@
     "require": {
         "neos/event-sourcing": "^2.0",
         "neos/content-repository": "*",
-        "neos/content-repository-dimensionspace": "*"
+        "neos/content-repository-dimensionspace": "*",
+        "guzzlehttp/psr7": "*"
     },
     "autoload": {
         "psr-4": {

@@ -1,5 +1,4 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature;
 
 /*
@@ -24,6 +23,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregat
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyConversionService;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -44,15 +44,17 @@ trait NodeModification
         NodeAggregateIdentifier $nodeAggregateIdentifier
     ): ReadableNodeAggregateInterface;
 
-    /**
-     * @param SetNodeProperties $command
-     * @return CommandResult
-     */
     public function handleSetNodeProperties(SetNodeProperties $command): CommandResult
     {
+        $this->requireContentStreamToExist($command->getContentStreamIdentifier());
+        $this->requireDimensionSpacePointToExist($command->getOriginDimensionSpacePoint());
         $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
+        $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
+        $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->getOriginDimensionSpacePoint());
         $nodeType = $this->requireNodeType($nodeAggregate->getNodeTypeName());
-
+        foreach ($command->getPropertyValues()->getValues() as $propertyName => $value) {
+            $this->requireNodeTypeToDeclareProperty($nodeType, PropertyName::fromString($propertyName));
+        }
         $serializedPropertyValues = $this->getPropertyConversionService()->serializePropertyValues($command->getPropertyValues(), $nodeType);
 
         $newCommand = new SetSerializedNodeProperties(
@@ -66,7 +68,7 @@ trait NodeModification
     }
 
     /**
-     * @param SetNodeProperties $command
+     * @param SetSerializedNodeProperties $command
      * @return CommandResult
      * @internal instead, use {@see self::handleSetNodeProperties} instead publicly.
      */
@@ -76,17 +78,10 @@ trait NodeModification
 
         $events = null;
         $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$events) {
-            $contentStreamIdentifier = $command->getContentStreamIdentifier();
-            // TODO: add assertions like "does the node exist, does the content stream eixst, ..."
-
-            // Check if node exists
-            // @todo: this must also work when creating a copy on write
-            #$this->assertNodeWithOriginDimensionSpacePointExists($contentStreamIdentifier, $command->getNodeAggregateIdentifier(), $command->getOriginDimensionSpacePoint());
-
             $events = DomainEvents::withSingleEvent(
                 DecoratedEvent::addIdentifier(
                     new NodePropertiesWereSet(
-                        $contentStreamIdentifier,
+                        $command->getContentStreamIdentifier(),
                         $command->getNodeAggregateIdentifier(),
                         $command->getOriginDimensionSpacePoint(),
                         $command->getPropertyValues()
@@ -96,7 +91,7 @@ trait NodeModification
             );
 
             $this->getNodeAggregateEventPublisher()->publishMany(
-                ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName(),
+                ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName(),
                 $events
             );
         });

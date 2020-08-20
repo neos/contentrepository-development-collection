@@ -12,6 +12,7 @@ declare(strict_types=1);
  */
 
 use Behat\Gherkin\Node\TableNode;
+use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
@@ -84,6 +85,7 @@ use Neos\EventSourcedContentRepository\Service\ContentStreamPruner;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\NodeDiscriminator;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\PostalAddress;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\Event\EventTypeResolver;
@@ -93,6 +95,11 @@ use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\EventStoreFactory;
 use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
+use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Media\Domain\Model\Image;
+use Neos\Media\Domain\Model\ImageInterface;
+use Neos\Media\Domain\Repository\ImageRepository;
 use Neos\Utility\Arrays;
 use Neos\Utility\ObjectAccess;
 use PHPUnit\Framework\Assert;
@@ -178,6 +185,10 @@ trait EventSourcedTrait
      */
     protected $lastCommandOrEventResult;
 
+    protected ResourceManager $resourceManager;
+
+    protected ImageRepository $imageRepository;
+
     /**
      * @return ObjectManagerInterface
      */
@@ -195,6 +206,8 @@ trait EventSourcedTrait
         $this->workspaceFinder = $this->getObjectManager()->get(WorkspaceFinder::class);
         $this->nodeTypeConstraintFactory = $this->getObjectManager()->get(NodeTypeConstraintFactory::class);
         $this->eventNormalizer = $this->getObjectManager()->get(EventNormalizer::class);
+        $this->resourceManager = $this->getObjectManager()->get(ResourceManager::class);
+        $this->imageRepository = $this->getObjectManager()->get(ImageRepository::class);
 
         $contentStreamRepository = $this->getObjectManager()->get(ContentStreamRepository::class);
         ObjectAccess::setProperty($contentStreamRepository, 'contentStreams', [], true);
@@ -731,6 +744,50 @@ trait EventSourcedTrait
             $this->lastCommandException = $exception;
         }
     }
+
+    /**
+     * @When /^the command SetNodeProperties is executed with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theCommandSetNodePropertiesIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        array_walk($commandArguments['propertyValues'], function (&$value) {
+            if (is_string($value)) {
+                if ($value === 'VO:PostalAddress') {
+                    $value = PostalAddress::dummy();
+                } elseif (\mb_strpos($value, 'DT:') === 0) {
+                    $value = \DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s', \mb_substr($value, 3));
+                } elseif (\mb_strpos($value, 'URI:') === 0) {
+                    $value = new Uri(\mb_substr($value, 4));
+                } elseif ($value === 'IMG:dummy') {
+                    $value = $this->requireDummyImage();
+                } elseif ($value === '[IMG:dummy]') {
+                    $value = [$this->requireDummyImage()];
+                }
+            }
+        });
+        $command = SetNodeProperties::fromArray($commandArguments);
+
+        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
+            ->handleSetNodeProperties($command);
+    }
+
+    /**
+     * @When /^the command SetNodeProperties is executed with payload and exceptions are caught:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theCommandSetNodePropertiesIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
+    {
+        try {
+            $this->theCommandSetNodePropertiesIsExecutedWithPayload($payloadTable);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
+    }
+
     /**
      * @Given /^the command RemoveNodeAggregate is executed with payload:$/
      * @param TableNode $payloadTable
@@ -1988,5 +2045,16 @@ trait EventSourcedTrait
         /** @var ContentStreamPruner $contentStreamPruner */
         $contentStreamPruner = $this->getObjectManager()->get(ContentStreamPruner::class);
         $contentStreamPruner->pruneRemovedFromEventStream();
+    }
+
+    /**
+     * @return ImageInterface
+     * @throws Exception
+     */
+    private function requireDummyImage(): ImageInterface
+    {
+        $resource = $this->resourceManager->importResource(__DIR__ . '/../Fixtures/bat.jpg');
+
+        return new Image($resource);
     }
 }
