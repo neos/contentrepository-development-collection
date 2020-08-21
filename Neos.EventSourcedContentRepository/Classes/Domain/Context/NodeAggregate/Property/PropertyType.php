@@ -114,6 +114,11 @@ final class PropertyType
         return $this->value === self::TYPE_ARRAY;
     }
 
+    public function isArrayOf(): bool
+    {
+        return preg_match(self::PATTERN_ARRAY_OF, $this->value);
+    }
+
     public function isDate(): bool
     {
         return $this->value === self::TYPE_DATE;
@@ -139,12 +144,28 @@ final class PropertyType
         if ($this->isArray()) {
             return is_array($propertyValue);
         }
+        if ($this->isArrayOf()) {
+            if (is_array($propertyValue)) {
+                $className = $this->getArrayOfClassName();
+                foreach ($propertyValue as $object) {
+                    if (!$object instanceof $className) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
 
         $className = $this->value[0] != '\\'
             ? '\\' . $this->value
             : $this->value;
 
         return (class_exists($className) || interface_exists($className)) && $propertyValue instanceof $className;
+    }
+
+    private function getArrayOfClassName(): string
+    {
+        return \mb_substr($this->value, 6, \mb_strlen($this->value) - 7);
     }
 
     public function __toString(): string

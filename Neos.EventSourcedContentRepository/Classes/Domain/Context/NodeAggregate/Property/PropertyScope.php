@@ -56,6 +56,21 @@ final class PropertyScope
         return new self(self::SCOPE_NODE_AGGREGATE);
     }
 
+    public function isNode(): bool
+    {
+        return $this->value === self::SCOPE_NODE;
+    }
+
+    public function isSpecializations(): bool
+    {
+        return $this->value === self::SCOPE_SPECIALIZATIONS;
+    }
+
+    public function isNodeAggregate(): bool
+    {
+        return $this->value === self::SCOPE_NODE_AGGREGATE;
+    }
+
     public function __toString(): string
     {
         return $this->value;

@@ -11,6 +11,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Featur
  * source code.
  */
 
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -20,6 +21,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetN
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetSerializedNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyConversionService;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyScope;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
@@ -38,6 +40,8 @@ trait NodeModification
     abstract protected function getNodeAggregateEventPublisher(): NodeAggregateEventPublisher;
 
     abstract protected function getPropertyConversionService(): PropertyConversionService;
+
+    abstract protected function getInterDimensionalVariationGraph(): InterDimensionalVariationGraph;
 
     abstract protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType;
 
@@ -79,22 +83,44 @@ trait NodeModification
         $this->getReadSideMemoryCacheManager()->disableCache();
 
         $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
-        $nodeType = $this->requireNodeType($nodeAggregate->getNodeTypeName());
         $events = null;
-        $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$events, $nodeType) {
-            $serializedPropertiesByScope = $this->separateSerializedPropertiesByScope($command->getPropertyValues(), $nodeType);
-
-            $events = DomainEvents::withSingleEvent(
-                DecoratedEvent::addIdentifier(
-                    new NodePropertiesWereSet(
-                        $command->getContentStreamIdentifier(),
-                        $command->getNodeAggregateIdentifier(),
-                        $command->getOriginDimensionSpacePoint(),
-                        $command->getPropertyValues()
-                    ),
-                    Uuid::uuid4()->toString()
-                )
+        $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$events, $nodeAggregate) {
+            $serializedPropertiesByScope = $this->separateSerializedPropertiesByScope(
+                $command->getPropertyValues(),
+                $this->requireNodeType($nodeAggregate->getNodeTypeName())
             );
+
+            $decoratedEvents = [];
+            foreach ($serializedPropertiesByScope as $scope => $serializedPropertyValues) {
+                $propertyScope = PropertyScope::fromString($scope);
+
+                if ($propertyScope->isNode()) {
+                    $affectedOrigins = new OriginDimensionSpacePointSet([$command->getOriginDimensionSpacePoint()]);
+                } elseif ($propertyScope->isSpecializations()) {
+                    $affectedOrigins = $nodeAggregate->getOccupiedDimensionSpacePoints()
+                        ->getIntersection(OriginDimensionSpacePointSet::fromDimensionSpacePointSet(
+                            $this->getInterDimensionalVariationGraph()->getSpecializationSet($command->getOriginDimensionSpacePoint())
+                        ));
+                } elseif ($propertyScope->isNodeAggregate()) {
+                    $affectedOrigins = $nodeAggregate->getOccupiedDimensionSpacePoints();
+                } else {
+                    $affectedOrigins = new OriginDimensionSpacePointSet([]);
+                }
+
+                foreach ($affectedOrigins as $originDimensionSpacePoint) {
+                    $decoratedEvents[] = DecoratedEvent::addIdentifier(
+                        new NodePropertiesWereSet(
+                            $command->getContentStreamIdentifier(),
+                            $command->getNodeAggregateIdentifier(),
+                            $originDimensionSpacePoint,
+                            $serializedPropertyValues
+                        ),
+                        Uuid::uuid4()->toString()
+                    );
+                }
+            }
+
+            $events = DomainEvents::fromArray($decoratedEvents);
 
             $this->getNodeAggregateEventPublisher()->publishMany(
                 ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier())->getEventStreamName(),
