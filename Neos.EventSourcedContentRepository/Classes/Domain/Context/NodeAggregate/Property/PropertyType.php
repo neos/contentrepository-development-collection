@@ -1,5 +1,5 @@
 <?php
-namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate;
+namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -28,6 +28,7 @@ final class PropertyType
     const TYPE_FLOAT = 'float';
     const TYPE_STRING = 'string';
     const TYPE_ARRAY = 'array';
+    const TYPE_DATE = 'DateTimeImmutable';
 
     const PATTERN_ARRAY_OF = '/array<[^>]+>/';
 
@@ -48,6 +49,9 @@ final class PropertyType
         }
         if ($string === 'int' || $string === 'integer') {
             return self::int();
+        }
+        if ($string === 'DateTime' || $string === '\DateTime' || $string === 'DateTimeImmutable' || $string === '\DateTimeImmutable') {
+            return self::date();
         }
         $className = $string[0] != '\\'
             ? '\\' . $string
@@ -75,6 +79,16 @@ final class PropertyType
         return new self(self::TYPE_INT);
     }
 
+    public static function string(): self
+    {
+        return new self(self::TYPE_STRING);
+    }
+
+    public static function date(): self
+    {
+        return new self(self::TYPE_DATE);
+    }
+
     public function isBool(): bool
     {
         return $this->value === self::TYPE_BOOL;
@@ -98,6 +112,11 @@ final class PropertyType
     public function isArray(): bool
     {
         return $this->value === self::TYPE_ARRAY;
+    }
+
+    public function isDate(): bool
+    {
+        return $this->value === self::TYPE_DATE;
     }
 
     public function matches($propertyValue): bool

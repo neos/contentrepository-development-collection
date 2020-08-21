@@ -21,9 +21,11 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetS
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateEventPublisher;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyConversionService;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyScope;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
+use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -76,8 +78,12 @@ trait NodeModification
     {
         $this->getReadSideMemoryCacheManager()->disableCache();
 
+        $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
+        $nodeType = $this->requireNodeType($nodeAggregate->getNodeTypeName());
         $events = null;
-        $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$events) {
+        $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$events, $nodeType) {
+            $serializedPropertiesByScope = $this->separateSerializedPropertiesByScope($command->getPropertyValues(), $nodeType);
+
             $events = DomainEvents::withSingleEvent(
                 DecoratedEvent::addIdentifier(
                     new NodePropertiesWereSet(
@@ -97,5 +103,29 @@ trait NodeModification
         });
 
         return CommandResult::fromPublishedEvents($events);
+    }
+
+    /**
+     * @param SerializedPropertyValues $serializedPropertyValues
+     * @param NodeType $nodeType
+     * @return array|SerializedPropertyValues[]
+     */
+    private function separateSerializedPropertiesByScope(SerializedPropertyValues $serializedPropertyValues, NodeType $nodeType): array
+    {
+        $serializedPropertiesByScope = [];
+        foreach ($serializedPropertyValues->getValues() as $propertyName => $serializedPropertyValue) {
+            $declaredScope = $nodeType->getConfiguration('properties.' . $propertyName . '.scope');
+            $propertyScope = $declaredScope
+                ? PropertyScope::fromString($declaredScope)
+                : PropertyScope::node();
+
+            $serializedPropertiesByScope[(string)$propertyScope][$propertyName] = $serializedPropertyValue;
+        }
+
+        array_walk($serializedPropertiesByScope, function (array &$scopedSerializedPropertiesByName) {
+            $scopedSerializedPropertiesByName = SerializedPropertyValues::fromArray($scopedSerializedPropertiesByName);
+        });
+
+        return $serializedPropertiesByScope;
     }
 }

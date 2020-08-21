@@ -35,6 +35,9 @@ Feature: Set properties of a node
           type: Neos\Media\Domain\Model\ImageInterface
         images:
           type: array<Neos\Media\Domain\Model\ImageInterface>
+        invalidlyScoped:
+          type: string
+          scope: wat
     """
     And the event RootWorkspaceWasCreated was published with payload:
       | Key                        | Value                                  |
@@ -117,6 +120,16 @@ Feature: Set properties of a node
       | propertyValues            | {"undefinedProperty": "value"}     |
     Then the last command should have thrown an exception of type "NodeTypeDoesNotDeclareProperty"
 
+  Scenario: Try to set a property of invalid scope
+    When the command SetNodeProperties is executed with payload and exceptions are caught:
+      | Key                       | Value                                  |
+      | contentStreamIdentifier   | "cs-identifier"                        |
+      | nodeAggregateIdentifier   | "nody-mc-nodeface"                     |
+      | originDimensionSpacePoint | {"market": "DE", "language": "de"}     |
+      | propertyValues            | {"invalidlyScoped": "Nody McNodeFace"} |
+    Then the last command should have thrown an exception of type "PropertyScopeIsInvalid"
+
+  # bool property tests
   Scenario: Try to set a bool node property to an int value
     When the command SetNodeProperties is executed with payload and exceptions are caught:
       | Key                       | Value                              |
@@ -168,7 +181,7 @@ Feature: Set properties of a node
       | contentStreamIdentifier   | "cs-identifier"                    |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                 |
       | originDimensionSpacePoint | {"market": "DE", "language": "de"} |
-      | propertyValues            | {"bool": "DT:2020-08-20T18:56:15"} |
+      | propertyValues            | {"bool": "Date:2020-08-20T18:56:15+00:00"} |
     Then the last command should have thrown an exception of type "PropertyTypeDoesNotMatchNodeTypeSchema"
 
   Scenario: Try to set a bool node property to a URI
@@ -198,6 +211,7 @@ Feature: Set properties of a node
       | propertyValues            | {"bool": "[IMG:dummy]"}            |
     Then the last command should have thrown an exception of type "PropertyTypeDoesNotMatchNodeTypeSchema"
 
+  # int property tests
   Scenario: Try to set an int node property to a boolean value
     When the command SetNodeProperties is executed with payload and exceptions are caught:
       | Key                       | Value                              |
@@ -249,7 +263,7 @@ Feature: Set properties of a node
       | contentStreamIdentifier   | "cs-identifier"                    |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                 |
       | originDimensionSpacePoint | {"market": "DE", "language": "de"} |
-      | propertyValues            | {"int": "DT:2020-08-20T18:56:15"}  |
+      | propertyValues            | {"int": "Date:2020-08-20T18:56:15+00:00"}  |
     Then the last command should have thrown an exception of type "PropertyTypeDoesNotMatchNodeTypeSchema"
 
   Scenario: Try to set an int node property to a URI
@@ -279,6 +293,7 @@ Feature: Set properties of a node
       | propertyValues            | {"int": "[IMG:dummy]"}             |
     Then the last command should have thrown an exception of type "PropertyTypeDoesNotMatchNodeTypeSchema"
 
+  # float property tests
   Scenario: Try to set a float node property to a bool value
     When the command SetNodeProperties is executed with payload and exceptions are caught:
       | Key                       | Value                              |
@@ -330,7 +345,7 @@ Feature: Set properties of a node
       | contentStreamIdentifier   | "cs-identifier"                     |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                  |
       | originDimensionSpacePoint | {"market": "DE", "language": "de"}  |
-      | propertyValues            | {"float": "DT:2020-08-20T18:56:15"} |
+      | propertyValues            | {"float": "Date:2020-08-20T18:56:15+00:00"} |
     Then the last command should have thrown an exception of type "PropertyTypeDoesNotMatchNodeTypeSchema"
 
   Scenario: Try to set a float node property to a URI
@@ -360,6 +375,7 @@ Feature: Set properties of a node
       | propertyValues            | {"float": "[IMG:dummy]"}           |
     Then the last command should have thrown an exception of type "PropertyTypeDoesNotMatchNodeTypeSchema"
 
+  # string property tests
   Scenario: Try to set a string node property to a bool value
     When the command SetNodeProperties is executed with payload and exceptions are caught:
       | Key                       | Value                              |
@@ -411,7 +427,7 @@ Feature: Set properties of a node
       | contentStreamIdentifier   | "cs-identifier"                      |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                   |
       | originDimensionSpacePoint | {"market": "DE", "language": "de"}   |
-      | propertyValues            | {"string": "DT:2020-08-20T18:56:15"} |
+      | propertyValues            | {"string": "Date:2020-08-20T18:56:15+00:00"} |
     Then the last command should have thrown an exception of type "PropertyTypeDoesNotMatchNodeTypeSchema"
 
   Scenario: Try to set a string node property to a URI
@@ -441,6 +457,7 @@ Feature: Set properties of a node
       | propertyValues            | {"string": "[IMG:dummy]"}          |
     Then the last command should have thrown an exception of type "PropertyTypeDoesNotMatchNodeTypeSchema"
 
+  # array property tests
   Scenario: Try to set a array node property to a bool value
     When the command SetNodeProperties is executed with payload and exceptions are caught:
       | Key                       | Value                              |
@@ -492,7 +509,7 @@ Feature: Set properties of a node
       | contentStreamIdentifier   | "cs-identifier"                     |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                  |
       | originDimensionSpacePoint | {"market": "DE", "language": "de"}  |
-      | propertyValues            | {"array": "DT:2020-08-20T18:56:15"} |
+      | propertyValues            | {"array": "Date:2020-08-20T18:56:15+00:00"} |
     Then the last command should have thrown an exception of type "PropertyTypeDoesNotMatchNodeTypeSchema"
 
   Scenario: Try to set a array node property to a URI
@@ -513,6 +530,7 @@ Feature: Set properties of a node
       | propertyValues            | {"array": "IMG:dummy"}             |
     Then the last command should have thrown an exception of type "PropertyTypeDoesNotMatchNodeTypeSchema"
 
+  # custom value object property tests
   Scenario: Try to set a value object node property to a bool value
     When the command SetNodeProperties is executed with payload and exceptions are caught:
       | Key                       | Value                              |
@@ -564,7 +582,7 @@ Feature: Set properties of a node
       | contentStreamIdentifier   | "cs-identifier"                             |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                          |
       | originDimensionSpacePoint | {"market": "DE", "language": "de"}          |
-      | propertyValues            | {"postalAddress": "DT:2020-08-20T18:56:15"} |
+      | propertyValues            | {"postalAddress": "Date:2020-08-20T18:56:15+00:00"} |
     Then the last command should have thrown an exception of type "PropertyTypeDoesNotMatchNodeTypeSchema"
 
   Scenario: Try to set a value object node property to a URI
@@ -594,6 +612,7 @@ Feature: Set properties of a node
       | propertyValues            | {"postalAddress": "[IMG:dummy]"}   |
     Then the last command should have thrown an exception of type "PropertyTypeDoesNotMatchNodeTypeSchema"
 
+  # date property tests
   Scenario: Try to set a date node property to a bool value
     When the command SetNodeProperties is executed with payload and exceptions are caught:
       | Key                       | Value                              |
@@ -675,6 +694,7 @@ Feature: Set properties of a node
       | propertyValues            | {"date": "[IMG:dummy]"}            |
     Then the last command should have thrown an exception of type "PropertyTypeDoesNotMatchNodeTypeSchema"
 
+  # uri property tests
   Scenario: Try to set a uri node property to a bool value
     When the command SetNodeProperties is executed with payload and exceptions are caught:
       | Key                       | Value                              |
@@ -735,7 +755,7 @@ Feature: Set properties of a node
       | contentStreamIdentifier   | "cs-identifier"                    |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                 |
       | originDimensionSpacePoint | {"market": "DE", "language": "de"} |
-      | propertyValues            | {"uri": "DT:2020-08-20T18:56:15"}  |
+      | propertyValues            | {"uri": "Date:2020-08-20T18:56:15+00:00"}  |
     Then the last command should have thrown an exception of type "PropertyTypeDoesNotMatchNodeTypeSchema"
 
   Scenario: Try to set a uri node property to an entity
@@ -756,6 +776,7 @@ Feature: Set properties of a node
       | propertyValues            | {"uri": "[IMG:dummy]"}             |
     Then the last command should have thrown an exception of type "PropertyTypeDoesNotMatchNodeTypeSchema"
 
+  # custom entity property tests
   Scenario: Try to set an entity node property to a bool value
     When the command SetNodeProperties is executed with payload and exceptions are caught:
       | Key                       | Value                              |
@@ -816,7 +837,7 @@ Feature: Set properties of a node
       | contentStreamIdentifier   | "cs-identifier"                     |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                  |
       | originDimensionSpacePoint | {"market": "DE", "language": "de"}  |
-      | propertyValues            | {"image": "DT:2020-08-20T18:56:15"} |
+      | propertyValues            | {"image": "Date:2020-08-20T18:56:15+00:00"} |
     Then the last command should have thrown an exception of type "PropertyTypeDoesNotMatchNodeTypeSchema"
 
   Scenario: Try to set an entity node property to a URI
@@ -837,6 +858,7 @@ Feature: Set properties of a node
       | propertyValues            | {"image": "[IMG:dummy]"}           |
     Then the last command should have thrown an exception of type "PropertyTypeDoesNotMatchNodeTypeSchema"
 
+  # array of entities property tests
   Scenario: Try to set an array of entities node property to a bool value
     When the command SetNodeProperties is executed with payload and exceptions are caught:
       | Key                       | Value                              |
@@ -897,7 +919,7 @@ Feature: Set properties of a node
       | contentStreamIdentifier   | "cs-identifier"                      |
       | nodeAggregateIdentifier   | "nody-mc-nodeface"                   |
       | originDimensionSpacePoint | {"market": "DE", "language": "de"}   |
-      | propertyValues            | {"images": "DT:2020-08-20T18:56:15"} |
+      | propertyValues            | {"images": "Date:2020-08-20T18:56:15+00:00"} |
     Then the last command should have thrown an exception of type "PropertyTypeDoesNotMatchNodeTypeSchema"
 
   Scenario: Try to set an array of entities node property to a URI

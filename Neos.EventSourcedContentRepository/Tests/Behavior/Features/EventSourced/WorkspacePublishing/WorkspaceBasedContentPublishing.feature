@@ -106,13 +106,13 @@ Feature: Workspace based content publishing
     Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
     And I expect this node to have the properties:
       | Key  | Value    |
-      | text | Original |
+      | text | "Original" |
 
     When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
     Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
     And I expect this node to have the properties:
       | Key  | Value    |
-      | text | Modified |
+      | text | "Modified" |
 
     # PUBLISHING
     When the command "PublishWorkspace" is executed with payload:
@@ -124,7 +124,7 @@ Feature: Workspace based content publishing
     Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
     And I expect this node to have the properties:
       | Key  | Value    |
-      | text | Modified |
+      | text | "Modified" |
 
   Scenario: modify the property in the nested workspace, do modification in live workspace; publish afterwards will not work because rebase is missing; then rebase and publish
 
@@ -167,7 +167,7 @@ Feature: Workspace based content publishing
     Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
     And I expect this node to have the properties:
       | Key  | Value                      |
-      | text | Modified in user workspace |
+      | text | "Modified in user workspace" |
 
   Scenario: modify the property in the nested workspace, publish, modify again and publish again (e.g. a workspace can be re-used after publishing for other changes)
 
@@ -206,7 +206,7 @@ Feature: Workspace based content publishing
     Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
     And I expect this node to have the properties:
       | Key  | Value         |
-      | text | Modified anew |
+      | text | "Modified anew" |
 
   Scenario: Discarding a full workspace works
     When the command "SetNodeProperties" is executed with payload:
@@ -221,7 +221,7 @@ Feature: Workspace based content publishing
     Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
     And I expect this node to have the properties:
       | Key  | Value    |
-      | text | Modified |
+      | text | "Modified" |
 
     # Discarding
     When the command DiscardWorkspace is executed with payload:
@@ -233,7 +233,7 @@ Feature: Workspace based content publishing
     Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
     And I expect this node to have the properties:
       | Key  | Value    |
-      | text | Original |
+      | text | "Original" |
 
   Scenario: Discarding a full workspace shows the most up-to-date base workspace when the base WS was modified in the meantime
     When the command "SetNodeProperties" is executed with payload:
@@ -262,4 +262,4 @@ Feature: Workspace based content publishing
     Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
     And I expect this node to have the properties:
       | Key  | Value                      |
-      | text | Modified in live workspace |
+      | text | "Modified in live workspace" |

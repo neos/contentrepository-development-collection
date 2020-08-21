@@ -11,8 +11,12 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper;
  * source code.
  */
 
+use Neos\Flow\Annotations as Flow;
+
 /**
  * The postal address value object for testing packages
+ *
+ * @Flow\Proxy(false)
  */
 final class PostalAddress implements \JsonSerializable
 {

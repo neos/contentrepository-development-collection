@@ -14,7 +14,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Except
  */
 
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyType;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyType;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\Flow\Annotations as Flow;
 

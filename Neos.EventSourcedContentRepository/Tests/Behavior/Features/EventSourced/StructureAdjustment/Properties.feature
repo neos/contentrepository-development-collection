@@ -48,7 +48,7 @@ Feature: Properties
     Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
     And I expect this node to have the properties:
       | Key    | Value |
-      | myProp | Foo   |
+      | myProp | "Foo" |
 
   Scenario: The property is removed
     When I have the following additional NodeTypes configuration:
@@ -88,8 +88,8 @@ Feature: Properties
     Then I expect a node identified by aggregate identifier "sir-david-nodenborough" to exist in the subgraph
     And I expect this node to have the properties:
       | Key       | Value |
-      | myProp    | Foo   |
-      | otherProp | foo   |
+      | myProp    | "Foo" |
+      | otherProp | "foo" |
 
   Scenario: a new property default value is not set if the value already contains the empty string
     When I have the following additional NodeTypes configuration:

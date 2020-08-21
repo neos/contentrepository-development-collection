@@ -17,7 +17,6 @@ use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\PropertyTypeDoesNotMatchNodeTypeSchema;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\PropertyType;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;

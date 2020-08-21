@@ -79,25 +79,25 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
     And I am in the active content stream of workspace "live" and Dimension Space Point {}
     Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
     And I expect this node to have the properties:
-      | Key  | Value    |
-      | text | Original |
+      | Key  | Value      |
+      | text | "Original" |
 
     When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
     Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
     And I expect this node to have the properties:
-      | Key  | Value   |
-      | text | Changed |
+      | Key  | Value     |
+      | text | "Changed" |
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
     Then I expect node aggregate identifier "nodingers-cat" and path "child/pet" to lead to node {"contentStreamIdentifier": "cs-identifier", "nodeAggregateIdentifier": "nodingers-cat", "originDimensionSpacePoint": {}}
     When I go to the parent node of node aggregate "nodingers-cat"
     Then I expect the current Node to have the properties:
-      | Key  | Value    |
-      | text | Original |
+      | Key  | Value      |
+      | text | "Original" |
 
     When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
     Then I expect node aggregate identifier "nodingers-cat" and path "child/pet" to lead to node {"contentStreamIdentifier": "user-cs-identifier", "nodeAggregateIdentifier": "nodingers-cat", "originDimensionSpacePoint": {}}
     When I go to the parent node of node aggregate "nodingers-cat"
     Then I expect the current Node to have the properties:
-      | Key  | Value   |
-      | text | Changed |
+      | Key  | Value     |
+      | text | "Changed" |

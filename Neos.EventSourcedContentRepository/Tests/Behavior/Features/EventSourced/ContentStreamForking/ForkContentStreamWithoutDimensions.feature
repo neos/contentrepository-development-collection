@@ -73,15 +73,15 @@ Feature: ForkContentStream Without Dimensions
     When I am in content stream "cs-identifier" and Dimension Space Point {}
     Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
     And I expect this node to have the properties:
-      | Key  | Value          |
-      | text | original value |
+      | Key  | Value            |
+      | text | "original value" |
 
     # forked content stream
     When I am in content stream "user-cs-identifier" and Dimension Space Point {}
     Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
     And I expect this node to have the properties:
-      | Key  | Value          |
-      | text | modified value |
+      | Key  | Value            |
+      | text | "modified value" |
 
   # this is a "reverse" scenario of the scenario above.
   Scenario: When a change is applied on the live content stream AFTER the fork, it is NOT visible in the forked content stream.
@@ -101,12 +101,12 @@ Feature: ForkContentStream Without Dimensions
     When I am in content stream "cs-identifier" and Dimension Space Point {}
     Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
     And I expect this node to have the properties:
-      | Key  | Value          |
-      | text | modified value |
+      | Key  | Value            |
+      | text | "modified value" |
 
     # forked content stream
     When I am in content stream "user-cs-identifier" and Dimension Space Point {}
     Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
     And I expect this node to have the properties:
-      | Key  | Value          |
-      | text | original value |
+      | Key  | Value            |
+      | text | "original value" |

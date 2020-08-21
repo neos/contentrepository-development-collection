@@ -6,6 +6,20 @@ Neos:
         className: Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\Normalizers\CollectionTypeDenormalizer
       ScalarNormalizer:
         className: Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\Normalizers\ScalarNormalizer
+      ArrayNormalizer:
+        className: Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\Normalizers\ArrayNormalizer
+      UriNormalizer:
+        className: Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\Normalizers\UriNormalizer
+      ValueObjectArrayDeNormalizer:
+        className: Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\Normalizers\ValueObjectArrayDenormalizer
+      ValueObjectBoolDeNormalizer:
+        className: Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\Normalizers\ValueObjectBoolDenormalizer
+      ValueObjectFloatDeNormalizer:
+        className: Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\Normalizers\ValueObjectFloatDenormalizer
+      ValueObjectIntDeNormalizer:
+        className: Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\Normalizers\ValueObjectIntDenormalizer
+      ValueObjectStringDeNormalizer:
+        className: Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\Normalizers\ValueObjectStringDenormalizer
       DateTime:
         className: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
         position: 'start'
