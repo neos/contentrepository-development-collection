@@ -170,8 +170,7 @@ trait ConstraintChecks
         NodeType $nodeType,
         ?NodeName $nodeName,
         array $parentNodeAggregateIdentifiers
-    ): void
-    {
+    ): void {
         foreach ($parentNodeAggregateIdentifiers as $parentNodeAggregateIdentifier) {
             $parentAggregate = $this->requireProjectedNodeAggregate($contentStreamIdentifier, $parentNodeAggregateIdentifier);
             try {
@@ -186,7 +185,6 @@ trait ConstraintChecks
                 try {
                     $grandParentsNodeType = $this->requireNodeType($grandParentNodeAggregate->getNodeTypeName());
                     $this->requireNodeTypeConstraintsImposedByGrandparentToBeMet($grandParentsNodeType, $parentAggregate->getNodeName(), $nodeType);
-
                 } catch (NodeTypeNotFound $e) {
                     // skip constraint check; Once the grand parent is changed to be of an available type,
                     // the constraint checks are executed again. See handleChangeNodeAggregateType
@@ -223,7 +221,7 @@ trait ConstraintChecks
         return true;
     }
 
-    protected function requireNodeTypeConstraintsImposedByGrandparentToBeMet(NodeType $grandParentsNodeType, NodeName $parentNodeName, NodeType $nodeType): void
+    protected function requireNodeTypeConstraintsImposedByGrandparentToBeMet(NodeType $grandParentsNodeType, ?NodeName $parentNodeName, NodeType $nodeType): void
     {
         if (!$this->areNodeTypeConstraintsImposedByGrandparentValid($grandParentsNodeType, $parentNodeName, $nodeType)) {
             throw new NodeConstraintException('Node type "' . $nodeType . '" is not allowed below tethered child nodes "' . $parentNodeName
@@ -231,7 +229,7 @@ trait ConstraintChecks
         }
     }
 
-    protected function areNodeTypeConstraintsImposedByGrandparentValid(NodeType $grandParentsNodeType, NodeName $parentNodeName, NodeType $nodeType): bool
+    protected function areNodeTypeConstraintsImposedByGrandparentValid(NodeType $grandParentsNodeType, ?NodeName $parentNodeName, NodeType $nodeType): bool
     {
         if ($parentNodeName
             && $grandParentsNodeType->hasAutoCreatedChildNode($parentNodeName)
@@ -251,8 +249,7 @@ trait ConstraintChecks
     protected function requireProjectedNodeAggregate(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
-    ): ReadableNodeAggregateInterface
-    {
+    ): ReadableNodeAggregateInterface {
         $nodeAggregate = $this->getContentGraph()->findNodeAggregateByIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier);
 
         if (!$nodeAggregate) {
@@ -271,8 +268,7 @@ trait ConstraintChecks
     protected function requireProjectedNodeAggregateToNotExist(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
-    ): void
-    {
+    ): void {
         $nodeAggregate = $this->getContentGraph()->findNodeAggregateByIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier);
 
         if ($nodeAggregate) {
@@ -288,8 +284,7 @@ trait ConstraintChecks
     protected function requireNodeAggregateToCoverDimensionSpacePoint(
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePoint $dimensionSpacePoint
-    ): void
-    {
+    ): void {
         if (!$nodeAggregate->coversDimensionSpacePoint($dimensionSpacePoint)) {
             throw new NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint('Node aggregate "' . $nodeAggregate->getIdentifier() . '" does currently not cover dimension space point ' . json_encode($dimensionSpacePoint) . '.', 1541678877);
         }
@@ -303,8 +298,7 @@ trait ConstraintChecks
     protected function requireNodeAggregateToCoverDimensionSpacePoints(
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePointSet $dimensionSpacePointSet
-    ): void
-    {
+    ): void {
         if (!$nodeAggregate->getCoveredDimensionSpacePoints()->getPointHashes() === $dimensionSpacePointSet->getPointHashes()) {
             throw NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet::butWasSupposedTo(
                 $nodeAggregate->getIdentifier(),
@@ -346,8 +340,7 @@ trait ConstraintChecks
         ContentStreamIdentifier $contentStreamIdentifier,
         ReadableNodeAggregateInterface $nodeAggregate,
         ReadableNodeAggregateInterface $referenceNodeAggregate
-    )
-    {
+    ) {
         if ($nodeAggregate->getIdentifier()->equals($referenceNodeAggregate->getIdentifier())) {
             throw new NodeAggregateIsDescendant('Node aggregate "' . $nodeAggregate->getIdentifier() . '" is descendant of node aggregate "' . $referenceNodeAggregate->getIdentifier() . '"', 1554971124);
         }
@@ -358,7 +351,7 @@ trait ConstraintChecks
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeName $nodeName
+     * @param NodeName|null $nodeName
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param OriginDimensionSpacePoint $parentOriginDimensionSpacePoint
      * @param DimensionSpacePointSet $dimensionSpacePoints
@@ -366,12 +359,14 @@ trait ConstraintChecks
      */
     protected function requireNodeNameToBeUnoccupied(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeName $nodeName,
+        ?NodeName $nodeName,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         OriginDimensionSpacePoint $parentOriginDimensionSpacePoint,
         DimensionSpacePointSet $dimensionSpacePoints
-    ): void
-    {
+    ): void {
+        if ($nodeName === null) {
+            return;
+        }
         $dimensionSpacePointsOccupiedByChildNodeName = $this->getContentGraph()->getDimensionSpacePointsOccupiedByChildNodeName(
             $contentStreamIdentifier,
             $nodeName,
@@ -386,18 +381,20 @@ trait ConstraintChecks
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeName $nodeName
+     * @param NodeName|null $nodeName
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param DimensionSpacePointSet $dimensionSpacePointsToBeCovered
      * @throws NodeNameIsAlreadyCovered
      */
     protected function requireNodeNameToBeUncovered(
         ContentStreamIdentifier $contentStreamIdentifier,
-        NodeName $nodeName,
+        ?NodeName $nodeName,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         DimensionSpacePointSet $dimensionSpacePointsToBeCovered
-    ): void
-    {
+    ): void {
+        if ($nodeName === null) {
+            return;
+        }
         $childNodeAggregates = $this->getContentGraph()->findChildNodeAggregatesByName($contentStreamIdentifier, $parentNodeAggregateIdentifier, $nodeName);
         foreach ($childNodeAggregates as $childNodeAggregate) {
             $alreadyCoveredDimensionSpacePoints = $childNodeAggregate->getCoveredDimensionSpacePoints()->getIntersection($dimensionSpacePointsToBeCovered);
@@ -439,8 +436,7 @@ trait ConstraintChecks
     protected function requireNodeAggregateToDisableDimensionSpacePoint(
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePoint $dimensionSpacePoint
-    ): void
-    {
+    ): void {
         if (!$nodeAggregate->disablesDimensionSpacePoint($dimensionSpacePoint)) {
             throw new NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint('Node aggregate "' . $nodeAggregate->getIdentifier() . '" currently does not disable dimension space point ' . json_encode($dimensionSpacePoint) . '.', 1557735431);
         }
@@ -454,8 +450,7 @@ trait ConstraintChecks
     protected function requireNodeAggregateToNotDisableDimensionSpacePoint(
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePoint $dimensionSpacePoint
-    ): void
-    {
+    ): void {
         if ($nodeAggregate->disablesDimensionSpacePoint($dimensionSpacePoint)) {
             throw new NodeAggregateCurrentlyDisablesDimensionSpacePoint('Node aggregate "' . $nodeAggregate->getIdentifier() . '" currently disables dimension space point ' . json_encode($dimensionSpacePoint) . '.', 1555179563);
         }
