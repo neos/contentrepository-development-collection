@@ -61,8 +61,7 @@ final class PropertyType
             && $string !== self::TYPE_ARRAY
             && !class_exists($className)
             && !interface_exists($className)
-            && !preg_match(self::PATTERN_ARRAY_OF, $string))
-        {
+            && !preg_match(self::PATTERN_ARRAY_OF, $string)) {
             throw PropertyTypeIsInvalid::becauseItIsUndefined($string);
         }
 
