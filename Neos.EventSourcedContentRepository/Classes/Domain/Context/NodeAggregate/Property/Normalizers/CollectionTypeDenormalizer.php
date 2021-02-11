@@ -70,9 +70,10 @@ final class CollectionTypeDenormalizer implements DenormalizerInterface, Seriali
             return false;
         }
         if ($this->serializer instanceof ContextAwareDenormalizerInterface) {
-            return $this->serializer->supportsDenormalization($data, $parsedType['elementType'], $format, $context);
+            return $this->serializer->supportsDenormalization(reset($data), $parsedType['elementType'], $format, $context);
         }
-        return $this->serializer->supportsDenormalization($data, $parsedType['elementType'], $format);
+
+        return $this->serializer->supportsDenormalization(reset($data), $parsedType['elementType'], $format);
     }
 
     /**

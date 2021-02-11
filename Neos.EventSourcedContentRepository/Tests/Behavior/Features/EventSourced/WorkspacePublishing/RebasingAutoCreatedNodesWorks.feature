@@ -69,11 +69,11 @@ Feature: Rebasing auto-created nodes works
 
     # - then, for the auto-created child node, set a property.
     When the command "SetNodeProperties" is executed with payload:
-      | Key                       | Value                                          |
-      | contentStreamIdentifier   | "user-cs-identifier"                           |
-      | nodeAggregateIdentifier   | $this->currentNodeAggregateIdentifier          |
-      | originDimensionSpacePoint | {}                                             |
-      | propertyValues            | {"text": {"value":"Modified","type":"string"}} |
+      | Key                       | Value                                 |
+      | contentStreamIdentifier   | "user-cs-identifier"                  |
+      | nodeAggregateIdentifier   | $this->currentNodeAggregateIdentifier |
+      | originDimensionSpacePoint | {}                                    |
+      | propertyValues            | {"text": "Modified"}                  |
     And the graph projection is fully up to date
 
     When the command "RebaseWorkspace" is executed with payload:

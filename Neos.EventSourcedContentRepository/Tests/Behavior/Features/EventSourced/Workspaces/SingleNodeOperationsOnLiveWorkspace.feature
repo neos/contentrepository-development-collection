@@ -57,5 +57,5 @@ Feature: Single Node operations on live workspace
     And I am in the active content stream of workspace "live" and Dimension Space Point {}
     Then I expect a node identified by aggregate identifier "nody-mc-nodeface" to exist in the subgraph
     And I expect this node to have the properties:
-      | Key  | Value |
-      | text | Hello |
+      | Key  | Value   |
+      | text | "Hello" |

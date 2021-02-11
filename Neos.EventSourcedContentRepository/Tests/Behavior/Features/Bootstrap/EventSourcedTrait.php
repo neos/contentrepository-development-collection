@@ -12,6 +12,7 @@ declare(strict_types=1);
  */
 
 use Behat\Gherkin\Node\TableNode;
+use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
@@ -48,6 +49,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\Di
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateIdentifiersByNodePaths;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyType;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\ReadableNodeAggregateInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\RelationDistributionStrategy;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeDuplication\Command\CopyNodesRecursively;
@@ -84,6 +86,7 @@ use Neos\EventSourcedContentRepository\Service\ContentStreamPruner;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\NodeDiscriminator;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Helper\PostalAddress;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Neos\EventSourcing\Event\EventTypeResolver;
@@ -93,6 +96,10 @@ use Neos\EventSourcing\EventStore\EventStore;
 use Neos\EventSourcing\EventStore\EventStoreFactory;
 use Neos\EventSourcing\EventStore\StreamName;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Media\Domain\Model\Image;
+use Neos\Media\Domain\Model\ImageInterface;
+use Neos\Media\Domain\Repository\ImageRepository;
 use Neos\Utility\Arrays;
 use Neos\Utility\ObjectAccess;
 use PHPUnit\Framework\Assert;
@@ -178,6 +185,12 @@ trait EventSourcedTrait
      */
     protected $lastCommandOrEventResult;
 
+    protected ?Image $dummyImage = null;
+
+    protected ResourceManager $resourceManager;
+
+    protected ImageRepository $imageRepository;
+
     /**
      * @return ObjectManagerInterface
      */
@@ -195,6 +208,8 @@ trait EventSourcedTrait
         $this->workspaceFinder = $this->getObjectManager()->get(WorkspaceFinder::class);
         $this->nodeTypeConstraintFactory = $this->getObjectManager()->get(NodeTypeConstraintFactory::class);
         $this->eventNormalizer = $this->getObjectManager()->get(EventNormalizer::class);
+        $this->resourceManager = $this->getObjectManager()->get(ResourceManager::class);
+        $this->imageRepository = $this->getObjectManager()->get(ImageRepository::class);
 
         $contentStreamRepository = $this->getObjectManager()->get(ContentStreamRepository::class);
         ObjectAccess::setProperty($contentStreamRepository, 'contentStreams', [], true);
@@ -590,11 +605,6 @@ trait EventSourcedTrait
             $commandArguments['originDimensionSpacePoint'] = [];
         }
 
-        if (isset($commandArguments['initialPropertyValues.dateProperty'])) {
-            // special case to test Date type conversion
-            $commandArguments['initialPropertyValues']['dateProperty'] = \DateTime::createFromFormat(\DateTime::W3C, $commandArguments['initialPropertyValues.dateProperty']);
-        }
-
         $command = new CreateNodeAggregateWithNode(
             ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier']),
             NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
@@ -731,6 +741,50 @@ trait EventSourcedTrait
             $this->lastCommandException = $exception;
         }
     }
+
+    /**
+     * @When /^the command SetNodeProperties is executed with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theCommandSetNodePropertiesIsExecutedWithPayload(TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        array_walk($commandArguments['propertyValues'], function (&$value) {
+            if (is_string($value)) {
+                if ($value === 'VO:PostalAddress') {
+                    $value = PostalAddress::dummy();
+                } elseif (\mb_strpos($value, 'Date:') === 0) {
+                    $value = \DateTimeImmutable::createFromFormat(\DateTimeInterface::W3C, \mb_substr($value, 5));
+                } elseif (\mb_strpos($value, 'URI:') === 0) {
+                    $value = new Uri(\mb_substr($value, 4));
+                } elseif ($value === 'IMG:dummy') {
+                    $value = $this->requireDummyImage();
+                } elseif ($value === '[IMG:dummy]') {
+                    $value = [$this->requireDummyImage()];
+                }
+            }
+        });
+        $command = SetNodeProperties::fromArray($commandArguments);
+
+        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
+            ->handleSetNodeProperties($command);
+    }
+
+    /**
+     * @When /^the command SetNodeProperties is executed with payload and exceptions are caught:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theCommandSetNodePropertiesIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
+    {
+        try {
+            $this->theCommandSetNodePropertiesIsExecutedWithPayload($payloadTable);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
+    }
+
     /**
      * @Given /^the command RemoveNodeAggregate is executed with payload:$/
      * @param TableNode $payloadTable
@@ -978,11 +1032,6 @@ trait EventSourcedTrait
         list($commandClassName, $commandHandlerClassName, $commandHandlerMethod) = self::resolveShortCommandName($shortCommandName);
         if ($commandArguments === null && $payloadTable !== null) {
             $commandArguments = $this->readPayloadTable($payloadTable);
-        }
-
-        if (isset($commandArguments['propertyValues.dateProperty'])) {
-            // special case to test Date type conversion
-            $commandArguments['propertyValues']['dateProperty'] = \DateTime::createFromFormat(\DateTime::W3C, $commandArguments['propertyValues.dateProperty']);
         }
 
         if (!method_exists($commandClassName, 'fromArray')) {
@@ -1565,6 +1614,7 @@ trait EventSourcedTrait
     /**
      * @Then /^I expect this node to have the properties:$/
      * @param TableNode $expectedProperties
+     * @throws Exception
      */
     public function iExpectThisNodeToHaveTheProperties(TableNode $expectedProperties)
     {
@@ -1575,6 +1625,7 @@ trait EventSourcedTrait
      * @Then /^I expect the node "([^"]*)" to have the properties:$/
      * @param string $nodeAggregateIdentifier
      * @param TableNode $expectedProperties
+     * @throws Exception
      */
     public function iExpectTheNodeToHaveTheProperties(string $nodeAggregateIdentifier, TableNode $expectedProperties)
     {
@@ -1589,6 +1640,7 @@ trait EventSourcedTrait
      * @Then /^I expect the Node Aggregate "([^"]*)" to have the properties:$/
      * @param $nodeAggregateIdentifier
      * @param TableNode $expectedProperties
+     * @throws Exception
      */
     public function iExpectTheNodeAggregateToHaveTheProperties($nodeAggregateIdentifier, TableNode $expectedProperties)
     {
@@ -1601,22 +1653,44 @@ trait EventSourcedTrait
     /**
      * @Then /^I expect the current Node to have the properties:$/
      * @param TableNode $expectedProperties
+     * @throws Exception
      */
     public function iExpectTheCurrentNodeToHaveTheProperties(TableNode $expectedProperties)
     {
         Assert::assertNotNull($this->currentNode, 'current node not found');
-        $this->currentNode = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByNodeAggregateIdentifier($this->currentNode->getNodeAggregateIdentifier());
 
         $properties = $this->currentNode->getProperties();
         foreach ($expectedProperties->getHash() as $row) {
             Assert::assertArrayHasKey($row['Key'], $properties, 'Property "' . $row['Key'] . '" not found');
-            $actualProperty = $properties[$row['Key']];
-            if (isset($row['Type']) && $row['Type'] === 'DateTime') {
-                $row['Value'] = \DateTime::createFromFormat(\DateTime::W3C, $row['Value']);
+            $propertyType = isset($row['Type'])
+                ? PropertyType::fromString($row['Type'])
+                : PropertyType::string();
+            $row['Value'] = json_decode($row['Value'], true);
+            if (is_string($row['Value'])) {
+                if ($row['Value'] === 'VO:PostalAddress') {
+                    $row['Value'] = PostalAddress::dummy();
+                }
+                if ($row['Value'] === 'IMG:dummy') {
+                    $row['Value'] = $this->requireDummyImage();
+                }
+                if ($row['Value'] === '[IMG:dummy]') {
+                    $row['Value'] = [$this->requireDummyImage()];
+                }
             }
-            Assert::assertEquals($row['Value'], $actualProperty, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($row['Value']) . '; Actual: ' . json_encode($actualProperty));
+            if ($propertyType->isDate()) {
+                $row['Value'] = \DateTimeImmutable::createFromFormat(\DateTime::W3C, $row['Value']);
+            }
+            if ((string)$propertyType === 'GuzzleHttp\Psr7\Uri') {
+                $row['Value'] = new Uri($row['Value']);
+            }
+
+            $actualPropertyValue = $this->currentNode->getProperty($row['Key']);
+
+            Assert::assertEquals(
+                $row['Value'],
+                $actualPropertyValue,
+                'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($row['Value']) . '; Actual: ' . json_encode($actualPropertyValue)
+            );
         }
     }
 
@@ -2001,5 +2075,19 @@ trait EventSourcedTrait
         /** @var ContentStreamPruner $contentStreamPruner */
         $contentStreamPruner = $this->getObjectManager()->get(ContentStreamPruner::class);
         $contentStreamPruner->pruneRemovedFromEventStream();
+    }
+
+    /**
+     * @return ImageInterface
+     * @throws Exception
+     */
+    private function requireDummyImage(): ImageInterface
+    {
+        if (!$this->dummyImage) {
+            $resource = $this->resourceManager->importResource(__DIR__ . '/../Fixtures/bat.jpg');
+            $this->dummyImage = new Image($resource);
+        }
+
+        return $this->dummyImage;
     }
 }

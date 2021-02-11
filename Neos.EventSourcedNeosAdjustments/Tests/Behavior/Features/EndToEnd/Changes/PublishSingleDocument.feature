@@ -40,20 +40,20 @@ Feature: Publishing a single document works
     Then I expect a node identified by aggregate identifier "d17caff2-f50c-d30b-b735-9b9216de02e9" to exist in the subgraph
     And I expect the current Node to have the properties:
       | Key   | Value                 |
-      | title | <h1>new title XX</h1> |
+      | title | "<h1>new title XX</h1>" |
 
     Then I expect a node identified by aggregate identifier "69e833bd-b3a9-e0e2-6d93-590b6aa93ead" to exist in the subgraph
     And I expect the current Node to have the properties:
       | Key   | Value                            |
-      | title | <h4>Built for Extensibility</h4> |
+      | title | "<h4>Built for Extensibility</h4>" |
 
     When I am in the active content stream of workspace "user-admin" and Dimension Space Point {"language": "en_US"}
     Then I expect a node identified by aggregate identifier "d17caff2-f50c-d30b-b735-9b9216de02e9" to exist in the subgraph
     And I expect the current Node to have the properties:
       | Key   | Value                 |
-      | title | <h1>new title XX</h1> |
+      | title | "<h1>new title XX</h1>" |
 
     Then I expect a node identified by aggregate identifier "69e833bd-b3a9-e0e2-6d93-590b6aa93ead" to exist in the subgraph
     And I expect the current Node to have the properties:
       | Key   | Value             |
-      | title | <h1>new text</h1> |
+      | title | "<h1>new text</h1>" |

@@ -109,25 +109,25 @@ Feature: Publishing and discard individual nodes (basics)
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
     Then I expect the Node Aggregate "sir-david-nodenborough" to have the properties:
-      | Key  | Value      |
-      | text | Initial t1 |
+      | Key  | Value        |
+      | text | "Initial t1" |
     And I expect the Node Aggregate "nody-mc-nodeface" to have the properties:
-      | Key  | Value      |
-      | text | Initial t2 |
+      | Key  | Value        |
+      | text | "Initial t2" |
     And I expect the Node Aggregate "sir-nodeward-nodington-iii" to have the properties:
-      | Key   | Value          |
-      | image | Modified image |
+      | Key   | Value            |
+      | image | "Modified image" |
 
     When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
     Then I expect the Node Aggregate "sir-david-nodenborough" to have the properties:
-      | Key  | Value       |
-      | text | Modified t1 |
+      | Key  | Value         |
+      | text | "Modified t1" |
     And I expect the Node Aggregate "nody-mc-nodeface" to have the properties:
-      | Key  | Value       |
-      | text | Modified t2 |
+      | Key  | Value         |
+      | text | "Modified t2" |
     And I expect the Node Aggregate "sir-nodeward-nodington-iii" to have the properties:
-      | Key   | Value          |
-      | image | Modified image |
+      | Key   | Value            |
+      | image | "Modified image" |
 
   Scenario: It is possible to publish no node
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
@@ -138,25 +138,25 @@ Feature: Publishing and discard individual nodes (basics)
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
     Then I expect the Node Aggregate "sir-david-nodenborough" to have the properties:
-      | Key  | Value      |
-      | text | Initial t1 |
+      | Key  | Value        |
+      | text | "Initial t1" |
     And I expect the Node Aggregate "nody-mc-nodeface" to have the properties:
-      | Key  | Value      |
-      | text | Initial t2 |
+      | Key  | Value        |
+      | text | "Initial t2" |
     And I expect the Node Aggregate "sir-nodeward-nodington-iii" to have the properties:
-      | Key   | Value         |
-      | image | Initial image |
+      | Key   | Value           |
+      | image | "Initial image" |
 
     When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
     Then I expect the Node Aggregate "sir-david-nodenborough" to have the properties:
-      | Key  | Value       |
-      | text | Modified t1 |
+      | Key  | Value         |
+      | text | "Modified t1" |
     And I expect the Node Aggregate "nody-mc-nodeface" to have the properties:
-      | Key  | Value       |
-      | text | Modified t2 |
+      | Key  | Value         |
+      | text | "Modified t2" |
     And I expect the Node Aggregate "sir-nodeward-nodington-iii" to have the properties:
-      | Key   | Value          |
-      | image | Modified image |
+      | Key   | Value            |
+      | image | "Modified image" |
 
   Scenario: It is possible to publish all nodes
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
@@ -167,25 +167,25 @@ Feature: Publishing and discard individual nodes (basics)
 
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
     Then I expect the Node Aggregate "sir-david-nodenborough" to have the properties:
-      | Key  | Value       |
-      | text | Modified t1 |
+      | Key  | Value         |
+      | text | "Modified t1" |
     And I expect the Node Aggregate "nody-mc-nodeface" to have the properties:
-      | Key  | Value       |
-      | text | Modified t2 |
+      | Key  | Value         |
+      | text | "Modified t2" |
     And I expect the Node Aggregate "sir-nodeward-nodington-iii" to have the properties:
-      | Key   | Value          |
-      | image | Modified image |
+      | Key   | Value            |
+      | image | "Modified image" |
 
     When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
     Then I expect the Node Aggregate "sir-david-nodenborough" to have the properties:
-      | Key  | Value       |
-      | text | Modified t1 |
+      | Key  | Value         |
+      | text | "Modified t1" |
     And I expect the Node Aggregate "nody-mc-nodeface" to have the properties:
-      | Key  | Value       |
-      | text | Modified t2 |
+      | Key  | Value         |
+      | text | "Modified t2" |
     And I expect the Node Aggregate "sir-nodeward-nodington-iii" to have the properties:
-      | Key   | Value          |
-      | image | Modified image |
+      | Key   | Value            |
+      | image | "Modified image" |
 
 
   ################
@@ -201,14 +201,14 @@ Feature: Publishing and discard individual nodes (basics)
 
     When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
     Then I expect the Node Aggregate "sir-david-nodenborough" to have the properties:
-      | Key  | Value       |
-      | text | Modified t1 |
+      | Key  | Value         |
+      | text | "Modified t1" |
     And I expect the Node Aggregate "nody-mc-nodeface" to have the properties:
-      | Key  | Value       |
-      | text | Modified t2 |
+      | Key  | Value         |
+      | text | "Modified t2" |
     And I expect the Node Aggregate "sir-nodeward-nodington-iii" to have the properties:
-      | Key   | Value         |
-      | image | Initial image |
+      | Key   | Value           |
+      | image | "Initial image" |
 
   Scenario: It is possible to discard no node
     When the command DiscardIndividualNodesFromWorkspace is executed with payload:
@@ -219,14 +219,14 @@ Feature: Publishing and discard individual nodes (basics)
 
     When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
     Then I expect the Node Aggregate "sir-david-nodenborough" to have the properties:
-      | Key  | Value       |
-      | text | Modified t1 |
+      | Key  | Value         |
+      | text | "Modified t1" |
     And I expect the Node Aggregate "nody-mc-nodeface" to have the properties:
-      | Key  | Value       |
-      | text | Modified t2 |
+      | Key  | Value         |
+      | text | "Modified t2" |
     And I expect the Node Aggregate "sir-nodeward-nodington-iii" to have the properties:
-      | Key   | Value          |
-      | image | Modified image |
+      | Key   | Value            |
+      | image | "Modified image" |
 
   Scenario: It is possible to discard all nodes
     When the command DiscardIndividualNodesFromWorkspace is executed with payload:
@@ -237,14 +237,14 @@ Feature: Publishing and discard individual nodes (basics)
 
     When I am in the active content stream of workspace "user-test" and Dimension Space Point {}
     Then I expect the Node Aggregate "sir-david-nodenborough" to have the properties:
-      | Key  | Value      |
-      | text | Initial t1 |
+      | Key  | Value        |
+      | text | "Initial t1" |
     And I expect the Node Aggregate "nody-mc-nodeface" to have the properties:
-      | Key  | Value      |
-      | text | Initial t2 |
+      | Key  | Value        |
+      | text | "Initial t2" |
     And I expect the Node Aggregate "sir-nodeward-nodington-iii" to have the properties:
-      | Key   | Value         |
-      | image | Initial image |
+      | Key   | Value           |
+      | image | "Initial image" |
 
   Scenario: When discarding a node, the live workspace does not change.
     # discard "sir-nodeward-nodington-iii"
@@ -257,12 +257,12 @@ Feature: Publishing and discard individual nodes (basics)
     # live WS does not change because of a discard
     When I am in the active content stream of workspace "live" and Dimension Space Point {}
     Then I expect the Node Aggregate "sir-david-nodenborough" to have the properties:
-      | Key  | Value      |
-      | text | Initial t1 |
+      | Key  | Value        |
+      | text | "Initial t1" |
     And I expect the Node Aggregate "nody-mc-nodeface" to have the properties:
-      | Key  | Value      |
-      | text | Initial t2 |
+      | Key  | Value        |
+      | text | "Initial t2" |
     And I expect the Node Aggregate "sir-nodeward-nodington-iii" to have the properties:
-      | Key   | Value         |
-      | image | Initial image |
+      | Key   | Value           |
+      | image | "Initial image" |
 
