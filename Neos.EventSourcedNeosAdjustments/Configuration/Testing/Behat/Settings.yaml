@@ -6,7 +6,7 @@ Neos:
         icon: icon-language
         defaultValue: en_US
         resolution:
-          mode: 'uriPathSegment'
+          className: 'Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionDetection\UriPathSegmentContentDimensionValueDetector'
         values:
           en_US:
             label: 'English (US)'

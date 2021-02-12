@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimensionDetection\Exception;
+namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Exception;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -15,8 +15,8 @@ namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\ContentDimen
 use Neos\Neos\Exception;
 
 /**
- * An "invalid dimension value detector" exception
+ * An exception to be thrown if an invalid content dimension value uri processor has been configured
  */
-class InvalidContentDimensionValueDetectorException extends Exception
+class InvalidContentDimensionValueUriProcessorException extends Exception
 {
 }

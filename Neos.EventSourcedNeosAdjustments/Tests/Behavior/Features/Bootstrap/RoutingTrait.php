@@ -22,7 +22,6 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
-use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Http\DetectContentSubgraphMiddleware;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\NodeUriBuilder;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection\DocumentUriPathProjector;
 use Neos\EventSourcing\EventListener\EventListenerInvoker;
@@ -258,7 +257,6 @@ trait RoutingTrait
     {
         $spyMiddleware = new SpyRequestHandler();
         (new RequestUriHostMiddleware())->process($httpRequest, $spyMiddleware);
-        (new DetectContentSubgraphMiddleware())->process($spyMiddleware->getHandledRequest(), $spyMiddleware);
         return $spyMiddleware->getHandledRequest();
     }
 }
