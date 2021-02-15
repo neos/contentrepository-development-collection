@@ -20,7 +20,6 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedNeosAdjustments\Domain\Service\NodeShortcutResolver;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\ContentDimensionProcessor\ContentDimensionProcessorInterface;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Exception\InvalidShortcutException;
-use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Exception\InvalidContentDimensionValueUriProcessorException;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Foo\FooInterface;
 use Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection\DocumentUriPathFinder;
 use Neos\Flow\Annotations as Flow;
@@ -32,8 +31,6 @@ use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Mvc\Routing\DynamicRoutePartInterface;
 use Neos\Flow\Mvc\Routing\ParameterAwareRoutePartInterface;
 use Neos\Neos\Controller\Exception\NodeNotFoundException;
-use Neos\Neos\Domain\Model\Domain;
-use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface;
 use Psr\Http\Message\UriInterface;
 

@@ -8,7 +8,6 @@ use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 
 interface ContentDimensionProcessorInterface
 {
-
     public function resolveDimensionSpacePoint(string &$requestPath, RouteParameters $routeParameters): DimensionSpacePoint;
 
     public function resolveDimensionUriConstraints(UriConstraints $uriConstraints, DimensionSpacePoint $dimensionSpacePoint): UriConstraints;
