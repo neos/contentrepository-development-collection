@@ -31,6 +31,7 @@ final class UriPathSegmentContentDimensionValueDetector implements ContentDimens
         foreach ($contentDimension->getValues() as $contentDimensionValue) {
             $resolutionValue = $contentDimensionValue->getConfigurationValue('resolution.value');
             if ($resolutionValue === $firstRequestPathSegment) {
+                $requestPath = ltrim(substr($requestPath, strlen($resolutionValue)), '\/');
                 return $contentDimensionValue;
             }
         }

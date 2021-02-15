@@ -49,7 +49,7 @@ class DefaultContentDimensionProcessor implements ContentDimensionProcessorInter
                 continue;
             }
             $linkProcessor = $this->resolveContentDimensionValueDetector($contentDimension);
-            $linkProcessor->processUriConstraints($uriConstraints, $contentDimension, $contentDimensionValue);
+            $uriConstraints = $linkProcessor->processUriConstraints($uriConstraints, $contentDimension, $contentDimensionValue);
         }
         return $uriConstraints;
     }
