@@ -17,14 +17,12 @@ use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimension;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValue;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
-use Neos\Utility\Arrays;
 
 /**
  * URI path segment based dimension value detector
  */
 final class UriPathSegmentContentDimensionValueDetector implements ContentDimensionValueDetectorInterface
 {
-
     public function detectValue(ContentDimension $contentDimension, string &$requestPath, RouteParameters $routeParameters): ?ContentDimensionValue
     {
         /** @var string[] $requestPathSegments */

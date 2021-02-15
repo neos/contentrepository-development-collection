@@ -7,6 +7,5 @@ use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 
 interface FooInterface
 {
-
     public function getCurrentSiteNode(RouteParameters $routeParameters): NodeName;
 }

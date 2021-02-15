@@ -72,5 +72,4 @@ final class Foo implements FooInterface
         }
         return $uriConstraints;
     }
-
 }

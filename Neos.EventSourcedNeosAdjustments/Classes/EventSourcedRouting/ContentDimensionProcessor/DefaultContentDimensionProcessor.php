@@ -13,7 +13,6 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 class DefaultContentDimensionProcessor implements ContentDimensionProcessorInterface
 {
-
     private ContentDimensionSourceInterface $dimensionSource;
     private ObjectManagerInterface $objectManager;
 
