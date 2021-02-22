@@ -11,8 +11,8 @@ use Neos\Flow\Annotations as Flow;
 /**
  * @Flow\Proxy(false)
  */
-final class ContentDimensionResolverContext {
-
+final class ContentDimensionResolverContext
+{
     private string $remainingUriPath;
     private RouteParameters $routeParameters;
     private array $dimensionSpacePointCoordinates;
@@ -50,5 +50,4 @@ final class ContentDimensionResolverContext {
     {
         return DimensionSpacePoint::fromArray($this->dimensionSpacePointCoordinates);
     }
-
 }

@@ -9,7 +9,6 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 final class DefaultContentDimensionResolver implements ContentDimensionResolverInterface
 {
-
     private ContentDimensionSourceInterface $dimensionSource;
     private ObjectManagerInterface $objectManager;
 
