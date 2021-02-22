@@ -99,7 +99,7 @@ use PHPUnit\Framework\Assert;
 use Ramsey\Uuid\Uuid;
 
 /**
- * Features contextI have the following content dimensions
+ * Features context
  */
 trait EventSourcedTrait
 {
