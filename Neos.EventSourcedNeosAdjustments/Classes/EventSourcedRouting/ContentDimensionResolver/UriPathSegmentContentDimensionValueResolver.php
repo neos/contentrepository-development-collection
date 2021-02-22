@@ -21,7 +21,6 @@ use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
  */
 final class UriPathSegmentContentDimensionValueResolver implements ContentDimensionResolverInterface
 {
-
     private ContentDimension $contentDimension;
 
     public function __construct(ContentDimension $contentDimension)
@@ -44,7 +43,6 @@ final class UriPathSegmentContentDimensionValueResolver implements ContentDimens
 
     public function resolveDimensionUriConstraints(UriConstraints $uriConstraints, DimensionSpacePoint $dimensionSpacePoint): UriConstraints
     {
-
         $dimensionCoordinate = $dimensionSpacePoint->getCoordinate($this->contentDimension->getIdentifier());
         $contentDimensionValue = $dimensionCoordinate !== null ? $this->contentDimension->getValue($dimensionCoordinate) : $this->contentDimension->getDefaultValue();
         if ($contentDimensionValue === null) {

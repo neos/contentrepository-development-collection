@@ -13,7 +13,6 @@ use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
  */
 interface RoutingSiteResolverInterface
 {
-
     public function getCurrentSiteNode(RouteParameters $routeParameters): NodeName;
 
     public function buildUriConstraintsForSite(RouteParameters $routeParameters, NodeName $targetSiteNodeName): UriConstraints;
