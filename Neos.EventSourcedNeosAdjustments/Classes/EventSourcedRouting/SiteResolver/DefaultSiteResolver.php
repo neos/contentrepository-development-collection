@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Foo;
+namespace Neos\EventSourcedNeosAdjustments\EventSourcedRouting\SiteResolver;
 
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
@@ -10,7 +10,7 @@ use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 
-final class Foo implements FooInterface
+final class DefaultSiteResolver implements RoutingSiteResolverInterface
 {
     private DomainRepository $domainRepository;
     private SiteRepository $siteRepository;
@@ -25,7 +25,6 @@ final class Foo implements FooInterface
         $this->domainRepository = $domainRepository;
         $this->siteRepository = $siteRepository;
     }
-
 
     public function getCurrentSiteNode(RouteParameters $routeParameters): NodeName
     {
@@ -47,14 +46,19 @@ final class Foo implements FooInterface
         return $this->siteNodeNameRuntimeCache[$host];
     }
 
-    public function bar(UriConstraints $uriConstraints, NodeName $siteNodeName): UriConstraints
+    public function buildUriConstraintsForSite(RouteParameters $routeParameters, NodeName $targetSiteNodeName): UriConstraints
     {
+        $uriConstraints = UriConstraints::create();
+        $cS = $this->getCurrentSiteNode($routeParameters);
+        if ((string)$cS === (string)$targetSiteNodeName) {
+            return $uriConstraints;
+        }
         /** @var Site $site */
         foreach ($this->siteRepository->findOnline() as $site) {
-            if ($site->getNodeName() === (string)$siteNodeName) {
+            if ($site->getNodeName() === (string)$targetSiteNodeName) {
                 $domain = $site->getPrimaryDomain();
                 if ($domain === null) {
-                    return $uriConstraints;
+                    return UriConstraints::create();
                 }
                 return $this->applyDomainToUriConstraints($uriConstraints, $domain);
             }
