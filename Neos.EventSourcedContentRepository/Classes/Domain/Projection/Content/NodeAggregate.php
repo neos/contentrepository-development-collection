@@ -171,6 +171,11 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
         return $this->nodeName;
     }
 
+    public function isNamed(): bool
+    {
+        return $this->nodeName instanceof NodeName;
+    }
+
     public function getOccupiedDimensionSpacePoints(): OriginDimensionSpacePointSet
     {
         return $this->occupiedDimensionSpacePoints;
@@ -251,7 +256,6 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
     {
         return $this->disabledDimensionSpacePoints->contains($dimensionSpacePoint);
     }
-
 
     public function getClassification(): NodeAggregateClassification
     {

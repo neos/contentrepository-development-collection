@@ -20,7 +20,6 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceFinder;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress;
@@ -44,7 +43,6 @@ use Neos\Neos\Ui\Domain\Service\StyleAndJavascriptInclusionService;
 
 class BackendController extends ActionController
 {
-
     /**
      * @var string
      */
@@ -78,12 +76,6 @@ class BackendController extends ActionController
      * @var SiteRepository
      */
     protected $siteRepository;
-
-    /**
-     * @Flow\Inject
-     * @var PersistenceManagerInterface
-     */
-    protected $persistenceManager;
 
     /**
      * @Flow\Inject
@@ -153,7 +145,7 @@ class BackendController extends ActionController
     /**
      * Displays the backend interface
      *
-     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress $node The node that will be displayed on the first tab
+     * @param NodeAddress|null $node The node that will be displayed on the first tab
      * @return void
      */
     public function indexAction(NodeAddress $node = null)
@@ -171,15 +163,16 @@ class BackendController extends ActionController
         $workspaceName = $this->userService->getPersonalWorkspaceName();
         $workspace = $this->workspaceFinder->findOneByName(new WorkspaceName($workspaceName));
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($workspace->getCurrentContentStreamIdentifier(), $this->findDefaultDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-        $siteNode = $subgraph->findChildNodeConnectedThroughEdgeName($this->getRootNodeAggregateIdentifier($workspace->getCurrentContentStreamIdentifier()), NodeName::fromString($this->siteRepository->findDefault()->getNodeName()));
-        $siteNode = new TraversableNode($siteNode, $subgraph);
+        $siteNode = $subgraph->findChildNodeConnectedThroughEdgeName(
+            $this->getRootNodeAggregateIdentifier($workspace->getCurrentContentStreamIdentifier()),
+            NodeName::fromString($this->siteRepository->findDefault()->getNodeName())
+        );
 
         if (!$nodeAddress) {
             // TODO: fix resolving node address from session?
             $node = $siteNode;
         } else {
             $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
-            $node = new TraversableNode($node, $subgraph);
         }
 
         $this->view->assign('user', $user);
@@ -200,7 +193,7 @@ class BackendController extends ActionController
     }
 
     /**
-     * @param \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddress $node
+     * @param NodeAddress $node
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      */
     public function redirectToAction(NodeAddress $node)

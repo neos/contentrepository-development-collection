@@ -105,7 +105,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                 if ($variant === null || !$this->isNodeHidden($variant)) {
                     $menuItems[] = [
                         'subgraph' => $subgraph,
-                        'node' => $variant ? new TraversableNode($variant, $subgraph) : null,
+                        'node' => $variant,
                         'state' => $this->calculateItemState($variant),
                         'label' => $this->determineLabel($variant, $metadata),
                         'targetDimensions' => $metadata

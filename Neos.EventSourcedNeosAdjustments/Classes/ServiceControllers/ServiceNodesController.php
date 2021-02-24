@@ -95,7 +95,7 @@ class ServiceNodesController extends ActionController
      * @param string $workspaceName Name of the workspace to search in, "live" by default
      * @param array $dimensions Optional list of dimensions and their values which should be used for querying
      * @param array $nodeTypes A list of node types the list should be filtered by
-     * @param NodeAddress $contextNode a node to use as context for the search
+     * @param NodeAddress|null $contextNode a node to use as context for the search
      * @return string
      */
     public function indexAction($searchTerm = '', array $nodeIdentifiers = [], $workspaceName = 'live', array $dimensions = [], array $nodeTypes = ['Neos.Neos:Document'], NodeAddress $contextNode = null)
@@ -111,15 +111,11 @@ class ServiceNodesController extends ActionController
         $traversableNodes = [];
 
         if ($nodeIdentifiers === []) {
-            $nodes = $subgraph->findDescendants(
+            $traversableNodes = $subgraph->findDescendants(
                 [$nodeAddress->getNodeAggregateIdentifier()],
                 $this->nodeTypeConstraintFactory->parseFilterString(implode(',', $nodeTypes)),
                 SearchTerm::fulltext($searchTerm)
-            );
-
-            foreach ($nodes as $node) {
-                $traversableNodes[] = new TraversableNode($node, $subgraph);
-            }
+            )->toArray();
         } else {
             if (!empty($searchTerm)) {
                 throw new \RuntimeException('Combination of $nodeIdentifiers and $searchTerm not supported');
@@ -128,7 +124,7 @@ class ServiceNodesController extends ActionController
             foreach ($nodeIdentifiers as $nodeAggregateIdentifier) {
                 $node = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
                 if ($node !== null) {
-                    $traversableNodes[] = new TraversableNode($node, $subgraph);
+                    $traversableNodes[] = $node;
                 }
             }
         }

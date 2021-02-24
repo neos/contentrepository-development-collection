@@ -71,7 +71,6 @@ class DisallowedChildNodeAdjustment
                 $parentNode = $subgraph->findParentNode($nodeAggregate->getIdentifier());
                 $grandparentNode = $parentNode !== null ? $subgraph->findParentNode($parentNode->getNodeAggregateIdentifier()) : null;
 
-
                 $allowedByParent = true;
                 $parentNodeType = null;
                 if ($parentNode !== null) {

@@ -13,12 +13,13 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content;
  */
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentSubgraph\SubtreeInterface;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
 
@@ -27,110 +28,73 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\PropertyName;
  */
 interface ContentSubgraphInterface extends \JsonSerializable
 {
-    /**
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param NodeTypeConstraints $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return array|NodeInterface[]
-     */
-    public function findChildNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
+    public function findChildNodes(
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeTypeConstraints $nodeTypeConstraints = null,
+        int $limit = null,
+        int $offset = null
+    ): TraversableNodes;
 
-    /**
-     * @param NodeAggregateIdentifier $nodeAggregateAggregateIdentifier
-     * @param PropertyName|null $name
-     * @return NodeInterface[]
-     */
-    public function findReferencedNodes(NodeAggregateIdentifier $nodeAggregateAggregateIdentifier, PropertyName $name = null): array;
+    public function findReferencedNodes(
+        NodeAggregateIdentifier $nodeAggregateAggregateIdentifier,
+        PropertyName $name = null
+    ): TraversableNodes;
 
-    /**
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param PropertyName $name
-     * @return NodeInterface[]
-     */
-    public function findReferencingNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, PropertyName $name = null): array;
+    public function findReferencingNodes(
+        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        PropertyName $name = null
+    ): TraversableNodes;
 
-    /**
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return NodeInterface|null
-     */
-    public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface;
+    public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?TraversableNodeInterface;
 
-    /**
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @return int
-     */
-    public function countChildNodes(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeTypeConstraints $nodeTypeConstraints = null): int;
+    public function countChildNodes(
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        NodeTypeConstraints $nodeTypeConstraints = null
+    ): int;
 
-    /**
-     * @param NodeAggregateIdentifier $childAggregateIdentifier
-     * @return NodeInterface|null
-     */
-    public function findParentNode(NodeAggregateIdentifier $childAggregateIdentifier): ?NodeInterface;
+    public function findParentNode(NodeAggregateIdentifier $childAggregateIdentifier): ?TraversableNodeInterface;
 
-    /**
-     * @param NodePath $path
-     * @param NodeAggregateIdentifier $startingNodeAggregateIdentifier
-     * @return NodeInterface|null
-     */
-    public function findNodeByPath(NodePath $path, NodeAggregateIdentifier $startingNodeAggregateIdentifier): ?NodeInterface;
+    public function findNodeByPath(
+        NodePath $path,
+        NodeAggregateIdentifier $startingNodeAggregateIdentifier
+    ): ?TraversableNodeInterface;
 
-    /**
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @param NodeName $edgeName
-     * @return NodeInterface|null
-     */
-    public function findChildNodeConnectedThroughEdgeName(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeName $edgeName): ?NodeInterface;
+    public function findChildNodeConnectedThroughEdgeName(
+        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        NodeName $edgeName
+    ): ?TraversableNodeInterface;
 
-    /**
-     * @param NodeAggregateIdentifier $sibling
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return array|NodeInterface[]
-     */
-    public function findSiblings(NodeAggregateIdentifier $sibling, ?NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
+    public function findSiblings(
+        NodeAggregateIdentifier $sibling,
+        ?NodeTypeConstraints $nodeTypeConstraints = null,
+        int $limit = null,
+        int $offset = null
+    ): TraversableNodes;
 
-    /**
-     * @param NodeAggregateIdentifier $sibling
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return array|NodeInterface[]
-     */
-    public function findSucceedingSiblings(NodeAggregateIdentifier $sibling, ?NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
+    public function findSucceedingSiblings(
+        NodeAggregateIdentifier $sibling,
+        ?NodeTypeConstraints $nodeTypeConstraints = null,
+        int $limit = null,
+        int $offset = null
+    ): TraversableNodes;
 
-    /**
-     * @param NodeAggregateIdentifier $sibling
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return array|NodeInterface[]
-     */
-    public function findPrecedingSiblings(NodeAggregateIdentifier $sibling, ?NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array;
+    public function findPrecedingSiblings(
+        NodeAggregateIdentifier $sibling,
+        ?NodeTypeConstraints $nodeTypeConstraints = null,
+        int $limit = null, int $offset = null
+    ): TraversableNodes;
 
-    /**
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return NodePath
-     */
     public function findNodePath(NodeAggregateIdentifier $nodeAggregateIdentifier): NodePath;
 
-    /**
-     * @return ContentStreamIdentifier
-     */
     public function getContentStreamIdentifier(): ContentStreamIdentifier;
 
-    /**
-     * @return DimensionSpacePoint
-     */
     public function getDimensionSpacePoint(): DimensionSpacePoint;
 
     /**
      * @param NodeAggregateIdentifier[] $entryNodeAggregateIdentifiers
      * @param int $maximumLevels
      * @param NodeTypeConstraints $nodeTypeConstraints
-     * @return mixed
+     * @return SubtreeInterface
      */
     public function findSubtrees(array $entryNodeAggregateIdentifiers, int $maximumLevels, NodeTypeConstraints $nodeTypeConstraints): SubtreeInterface;
 
@@ -142,9 +106,9 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @param array $entryNodeAggregateIdentifiers
      * @param NodeTypeConstraints $nodeTypeConstraints
      * @param SearchTerm|null $searchTerm
-     * @return array|NodeInterface[]
+     * @return TraversableNodes
      */
-    public function findDescendants(array $entryNodeAggregateIdentifiers, NodeTypeConstraints $nodeTypeConstraints, ?SearchTerm $searchTerm): array;
+    public function findDescendants(array $entryNodeAggregateIdentifiers, NodeTypeConstraints $nodeTypeConstraints, ?SearchTerm $searchTerm): TraversableNodes;
 
     public function countNodes(): int;
 

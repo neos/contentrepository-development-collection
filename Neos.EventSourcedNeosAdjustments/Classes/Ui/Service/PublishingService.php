@@ -36,30 +36,35 @@ use Neos\ContentRepository\Domain\Model\Workspace;
  */
 class PublishingService
 {
-
     /**
      * @Flow\Inject
      * @var ContentDimensionPresetSourceInterface
      */
-    protected $contentDimensionPresetSource;
+    protected ContentDimensionPresetSourceInterface $contentDimensionPresetSource;
 
     /**
      * @Flow\Inject
      * @var ContentGraphInterface
      */
-    protected $contentGraph;
+    protected ContentGraphInterface $contentGraph;
 
     /**
      * @Flow\Inject
      * @var WorkspaceFinder
      */
-    protected $workspaceFinder;
+    protected WorkspaceFinder $workspaceFinder;
 
     /**
      * @Flow\Inject
      * @var ChangeFinder
      */
-    protected $changeFinder;
+    protected ChangeFinder $changeFinder;
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceCommandHandler
+     */
+    protected WorkspaceCommandHandler $workspaceCommandHandler;
 
     /**
      * Returns a list of nodes contained in the given workspace which are not yet published
@@ -77,7 +82,6 @@ class PublishingService
         $changes = $this->changeFinder->findByContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
         $unpublishedNodes = [];
         foreach ($changes as $change) {
-            /* @var $change Change */
             $subgraph = $this->contentGraph->getSubgraphByIdentifier(
                 $workspace->getCurrentContentStreamIdentifier(),
                 $change->originDimensionSpacePoint,
@@ -85,8 +89,8 @@ class PublishingService
             );
             $node = $subgraph->findNodeByNodeAggregateIdentifier($change->nodeAggregateIdentifier);
 
-            if ($node instanceof NodeInterface) {
-                $unpublishedNodes[] = new TraversableNode($node, $subgraph);
+            if ($node instanceof TraversableNodeInterface) {
+                $unpublishedNodes[] = new $node;
             }
         }
         return $unpublishedNodes;
@@ -104,13 +108,6 @@ class PublishingService
         $workspace = $this->workspaceFinder->findOneByName(new WorkspaceName($workspace->getName()));
         return $this->changeFinder->countByContentStreamIdentifier($workspace->getCurrentContentStreamIdentifier());
     }
-
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceCommandHandler
-     */
-    protected $workspaceCommandHandler;
 
     /**
      * @param WorkspaceName $workspaceName

@@ -15,6 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryC
 
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 
 /**
  * NodeAggregateIdentifier -> Node cache
@@ -49,7 +50,7 @@ final class NodeByNodeAggregateIdentifierCache
         return isset($this->nodes[$key]) || isset($this->nonExistingNodeAggregateIdentifiers[$key]);
     }
 
-    public function add(NodeAggregateIdentifier $nodeAggregateIdentifier, NodeInterface $node): void
+    public function add(NodeAggregateIdentifier $nodeAggregateIdentifier, TraversableNodeInterface $node): void
     {
         if ($this->isEnabled === false) {
             return;
@@ -69,7 +70,7 @@ final class NodeByNodeAggregateIdentifierCache
         $this->nonExistingNodeAggregateIdentifiers[$key] = true;
     }
 
-    public function get(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface
+    public function get(NodeAggregateIdentifier $nodeAggregateIdentifier): ?TraversableNodeInterface
     {
         if ($this->isEnabled === false) {
             return null;

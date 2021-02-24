@@ -17,18 +17,24 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeImplementationClassName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Property\PropertyConversionService;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content as ContentProjection;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\Node;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeAggregate;
+use Neos\EventSourcedContentRepository\Domain\Projection\Content\PropertyCollection;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -66,25 +72,58 @@ final class NodeFactory
     protected $propertyConversionService;
 
     /**
+     * @param array $nodeRows
+     * @param ContentSubgraphInterface $contentSubgraph
+     * @return TraversableNodes
+     * @throws NodeConfigurationException
+     * @throws NodeTypeNotFoundException
+     */
+    public function mapNodeRowsToTraversableNodes(array $nodeRows, ContentSubgraphInterface $contentSubgraph): TraversableNodes
+    {
+        $result = [];
+        foreach ($nodeRows as $nodeRecord) {
+            $result[] = $this->mapNodeRowToTraversableNode($nodeRecord, $contentSubgraph);
+        }
+
+        return TraversableNodes::fromArray($result);
+    }
+
+    /**
+     * @param array $nodeRow
+     * @param ContentSubgraphInterface $contentSubgraph
+     * @return TraversableNodeInterface
+     * @throws NodeConfigurationException
+     * @throws NodeTypeNotFoundException
+     */
+    public function mapNodeRowToTraversableNode(array $nodeRow, ContentSubgraphInterface $contentSubgraph): TraversableNodeInterface
+    {
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']);
+        $className = NodeImplementationClassName::forNodeType($nodeType);
+        $node = $this->mapNodeRowToNode($nodeRow);
+
+        return new $className(
+            $node,
+            $contentSubgraph
+        );
+    }
+
+    /**
      * @param array $nodeRow Node Row from projection (neos_contentgraph_node table)
      * @return NodeInterface
-     * @throws NodeConfigurationException
      * @throws NodeTypeNotFoundException
      */
     public function mapNodeRowToNode(array $nodeRow): NodeInterface
     {
         $nodeType = $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']);
-        $className = $this->getNodeInterfaceImplementationClassName($nodeType);
 
         $contentStreamIdentifier = ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']);
         $originDimensionSpacePoint = OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']);
 
         $properties = SerializedPropertyValues::fromArray(json_decode($nodeRow['properties'], true));
 
-        $propertyCollection = new ContentProjection\PropertyCollection($properties, $this->propertyConversionService);
+        $propertyCollection = new PropertyCollection($properties, $this->propertyConversionService);
 
-        /* @var NodeInterface $node */
-        $node = new $className(
+        return new Node(
             $contentStreamIdentifier,
             NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']),
             $originDimensionSpacePoint,
@@ -94,17 +133,14 @@ final class NodeFactory
             $propertyCollection,
             NodeAggregateClassification::fromString($nodeRow['classification'])
         );
-
-        return $node;
     }
 
     /**
      * @param array $nodeRows
-     * @return ContentProjection\NodeAggregate|null
-     * @throws NodeConfigurationException
+     * @return NodeAggregate|null
      * @throws NodeTypeNotFoundException
      */
-    public function mapNodeRowsToNodeAggregate(array $nodeRows): ?ContentProjection\NodeAggregate
+    public function mapNodeRowsToNodeAggregate(array $nodeRows): ?NodeAggregate
     {
         if (empty($nodeRows)) {
             return null;
@@ -151,7 +187,7 @@ final class NodeFactory
             $coverage = new DimensionSpacePointSet($coverage);
         }
 
-        return new ContentProjection\NodeAggregate(
+        return new NodeAggregate(
             current($nodesByOccupiedDimensionSpacePoints)->getContentStreamIdentifier(), // this line is safe because a nodeAggregate only exists if it at least contains one node.
             NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
             NodeAggregateClassification::fromString($rawNodeAggregateClassification),
@@ -169,8 +205,7 @@ final class NodeFactory
 
     /**
      * @param array $nodeRows
-     * @return array|ContentProjection\NodeAggregate[]
-     * @throws NodeConfigurationException
+     * @return array|NodeAggregate[]
      * @throws NodeTypeNotFoundException
      */
     public function mapNodeRowsToNodeAggregates(array $nodeRows): array
@@ -222,7 +257,7 @@ final class NodeFactory
         }
 
         foreach ($nodesByOccupiedDimensionSpacePointsByNodeAggregate as $rawNodeAggregateIdentifier => $nodes) {
-            $nodeAggregates[$rawNodeAggregateIdentifier] = new ContentProjection\NodeAggregate(
+            $nodeAggregates[$rawNodeAggregateIdentifier] = new NodeAggregate(
                 current($nodes)->getContentStreamIdentifier(), // this line is safe because a nodeAggregate only exists if it at least contains one node.
                 NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
                 $classificationByNodeAggregate[$rawNodeAggregateIdentifier],
@@ -239,28 +274,5 @@ final class NodeFactory
         }
 
         return $nodeAggregates;
-    }
-
-    /**
-     * @param NodeType $nodeType
-     * @return string
-     * @throws NodeConfigurationException
-     */
-    protected function getNodeInterfaceImplementationClassName(NodeType $nodeType): string
-    {
-        $customClassName = $nodeType->getConfiguration('class');
-        if (!empty($customClassName)) {
-            if (!class_exists($customClassName)) {
-                throw new NodeConfigurationException('The configured implementation class name "' . $customClassName . '" for NodeType "' . $nodeType . '" does not exist.', 1505805774);
-            } elseif (!$this->reflectionService->isClassImplementationOf($customClassName, NodeInterface::class)) {
-                if ($this->reflectionService->isClassImplementationOf($customClassName, \Neos\ContentRepository\Domain\Model\NodeInterface::class)) {
-                    throw new NodeConfigurationException('The configured implementation class name "' . $customClassName . '" for NodeType "' . $nodeType. '" inherits from the OLD (pre-event-sourced) NodeInterface; which is not supported anymore. Your custom Node class now needs to implement ' . NodeInterface::class . '.', 1520069750);
-                }
-                throw new NodeConfigurationException('The configured implementation class name "' . $customClassName . '" for NodeType "' . $nodeType. '" does not inherit from ' . NodeInterface::class . '.', 1406884014);
-            }
-            return $customClassName;
-        } else {
-            return $this->objectManager->getClassNameByObjectName(NodeInterface::class);
-        }
     }
 }

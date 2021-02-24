@@ -45,20 +45,21 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
 
     public function findParentNode(): TraversableNodeInterface
     {
-        $node = $this->subgraph->findParentNode($this->node->getNodeAggregateIdentifier());
+        $node = $this->subgraph->findParentNode($this->getNodeAggregateIdentifier());
         if ($node === null) {
             throw new NodeException('This node has no parent', 1542982973);
         }
-        return new TraversableNode($node, $this->subgraph);
+        return $node;
     }
 
     public function findNamedChildNode(NodeName $nodeName): TraversableNodeInterface
     {
-        $node = $this->subgraph->findChildNodeConnectedThroughEdgeName($this->node->getNodeAggregateIdentifier(), $nodeName);
+        $node = $this->subgraph->findChildNodeConnectedThroughEdgeName($this->getNodeAggregateIdentifier(), $nodeName);
         if ($node === null) {
             throw new NodeException(sprintf('Child node with name "%s" does not exist', $nodeName), 1542982917);
         }
-        return new TraversableNode($node, $this->subgraph);
+
+        return $node;
     }
 
     /**
@@ -69,37 +70,27 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
      */
     public function findChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): TraversableNodes
     {
-        $childNodes = $this->subgraph->findChildNodes($this->node->getNodeAggregateIdentifier(), $nodeTypeConstraints, $limit, $offset);
-
-        $traversableChildNodes = [];
-        foreach ($childNodes as $node) {
-            $traversableChildNodes[] = new TraversableNode($node, $this->subgraph);
-        }
-        return TraversableNodes::fromArray($traversableChildNodes);
+        return $this->subgraph->findChildNodes(
+            $this->getNodeAggregateIdentifier(),
+            $nodeTypeConstraints,
+            $limit,
+            $offset
+        );
     }
 
     public function countChildNodes(NodeTypeConstraints $nodeTypeConstraints = null): int
     {
-        return $this->subgraph->countChildNodes($this->node->getNodeAggregateIdentifier(), $nodeTypeConstraints);
+        return $this->subgraph->countChildNodes($this->getNodeAggregateIdentifier(), $nodeTypeConstraints);
     }
 
     public function findNodePath(): NodePath
     {
-        return $this->subgraph->findNodePath($this->node->getNodeAggregateIdentifier());
+        return $this->subgraph->findNodePath($this->getNodeAggregateIdentifier());
     }
 
-    /**
-     * @return TraversableNodes
-     */
     public function findReferencingNodes(): TraversableNodes
     {
-        $nodes = $this->subgraph->findReferencingNodes($this->node->getNodeAggregateIdentifier());
-
-        $traversableNodes = [];
-        foreach ($nodes as $node) {
-            $traversableNodes[] = new TraversableNode($node, $this->subgraph);
-        }
-        return TraversableNodes::fromArray($traversableNodes);
+        return $this->subgraph->findReferencingNodes($this->getNodeAggregateIdentifier());
     }
 
     /**
@@ -110,13 +101,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
      */
     public function findNamedReferencingNodes(PropertyName $edgeName): TraversableNodes
     {
-        $nodes = $this->subgraph->findReferencingNodes($this->node->getNodeAggregateIdentifier(), $edgeName);
-
-        $traversableNodes = [];
-        foreach ($nodes as $node) {
-            $traversableNodes[] = new TraversableNode($node, $this->subgraph);
-        }
-        return TraversableNodes::fromArray($traversableNodes);
+        return $this->subgraph->findReferencingNodes($this->getNodeAggregateIdentifier(), $edgeName);
     }
 
     /**
@@ -126,20 +111,14 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
      * @param NodeTypeConstraints|null $nodeTypeConstraints
      * @param int|null $limit
      * @param int|null $offset
-     * @return array<TraversableNodeInterface>|TraversableNodeInterface[]
+     * @return TraversableNodes
      */
     public function findSiblingNodes(
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array {
-        $nodes = $this->subgraph->findSiblings($this->node->getNodeAggregateIdentifier(), $nodeTypeConstraints, $limit, $offset);
-
-        $traversableNodes = [];
-        foreach ($nodes as $node) {
-            $traversableNodes[] = new TraversableNode($node, $this->subgraph);
-        }
-        return $traversableNodes;
+    ): TraversableNodes {
+        return $this->subgraph->findSiblings($this->getNodeAggregateIdentifier(), $nodeTypeConstraints, $limit, $offset);
     }
 
     /**
@@ -149,20 +128,14 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
      * @param NodeTypeConstraints|null $nodeTypeConstraints
      * @param int|null $limit
      * @param int|null $offset
-     * @return array
+     * @return TraversableNodes
      */
     public function findPrecedingSiblingNodes(
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array {
-        $nodes = $this->subgraph->findPrecedingSiblings($this->node->getNodeAggregateIdentifier());
-
-        $traversableNodes = [];
-        foreach ($nodes as $node) {
-            $traversableNodes[] = new TraversableNode($node, $this->subgraph);
-        }
-        return $traversableNodes;
+    ): TraversableNodes {
+        return $this->subgraph->findPrecedingSiblings($this->getNodeAggregateIdentifier(), $nodeTypeConstraints, $limit, $offset);
     }
 
     /**
@@ -172,20 +145,14 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
      * @param NodeTypeConstraints|null $nodeTypeConstraints
      * @param int|null $limit
      * @param int|null $offset
-     * @return array
+     * @return TraversableNodes
      */
     public function findSucceedingSiblingNodes(
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array {
-        $nodes = $this->subgraph->findSucceedingSiblings($this->node->getNodeAggregateIdentifier());
-
-        $traversableNodes = [];
-        foreach ($nodes as $node) {
-            $traversableNodes[] = new TraversableNode($node, $this->subgraph);
-        }
-        return $traversableNodes;
+    ): TraversableNodes {
+        return $this->subgraph->findSucceedingSiblings($this->getNodeAggregateIdentifier(), $nodeTypeConstraints, $limit, $offset);
     }
 
     /**
@@ -199,13 +166,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
      */
     public function findReferencedNodes(): TraversableNodes
     {
-        $nodes = $this->subgraph->findReferencedNodes($this->node->getNodeAggregateIdentifier());
-
-        $traversableNodes = [];
-        foreach ($nodes as $node) {
-            $traversableNodes[] = new TraversableNode($node, $this->subgraph);
-        }
-        return TraversableNodes::fromArray($traversableNodes);
+        return $this->subgraph->findReferencedNodes($this->getNodeAggregateIdentifier());
     }
 
     /**
@@ -216,13 +177,7 @@ final class TraversableNode implements TraversableNodeInterface, ProtectedContex
      */
     public function findNamedReferencedNodes(PropertyName $edgeName): TraversableNodes
     {
-        $nodes = $this->subgraph->findReferencedNodes($this->node->getNodeAggregateIdentifier(), $edgeName);
-
-        $traversableNodes = [];
-        foreach ($nodes as $node) {
-            $traversableNodes[] = new TraversableNode($node, $this->subgraph);
-        }
-        return TraversableNodes::fromArray($traversableNodes);
+        return $this->subgraph->findReferencedNodes($this->getNodeAggregateIdentifier(), $edgeName);
     }
 
     /**

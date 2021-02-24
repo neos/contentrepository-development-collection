@@ -537,7 +537,6 @@ class WorkspacesController extends AbstractModuleController
             $subgraph = $this->contentGraph->getSubgraphByIdentifier($contentStreamIdentifier, $change->originDimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
 
             $node = $subgraph->findNodeByNodeAggregateIdentifier($change->nodeAggregateIdentifier);
-            $node = new TraversableNode($node, $subgraph);
             $pathParts = explode('/', (string)$node->findNodePath());
             if (count($pathParts) > 2) {
                 $siteNodeName = $pathParts[2];
@@ -595,8 +594,8 @@ class WorkspacesController extends AbstractModuleController
     protected function getOriginalNode(TraversableNodeInterface $modifiedNode, ContentStreamIdentifier $baseContentStreamIdentifier): ?TraversableNodeInterface
     {
         $baseSubgraph = $this->contentGraph->getSubgraphByIdentifier($baseContentStreamIdentifier, $modifiedNode->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-        $node = $baseSubgraph->findNodeByNodeAggregateIdentifier($modifiedNode->getNodeAggregateIdentifier());
-        return $node ? new TraversableNode($node, $baseSubgraph) : null;
+
+        return $baseSubgraph->findNodeByNodeAggregateIdentifier($modifiedNode->getNodeAggregateIdentifier());
     }
 
     /**
@@ -604,10 +603,13 @@ class WorkspacesController extends AbstractModuleController
      * with meta information, in an array.
      *
      * @param TraversableNodeInterface $changedNode
+     * @param ContentStreamIdentifier $contentStreamIdentifierOfOriginalNode
      * @return array
      */
-    protected function renderContentChanges(TraversableNodeInterface $changedNode, ContentStreamIdentifier $contentStreamIdentifierOfOriginalNode)
-    {
+    protected function renderContentChanges(
+        TraversableNodeInterface $changedNode,
+        ContentStreamIdentifier $contentStreamIdentifierOfOriginalNode
+    ) {
         $currentWorkspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifierOfOriginalNode);
         $originalNode = null;
         if ($currentWorkspace !== null) {
@@ -619,7 +621,7 @@ class WorkspacesController extends AbstractModuleController
 
         $contentChanges = [];
 
-        $changeNodePropertiesDefaults = $changedNode->getNodeType()->getDefaultValuesForProperties($changedNode);
+        $changeNodePropertiesDefaults = $changedNode->getNodeType()->getDefaultValuesForProperties();
 
         $renderer = new HtmlArrayRenderer();
         foreach ($changedNode->getProperties() as $propertyName => $changedPropertyValue) {

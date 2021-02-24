@@ -16,6 +16,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryC
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
 
 /**
  * This cache is only filled for a $parentNodeIdentifier if we have retrieved *all* childNodes, without any restriction.
@@ -34,7 +35,7 @@ final class AllChildNodesByNodeIdentifierCache
         $this->isEnabled = $isEnabled;
     }
 
-    public function add(NodeAggregateIdentifier $parentNodeAggregateIdentifier, ?NodeTypeConstraints $nodeTypeConstraints, array $allChildNodes): void
+    public function add(NodeAggregateIdentifier $parentNodeAggregateIdentifier, ?NodeTypeConstraints $nodeTypeConstraints, TraversableNodes $allChildNodes): void
     {
         if ($this->isEnabled === false) {
             return;
@@ -56,10 +57,15 @@ final class AllChildNodesByNodeIdentifierCache
         return isset($this->childNodes[$key][$nodeTypeConstraintsSerialized]) || isset($this->childNodes[$key]['*']);
     }
 
-    public function findChildNodes(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array
-    {
+    public function findChildNodes(
+        NodeAggregateIdentifier
+        $parentNodeAggregateIdentifier,
+        NodeTypeConstraints $nodeTypeConstraints = null,
+        int $limit = null,
+        int $offset = null
+    ): TraversableNodes {
         if ($this->isEnabled === false) {
-            return [];
+            TraversableNodes::fromArray([]);
         }
 
         $key = (string)$parentNodeAggregateIdentifier;
@@ -83,6 +89,7 @@ final class AllChildNodesByNodeIdentifierCache
                 $result = array_slice($result, $offset ?? 0, $limit);
             }
         }
-        return $result;
+
+        return TraversableNodes::fromArray($result);
     }
 }

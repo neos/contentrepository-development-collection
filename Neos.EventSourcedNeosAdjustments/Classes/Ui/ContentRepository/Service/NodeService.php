@@ -15,9 +15,9 @@ namespace Neos\EventSourcedNeosAdjustments\Ui\ContentRepository\Service;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Error\Messages\Error;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
-use Neos\EventSourcedContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -27,15 +27,15 @@ class NodeService
 {
     /**
      * @Flow\Inject
-     * @var \Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory
+     * @var NodeAddressFactory
      */
-    protected $nodeAddressFactory;
+    protected NodeAddressFactory $nodeAddressFactory;
 
     /**
      * @Flow\Inject
      * @var ContentGraphInterface
      */
-    protected $contentGraph;
+    protected ContentGraphInterface $contentGraph;
 
     /**
      * Helper method to retrieve the closest document for a node
@@ -69,14 +69,14 @@ class NodeService
      * Converts a given context path to a node object
      *
      * @param string $contextPath
-     * @return TraversableNode|Error
+     * @return TraversableNodeInterface|Error
      */
     public function getNodeFromContextPath($contextPath)
     {
         $nodeAddress = $this->nodeAddressFactory->createFromUriString($contextPath);
         $subgraph = $this->contentGraph
             ->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
-        $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
-        return new TraversableNode($node, $subgraph);
+
+        return $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
     }
 }

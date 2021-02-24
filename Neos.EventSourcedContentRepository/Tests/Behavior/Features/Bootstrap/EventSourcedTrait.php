@@ -20,6 +20,7 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeName;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
@@ -1404,7 +1405,7 @@ trait EventSourcedTrait
         $this->iExpectNodeAggregateIdentifierToLeadToNode($serializedNodeAggregateIdentifier, $serializedNodeIdentifier);
 
         $nodeByPath = $subgraph->findNodeByPath(NodePath::fromString($serializedNodePath), $this->getRootNodeAggregateIdentifier());
-        Assert::assertInstanceOf(NodeInterface::class, $nodeByPath, 'No node could be found by path "' . $serializedNodePath . '"" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
+        Assert::assertInstanceOf(TraversableNodeInterface::class, $nodeByPath, 'No node could be found by path "' . $serializedNodePath . '"" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamIdentifier . '"');
         $actualDiscriminator = NodeDiscriminator::fromNode($nodeByPath);
         Assert::assertTrue($expectedDiscriminator->equals($actualDiscriminator), 'Node discriminators do not match. Expected was ' . json_encode($expectedDiscriminator) . ', given was ' . json_encode($actualDiscriminator));
     }
@@ -1434,7 +1435,7 @@ trait EventSourcedTrait
         $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
 
         $parent = $subgraph->findParentNode($this->currentNode->getNodeAggregateIdentifier());
-        Assert::assertInstanceOf(NodeInterface::class, $parent, 'Parent not found.');
+        Assert::assertInstanceOf(TraversableNodeInterface::class, $parent, 'Parent not found.');
         $actualParentDiscriminator = NodeDiscriminator::fromNode($parent);
         Assert::assertTrue($expectedParentDiscriminator->equals($actualParentDiscriminator), 'Parent discriminator does not match. Expected was ' . json_encode($expectedParentDiscriminator) . ', given was ' . json_encode($actualParentDiscriminator));
 
@@ -1459,7 +1460,7 @@ trait EventSourcedTrait
         $actualSiblings = $subgraph->findPrecedingSiblings($this->currentNode->getNodeAggregateIdentifier());
         $actualSiblingNodeAggregateIdentifiers = array_map(function (NodeInterface $sibling) {
             return $sibling->getNodeAggregateIdentifier();
-        }, $actualSiblings);
+        }, $actualSiblings->toArray());
 
         Assert::assertEquals(
             $expectedSiblingNodeAggregateIdentifiers,
@@ -1483,7 +1484,7 @@ trait EventSourcedTrait
         $actualSiblings = $subgraph->findSucceedingSiblings($this->currentNode->getNodeAggregateIdentifier());
         $actualSiblingNodeAggregateIdentifiers = array_map(function (NodeInterface $sibling) {
             return $sibling->getNodeAggregateIdentifier();
-        }, $actualSiblings);
+        }, $actualSiblings->toArray());
 
         Assert::assertEquals(
             $expectedSiblingNodeAggregateIdentifiers,
@@ -1658,13 +1659,13 @@ trait EventSourcedTrait
             $destinationNodes = $subgraph->findReferencedNodes(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier), PropertyName::fromString($propertyName));
             $destinationNodeAggregateIdentifiers = array_map(
                 function ($item) {
-                    if ($item instanceof NodeInterface) {
+                    if ($item instanceof TraversableNodeInterface) {
                         return (string)$item->getNodeAggregateIdentifier();
                     } else {
                         return $item;
                     }
                 },
-                $destinationNodes
+                $destinationNodes->toArray()
             );
             Assert::assertEquals($expectedDestinationNodeAggregateIdentifiers, $destinationNodeAggregateIdentifiers, 'Node references ' . $propertyName . ' does not match. Expected: ' . json_encode($expectedDestinationNodeAggregateIdentifiers) . '; Actual: ' . json_encode($destinationNodeAggregateIdentifiers));
         }
@@ -1687,13 +1688,13 @@ trait EventSourcedTrait
             $destinationNodes = $subgraph->findReferencingNodes(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier), PropertyName::fromString($propertyName));
             $destinationNodeAggregateIdentifiers = array_map(
                 function ($item) {
-                    if ($item instanceof NodeInterface) {
+                    if ($item instanceof TraversableNodeInterface) {
                         return (string)$item->getNodeAggregateIdentifier();
                     } else {
                         return $item;
                     }
                 },
-                $destinationNodes
+                $destinationNodes->toArray()
             );
 
             // since the order on the target side is not defined we sort

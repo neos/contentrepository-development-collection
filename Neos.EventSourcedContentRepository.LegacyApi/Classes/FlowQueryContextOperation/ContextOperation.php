@@ -101,7 +101,7 @@ class ContextOperation extends AbstractOperation
 
             $nodeInModifiedSubgraph = $subgraph->findNodeByNodeAggregateIdentifier($contextNode->getNodeAggregateIdentifier());
             if ($nodeInModifiedSubgraph !== null) {
-                $output[$nodeInModifiedSubgraph->getNodeAggregateIdentifier()->jsonSerialize()] = new TraversableNode($nodeInModifiedSubgraph, $subgraph);
+                $output[$nodeInModifiedSubgraph->getNodeAggregateIdentifier()->jsonSerialize()] = $nodeInModifiedSubgraph;
             }
         }
 

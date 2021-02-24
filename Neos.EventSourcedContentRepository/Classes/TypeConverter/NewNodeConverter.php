@@ -15,11 +15,9 @@ namespace Neos\EventSourcedContentRepository\TypeConverter;
 use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConstraints;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentGraphInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAddress\NodeAddressFactory;
-use Neos\Flow\Security\Context;
 
 /**
  * !!! Only needed for uncached Fusion segments; as in Fusion ContentCache, the PropertyMapper is used to serialize
@@ -59,14 +57,20 @@ class NewNodeConverter extends AbstractTypeConverter
      */
     protected $nodeAddressFactory;
 
-    /**
-     *
-     */
-    public function convertFrom($source, $targetType = null, array $subProperties = [], PropertyMappingConfigurationInterface $configuration = null)
-    {
+    public function convertFrom(
+        $source,
+        $targetType = null,
+        array $subProperties = [],
+        PropertyMappingConfigurationInterface $configuration = null
+    ) {
         $nodeAddress = $this->nodeAddressFactory->createFromUriString($source);
 
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($nodeAddress->getContentStreamIdentifier(), $nodeAddress->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
+        $subgraph = $this->contentGraph->getSubgraphByIdentifier(
+            $nodeAddress->getContentStreamIdentifier(),
+            $nodeAddress->getDimensionSpacePoint(),
+            VisibilityConstraints::withoutRestrictions()
+        );
+
         return $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->getNodeAggregateIdentifier());
     }
 }

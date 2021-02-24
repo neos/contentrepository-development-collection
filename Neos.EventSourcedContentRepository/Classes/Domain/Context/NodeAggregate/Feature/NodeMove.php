@@ -17,6 +17,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpac
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\Exception\ContentStreamDoesNotExistYet;
@@ -288,7 +289,7 @@ trait NodeMove
                 if ($precedingSibling) {
                     $alternateSucceedingSiblings = $contentSubgraph->findSucceedingSiblings($precedingSiblingIdentifier, null, 1);
                     if (count($alternateSucceedingSiblings) > 0) {
-                        $succeedingSibling = reset($alternateSucceedingSiblings);
+                        $succeedingSibling = $alternateSucceedingSiblings->getFirst();
                     }
                 } else {
                     $succeedingSibling = $this->resolveSucceedingSiblingFromOriginSiblings($nodeAggregate->getIdentifier(), $parentIdentifier, $precedingSiblingIdentifier, $succeedingSiblingIdentifier, $contentSubgraph, $originContentSubgraph);
@@ -309,8 +310,11 @@ trait NodeMove
         return $succeedingSiblings;
     }
 
-    private function findSibling(ContentSubgraphInterface $contentSubgraph, ?NodeAggregateIdentifier $parentIdentifier, NodeAggregateIdentifier $siblingIdentifier): ?NodeInterface
-    {
+    private function findSibling(
+        ContentSubgraphInterface $contentSubgraph,
+        ?NodeAggregateIdentifier $parentIdentifier,
+        NodeAggregateIdentifier $siblingIdentifier
+    ): ?TraversableNodeInterface {
         $siblingCandidate = $contentSubgraph->findNodeByNodeAggregateIdentifier($siblingIdentifier);
         if ($parentIdentifier && $siblingCandidate) {
             // If a parent node aggregate is explicitly given, all siblings must have this parent
@@ -334,8 +338,12 @@ trait NodeMove
         ContentSubgraphInterface $originContentSubgraph
     ): ?NodeInterface {
         $succeedingSibling = null;
-        $precedingSiblingCandidates = $precedingSiblingIdentifier ? $originContentSubgraph->findPrecedingSiblings($precedingSiblingIdentifier): [];
-        $succeedingSiblingCandidates = $succeedingSiblingIdentifier ? $originContentSubgraph->findSucceedingSiblings($succeedingSiblingIdentifier) : [];
+        $precedingSiblingCandidates = $precedingSiblingIdentifier
+            ? $originContentSubgraph->findPrecedingSiblings($precedingSiblingIdentifier)->toArray()
+            : [];
+        $succeedingSiblingCandidates = $succeedingSiblingIdentifier
+            ? $originContentSubgraph->findSucceedingSiblings($succeedingSiblingIdentifier)->toArray()
+            : [];
         $maximumIndex = max(count($succeedingSiblingCandidates), count($precedingSiblingCandidates));
         for ($i = 0; $i < $maximumIndex; $i++) {
             // try successors of same distance first
@@ -356,7 +364,7 @@ trait NodeMove
                 if ($precedingSibling) {
                     $alternateSucceedingSiblings = $currentContentSubgraph->findSucceedingSiblings($precedingSiblingIdentifier, null, 1);
                     if (count($alternateSucceedingSiblings) > 0) {
-                        $succeedingSibling = reset($alternateSucceedingSiblings);
+                        $succeedingSibling = $alternateSucceedingSiblings->getFirst();
                         break;
                     }
                 }

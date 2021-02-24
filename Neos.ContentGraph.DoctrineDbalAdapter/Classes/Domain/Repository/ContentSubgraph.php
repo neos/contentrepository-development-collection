@@ -13,10 +13,15 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
  * source code.
  */
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DBALException;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\ContentSubgraph\NodePath;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
+use Neos\ContentRepository\Exception\NodeConfigurationException;
+use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\ContentSubgraphInterface;
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryCache;
 use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
@@ -71,28 +76,19 @@ final class ContentSubgraph implements ContentSubgraphInterface
      */
     protected $nodeFactory;
 
-    /**
-     * @var InMemoryCache
-     */
-    protected $inMemoryCache;
+    protected InMemoryCache $inMemoryCache;
 
-    /**
-     * @var ContentStreamIdentifier
-     */
-    protected $contentStreamIdentifier;
+    protected ContentStreamIdentifier $contentStreamIdentifier;
 
-    /**
-     * @var DimensionSpacePoint
-     */
-    protected $dimensionSpacePoint;
+    protected DimensionSpacePoint $dimensionSpacePoint;
 
-    /**
-     * @var ContentRepository\Context\Parameters\VisibilityConstraints
-     */
-    protected $visibilityConstraints;
+    protected ContentRepository\Context\Parameters\VisibilityConstraints $visibilityConstraints;
 
-    public function __construct(ContentStreamIdentifier $contentStreamIdentifier, DimensionSpacePoint $dimensionSpacePoint, ContentRepository\Context\Parameters\VisibilityConstraints $visibilityConstraints)
-    {
+    public function __construct(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint,
+        ContentRepository\Context\Parameters\VisibilityConstraints $visibilityConstraints
+    ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->visibilityConstraints = $visibilityConstraints;
@@ -101,7 +97,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     /**
      * @param SqlQueryBuilder $query
-     * @param NodeTypeConstraints $nodeTypeConstraints
+     * @param NodeTypeConstraints|null $nodeTypeConstraints
      * @param string|null $markerToReplaceInQuery
      * @param string $tableReference
      * @param string $concatenation
@@ -157,7 +153,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
                 ->parameter('term', $likeParameter);
         } else {
             $query->addToQuery('', $markerToReplaceInQuery);
-        };
+        }
     }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
@@ -175,7 +171,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
      * @param NodeTypeConstraints|null $nodeTypeConstraints
      * @param int|null $limit
      * @param int|null $offset
-     * @return array|NodeInterface[]
+     * @return TraversableNodes
      * @throws \Exception
      */
     public function findChildNodes(
@@ -183,7 +179,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array {
+    ): TraversableNodes {
         if ($limit !== null || $offset !== null) {
             throw new \RuntimeException("TODO: Limit/Offset not yet supported in findChildNodes");
         }
@@ -212,10 +208,9 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
         self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'c');
         $query->addToQuery('ORDER BY h.position ASC');
 
-        $result = [];
-        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeData) {
-            $node = $this->nodeFactory->mapNodeRowToNode($nodeData);
-            $result[] = $node;
+        $queryResult = $query->execute($this->getDatabaseConnection())->fetchAll();
+        $result = $this->nodeFactory->mapNodeRowsToTraversableNodes($queryResult, $this);
+        foreach ($result as $node) {
             $namedChildNodeCache->add($nodeAggregateIdentifier, $node->getNodeName(), $node);
             $parentNodeIdentifierCache->add($node->getNodeAggregateIdentifier(), $nodeAggregateIdentifier);
             $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache()->add($node->getNodeAggregateIdentifier(), $node);
@@ -228,7 +223,14 @@ SELECT c.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node p
         return $result;
     }
 
-    public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface
+    /**
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @return TraversableNodeInterface|null
+     * @throws DBALException
+     * @throws NodeConfigurationException
+     * @throws NodeTypeNotFoundException
+     */
+    public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?TraversableNodeInterface
     {
         $cache = $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache();
 
@@ -257,7 +259,7 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
                 return null;
             }
 
-            $node = $this->nodeFactory->mapNodeRowToNode($nodeRow);
+            $node = $this->nodeFactory->mapNodeRowToTraversableNode($nodeRow, $this);
             $cache->add($nodeAggregateIdentifier, $node);
 
             return $node;
@@ -286,6 +288,12 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
         return $query;
     }
 
+    /**
+     * @param NodeAggregateIdentifier $parentNodeNodeAggregateIdentifier
+     * @param NodeTypeConstraints|null $nodeTypeConstraints
+     * @return int
+     * @throws DBALException
+     */
     public function countChildNodes(
         NodeAggregateIdentifier $parentNodeNodeAggregateIdentifier,
         NodeTypeConstraints $nodeTypeConstraints = null
@@ -313,11 +321,13 @@ SELECT n.*, h.name, h.contentstreamidentifier FROM neos_contentgraph_node n
 
     /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param PropertyName $name
-     * @return NodeInterface[]
-     * @throws \Doctrine\DBAL\DBALException
+     * @param PropertyName|null $name
+     * @return TraversableNodes
+     * @throws DBALException
+     * @throws NodeConfigurationException
+     * @throws NodeTypeNotFoundException
      */
-    public function findReferencedNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, PropertyName $name = null): array
+    public function findReferencedNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, PropertyName $name = null): TraversableNodes
     {
         $query = new SqlQueryBuilder();
         $query->addToQuery(
@@ -355,21 +365,20 @@ SELECT d.*, dh.contentstreamidentifier, dh.name FROM neos_contentgraph_hierarchy
             );
         }
 
-        $result = [];
-        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeData) {
-            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeData);
-        }
+        $result = $query->execute($this->getDatabaseConnection())->fetchAll();
 
-        return $result;
+        return $this->nodeFactory->mapNodeRowsToTraversableNodes($result, $this);
     }
 
     /**
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param PropertyName $name
-     * @return NodeInterface[]
-     * @throws \Doctrine\DBAL\DBALException
+     * @param PropertyName|null $name
+     * @return TraversableNodes
+     * @throws DBALException
+     * @throws NodeConfigurationException
+     * @throws NodeTypeNotFoundException
      */
-    public function findReferencingNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, PropertyName $name = null) :array
+    public function findReferencingNodes(NodeAggregateIdentifier $nodeAggregateIdentifier, PropertyName $name = null): TraversableNodes
     {
         $query = new SqlQueryBuilder();
         $query->addToQuery(
@@ -398,23 +407,18 @@ SELECT s.*, sh.contentstreamidentifier, sh.name FROM neos_contentgraph_hierarchy
 
         self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 's', 'sh');
 
-        $result = [];
-        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeData) {
-            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeData);
-        }
+        $result = $query->execute($this->getDatabaseConnection())->fetchAll();
 
-        return $result;
+        return $this->nodeFactory->mapNodeRowsToTraversableNodes($result, $this);
     }
 
     /**
      * @param NodeAggregateIdentifier $childNodeAggregateIdentifier
-     * @return NodeInterface|null
-     * @throws \Doctrine\DBAL\DBALException
+     * @return TraversableNodeInterface
+     * @throws DBALException
      * @throws \Exception
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeConfigurationException
-     * @throws \Neos\EventSourcedContentRepository\Exception\NodeTypeNotFoundException
      */
-    public function findParentNode(NodeAggregateIdentifier $childNodeAggregateIdentifier): ?NodeInterface
+    public function findParentNode(NodeAggregateIdentifier $childNodeAggregateIdentifier): ?TraversableNodeInterface
     {
         $cache = $this->inMemoryCache->getParentNodeIdentifierByChildNodeIdentifierCache();
 
@@ -451,7 +455,7 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
 
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetch();
 
-        $node = $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
+        $node = $nodeRow ? $this->nodeFactory->mapNodeRowToTraversableNode($nodeRow, $this) : null;
         if ($node) {
             $cache->add($childNodeAggregateIdentifier, $node->getNodeAggregateIdentifier());
 
@@ -468,9 +472,11 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
      * @param NodePath $path
      * @param NodeAggregateIdentifier $startingNodeAggregateIdentifier
      * @return NodeInterface|null
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
+     * @throws NodeConfigurationException
+     * @throws NodeTypeNotFoundException
      */
-    public function findNodeByPath(NodePath $path, NodeAggregateIdentifier $startingNodeAggregateIdentifier): ?NodeInterface
+    public function findNodeByPath(NodePath $path, NodeAggregateIdentifier $startingNodeAggregateIdentifier): ?TraversableNodeInterface
     {
         $currentNode = $this->findNodeByNodeAggregateIdentifier($startingNodeAggregateIdentifier);
         if (!$currentNode) {
@@ -493,13 +499,15 @@ SELECT p.*, h.contentstreamidentifier, hp.name FROM neos_contentgraph_node p
     /**
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param NodeName $edgeName
-     * @return NodeInterface|null
-     * @throws \Doctrine\DBAL\DBALException
+     * @return TraversableNodeInterface|null
+     * @throws DBALException
+     * @throws NodeConfigurationException
+     * @throws NodeTypeNotFoundException
      */
     public function findChildNodeConnectedThroughEdgeName(
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeName $edgeName
-    ): ?NodeInterface {
+    ): ?TraversableNodeInterface {
         $cache = $this->inMemoryCache->getNamedChildNodeByNodeIdentifierCache();
         if ($cache->contains($parentNodeAggregateIdentifier, $edgeName)) {
             return $cache->get($parentNodeAggregateIdentifier, $edgeName);
@@ -533,10 +541,10 @@ WHERE
 
             $query->addToQuery('ORDER BY h.position LIMIT 1');
 
-            $nodeData = $query->execute($this->getDatabaseConnection())->fetch();
+            $nodeRecord = $query->execute($this->getDatabaseConnection())->fetch();
 
-            if ($nodeData) {
-                $node = $this->nodeFactory->mapNodeRowToNode($nodeData);
+            if ($nodeRecord) {
+                $node = $this->nodeFactory->mapNodeRowToTraversableNode($nodeRecord, $this);
                 if ($node) {
                     $cache->add($parentNodeAggregateIdentifier, $edgeName, $node);
                     $this->inMemoryCache->getNodeByNodeAggregateIdentifierCache()->add($node->getNodeAggregateIdentifier(), $node);
@@ -554,11 +562,11 @@ WHERE
      * @param NodeTypeConstraints|null $nodeTypeConstraints
      * @param int|null $limit
      * @param int|null $offset
-     * @return array
-     * @throws \Doctrine\DBAL\DBALException
+     * @return TraversableNodes
+     * @throws DBALException
      * @throws \Exception
      */
-    public function findSiblings(NodeAggregateIdentifier $sibling, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): array
+    public function findSiblings(NodeAggregateIdentifier $sibling, NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): TraversableNodes
     {
         $query = new SqlQueryBuilder();
         $query->addToQuery($this->getSiblingBaseQuery() . '
@@ -578,12 +586,9 @@ WHERE
             $query->addToQuery(' OFFSET ' . $offset);
         }
 
-        $result = [];
-        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeRecord) {
-            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord);
-        }
+        $result = $query->execute($this->getDatabaseConnection())->fetchAll();
 
-        return $result;
+        return $this->nodeFactory->mapNodeRowsToTraversableNodes($result, $this);
     }
 
     /**
@@ -591,8 +596,8 @@ WHERE
      * @param NodeTypeConstraints|null $nodeTypeConstraints
      * @param int|null $limit
      * @param int|null $offset
-     * @return array|NodeInterface[]
-     * @throws \Doctrine\DBAL\DBALException
+     * @return TraversableNodes
+     * @throws DBALException
      * @throws \Exception
      */
     public function findPrecedingSiblings(
@@ -600,7 +605,7 @@ WHERE
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array {
+    ): TraversableNodes {
         $query = new SqlQueryBuilder();
         $query->addToQuery($this->getSiblingBaseQuery() . '
             AND n.nodeaggregateidentifier != :siblingNodeAggregateIdentifier')
@@ -628,12 +633,9 @@ WHERE
             $query->addToQuery(' OFFSET ' . $offset);
         }
 
-        $result = [];
-        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeRecord) {
-            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord);
-        }
+        $result = $query->execute($this->getDatabaseConnection())->fetchAll();
 
-        return $result;
+        return $this->nodeFactory->mapNodeRowsToTraversableNodes($result, $this);
     }
 
     /**
@@ -641,8 +643,8 @@ WHERE
      * @param NodeTypeConstraints|null $nodeTypeConstraints
      * @param int|null $limit
      * @param int|null $offset
-     * @return array|NodeInterface[]
-     * @throws \Doctrine\DBAL\DBALException
+     * @return TraversableNodes
+     * @throws DBALException
      * @throws \Exception
      */
     public function findSucceedingSiblings(
@@ -650,7 +652,7 @@ WHERE
         NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null
-    ): array {
+    ): TraversableNodes {
         $query = new SqlQueryBuilder();
         $query->addToQuery($this->getSiblingBaseQuery() . '
             AND n.nodeaggregateidentifier != :siblingNodeAggregateIdentifier')
@@ -678,12 +680,9 @@ WHERE
             $query->addToQuery(' OFFSET ' . $offset);
         }
 
-        $result = [];
-        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeRecord) {
-            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord);
-        }
+        $result = $query->execute($this->getDatabaseConnection())->fetchAll();
 
-        return $result;
+        return $this->nodeFactory->mapNodeRowsToTraversableNodes($result, $this);
     }
 
     protected function getSiblingBaseQuery(): string
@@ -700,12 +699,11 @@ WHERE
   )';
     }
 
-    protected function getDatabaseConnection(): Connection
-    {
-        return $this->client->getConnection();
-    }
-
-
+    /**
+     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @return NodePath
+     * @throws DBALException
+     */
     public function findNodePath(NodeAggregateIdentifier $nodeAggregateIdentifier): NodePath
     {
         $cache = $this->inMemoryCache->getNodePathCache();
@@ -754,22 +752,14 @@ WHERE
         return $nodePath;
     }
 
-    public function jsonSerialize(): array
-    {
-        return [
-            'contentStreamIdentifier' => $this->contentStreamIdentifier,
-            'dimensionSpacePoint' => $this->dimensionSpacePoint
-        ];
-    }
-
     /**
      * @param array $entryNodeAggregateIdentifiers
      * @param int $maximumLevels
      * @param NodeTypeConstraints $nodeTypeConstraints
      * @return mixed|void
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
-     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     * @throws DBALException
+     * @throws NodeConfigurationException
+     * @throws NodeTypeNotFoundException
      */
     public function findSubtrees(
         array $entryNodeAggregateIdentifiers,
@@ -851,7 +841,7 @@ order by level asc, position asc;')
         $subtreesByNodeIdentifier['ROOT'] = new Subtree(0);
 
         foreach ($result as $nodeData) {
-            $node = $this->nodeFactory->mapNodeRowToNode($nodeData);
+            $node = $this->nodeFactory->mapNodeRowToTraversableNode($nodeData, $this);
             $this->getInMemoryCache()->getNodeByNodeAggregateIdentifierCache()->add($node->getNodeAggregateIdentifier(), $node);
 
             if (!isset($subtreesByNodeIdentifier[$nodeData['parentNodeAggregateIdentifier']])) {
@@ -866,7 +856,9 @@ order by level asc, position asc;')
             /* @var $parentSubtree Subtree */
             $parentSubtree = $subtreesByNodeIdentifier[$nodeData['parentNodeAggregateIdentifier']];
             if ($parentSubtree->getNode() !== null) {
-                $this->getInMemoryCache()->getParentNodeIdentifierByChildNodeIdentifierCache()->add($node->getNodeAggregateIdentifier(), $parentSubtree->getNode()->getNodeAggregateIdentifier());
+                $this->getInMemoryCache()
+                    ->getParentNodeIdentifierByChildNodeIdentifierCache()
+                    ->add($node->getNodeAggregateIdentifier(), $parentSubtree->getNode()->getNodeAggregateIdentifier());
             }
         }
 
@@ -877,13 +869,16 @@ order by level asc, position asc;')
      * @param array $entryNodeAggregateIdentifiers
      * @param NodeTypeConstraints $nodeTypeConstraints
      * @param ContentRepository\Projection\Content\SearchTerm|null $searchTerm
-     * @return array
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Neos\ContentRepository\Exception\NodeConfigurationException
-     * @throws \Neos\ContentRepository\Exception\NodeTypeNotFoundException
+     * @return TraversableNodes
+     * @throws DBALException
+     * @throws NodeConfigurationException
+     * @throws NodeTypeNotFoundException
      */
-    public function findDescendants(array $entryNodeAggregateIdentifiers, NodeTypeConstraints $nodeTypeConstraints, ?ContentRepository\Projection\Content\SearchTerm $searchTerm): array
-    {
+    public function findDescendants(
+        array $entryNodeAggregateIdentifiers,
+        NodeTypeConstraints $nodeTypeConstraints,
+        ?ContentRepository\Projection\Content\SearchTerm $searchTerm
+    ): TraversableNodes {
         $query = new SqlQueryBuilder();
         $query->addToQuery('
 -- ContentSubgraph::findDescendants
@@ -960,17 +955,14 @@ order by level asc, position asc;')
         self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'n', 'h', '###VISIBILITY_CONSTRAINTS_INITIAL###');
         self::addRestrictionRelationConstraintsToQuery($query, $this->visibilityConstraints, 'c', 'h', '###VISIBILITY_CONSTRAINTS_RECURSION###');
 
-        $result = [];
-        foreach ($query->execute($this->getDatabaseConnection())->fetchAll() as $nodeRecord) {
-            $result[] = $this->nodeFactory->mapNodeRowToNode($nodeRecord);
-        }
+        $result = $query->execute($this->getDatabaseConnection())->fetchAll();
 
-        return $result;
+        return $this->nodeFactory->mapNodeRowsToTraversableNodes($result, $this);
     }
 
     /**
      * @return int
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function countNodes(): int
     {
@@ -986,8 +978,21 @@ SELECT COUNT(*) FROM neos_contentgraph_node n
         return (int) $query->execute($this->getDatabaseConnection())->fetch()['COUNT(*)'];
     }
 
+    protected function getDatabaseConnection(): Connection
+    {
+        return $this->client->getConnection();
+    }
+
     public function getInMemoryCache(): InMemoryCache
     {
         return $this->inMemoryCache;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'dimensionSpacePoint' => $this->dimensionSpacePoint
+        ];
     }
 }

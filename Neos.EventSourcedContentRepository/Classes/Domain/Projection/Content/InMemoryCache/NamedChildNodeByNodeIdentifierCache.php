@@ -13,9 +13,9 @@ namespace Neos\EventSourcedContentRepository\Domain\Projection\Content\InMemoryC
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 
 /**
  * Parent Node Identifier + Node Name => Child Node
@@ -41,7 +41,7 @@ final class NamedChildNodeByNodeIdentifierCache
         $this->isEnabled = $isEnabled;
     }
 
-    public function add(NodeAggregateIdentifier $parentNodeAggregateIdentifier, ?NodeName $nodeName, NodeInterface $node): void
+    public function add(NodeAggregateIdentifier $parentNodeAggregateIdentifier, ?NodeName $nodeName, TraversableNodeInterface $node): void
     {
         if ($this->isEnabled === false) {
             return;
@@ -63,7 +63,7 @@ final class NamedChildNodeByNodeIdentifierCache
         return isset($this->nodes[(string)$parentNodeAggregateIdentifier][(string)$nodeName]);
     }
 
-    public function get(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeName $nodeName): ?NodeInterface
+    public function get(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeName $nodeName): ?TraversableNodeInterface
     {
         if ($this->isEnabled === false) {
             return null;

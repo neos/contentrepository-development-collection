@@ -209,7 +209,7 @@ class FindOperation extends AbstractOperation
             $subgraph = $entryPoint['subgraph'];
             $nodeByIdentifier = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
             if ($nodeByIdentifier) {
-                $result[] = new TraversableNode($nodeByIdentifier, $subgraph);
+                $result[] = $nodeByIdentifier;
             }
         }
 
@@ -233,7 +233,7 @@ class FindOperation extends AbstractOperation
                     $nodeByPath = $subgraph->findNodeByPath($nodePath, $node->getNodeAggregateIdentifier());
                 }
                 if ($nodeByPath) {
-                    $result[] = new TraversableNode($nodeByPath, $subgraph);
+                    $result[] = $nodeByPath;
                 }
             }
         }

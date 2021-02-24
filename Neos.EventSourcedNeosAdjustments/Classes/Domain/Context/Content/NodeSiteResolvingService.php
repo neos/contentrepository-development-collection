@@ -25,7 +25,6 @@ use Neos\Flow\Annotations as Flow;
  */
 class NodeSiteResolvingService
 {
-
     /**
      * @Flow\Inject
      * @var WorkspaceFinder

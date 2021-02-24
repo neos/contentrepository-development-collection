@@ -306,7 +306,6 @@ class Property extends AbstractChange
             // Thus, we need to re-fetch it (as a workaround; until we do not need this anymore)
             $subgraph = $this->contentGraph->getSubgraphByIdentifier($node->getContentStreamIdentifier(), $node->getDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions());
             $node = $subgraph->findNodeByNodeAggregateIdentifier($node->getNodeAggregateIdentifier());
-            $node = new TraversableNode($node, $subgraph);
 
             $this->updateWorkspaceInfo();
 

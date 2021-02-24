@@ -20,7 +20,6 @@ use Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier;
 
 final class NodeTreeTraversalHelper
 {
-
     /**
      * the callback always gets the current NodeInterface passed as first parameter, and then its parent, and its parent etc etc.
      * Until it has reached the root, or the return value of the closure is FALSE.
@@ -47,13 +46,11 @@ final class NodeTreeTraversalHelper
 
         $childNodeAggregateIdentifier = self::findNodeAggregateIdentifierByPath($subgraph, $nodeAggregateIdentifier, $nodePath);
         if ($childNodeAggregateIdentifier !== null) {
-            $node = $subgraph->findNodeByNodeAggregateIdentifier($childNodeAggregateIdentifier);
-            return new TraversableNode($node, $subgraph);
+            return $subgraph->findNodeByNodeAggregateIdentifier($childNodeAggregateIdentifier);
         }
 
         return null;
     }
-
 
     private static function findRootNodeAggregateIdentifier(ContentSubgraphInterface $subgraph, NodeAggregateIdentifier $nodeAggregateIdentifier): NodeAggregateIdentifier
     {
