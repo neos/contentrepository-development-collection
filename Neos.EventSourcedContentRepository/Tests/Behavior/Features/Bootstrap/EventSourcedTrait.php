@@ -155,7 +155,7 @@ trait EventSourcedTrait
     protected $rootNodeAggregateIdentifier;
 
     /**
-     * @var NodeInterface
+     * @var TraversableNodeInterface
      */
     protected $currentNode;
 
@@ -954,12 +954,10 @@ trait EventSourcedTrait
     /**
      * @When /^the command CopyNodesRecursively is executed, copying the current node aggregate with payload:$/
      */
-    public function theCommandCopynodesrecursivelyIsExecutedCopyingTheCurrentNodeAggregateWithPayload(TableNode $payloadTable)
+    public function theCommandCopyNodesRecursivelyIsExecutedCopyingTheCurrentNodeAggregateWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
-        $currentTraversableNode = new TraversableNode($this->currentNode, $subgraph);
-        $commandArguments['nodeToInsert'] = json_decode(json_encode(NodeSubtreeSnapshot::fromTraversableNode($currentTraversableNode)), true);
+        $commandArguments['nodeToInsert'] = json_decode(json_encode(NodeSubtreeSnapshot::fromTraversableNode($this->currentNode)), true);
         $command = CopyNodesRecursively::fromArray($commandArguments);
         $this->lastCommandOrEventResult = $this->getNodeDuplicationCommandHandler()
             ->handleCopyNodesRecursively($command);

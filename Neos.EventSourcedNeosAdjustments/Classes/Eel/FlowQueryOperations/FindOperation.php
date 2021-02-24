@@ -250,9 +250,8 @@ class FindOperation extends AbstractOperation
                 return $node->getNodeAggregateIdentifier();
             }, $entryPoint['nodes']);
 
-            foreach ($subgraph->findDescendants($entryIdentifiers, $this->nodeTypeConstraintFactory->parseFilterString($nodeTypeName->jsonSerialize()), null) as $descendant) {
-                $result[] = new TraversableNode($descendant, $subgraph);
-            }
+            $descendants = $subgraph->findDescendants($entryIdentifiers, $this->nodeTypeConstraintFactory->parseFilterString($nodeTypeName->jsonSerialize()), null);
+            $result = array_merge($result, $descendants->toArray());
         }
 
         return $result;
