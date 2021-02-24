@@ -1531,7 +1531,7 @@ trait EventSourcedTrait
         $subgraph = $this->contentGraph
             ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
         $nodes = $subgraph
-            ->findChildNodes($nodeAggregateIdentifier);
+            ->findChildNodes($nodeAggregateIdentifier)->toArray();
 
         $numberOfChildNodes = $subgraph
             ->countChildNodes($nodeAggregateIdentifier);
