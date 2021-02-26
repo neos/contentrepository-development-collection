@@ -16,11 +16,6 @@ Feature: Increase node aggregate coverage
     """
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Node': []
-    'Neos.ContentRepository.Testing:Document':
-      childNodes:
-        tethered:
-          type: 'Neos.ContentRepository.Testing:Tethered'
-    'Neos.ContentRepository.Testing:Tethered': []
     """
     And the event RootWorkspaceWasCreated was published with payload:
       | Key                        | Value                        |
@@ -41,22 +36,12 @@ Feature: Increase node aggregate coverage
       | Key                           | Value                                                                       |
       | contentStreamIdentifier       | "cs-identifier"                                                             |
       | nodeAggregateIdentifier       | "sir-david-nodenborough"                                                    |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                   |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Node"                                       |
       | originDimensionSpacePoint     | {"language":"mul"}                                                          |
       | coveredDimensionSpacePoints   | [{"language":"mul"},{"language":"en"},{"language":"de"},{"language":"gsw"}] |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                                    |
       | nodeName                      | "document"                                                                  |
       | nodeAggregateClassification   | "regular"                                                                   |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                       |
-      | contentStreamIdentifier       | "cs-identifier"                                                             |
-      | nodeAggregateIdentifier       | "nodewyn-tetherton"                                                         |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Tethered"                                   |
-      | originDimensionSpacePoint     | {"language":"mul"}                                                          |
-      | coveredDimensionSpacePoints   | [{"language":"mul"},{"language":"en"},{"language":"de"},{"language":"gsw"}] |
-      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                    |
-      | nodeName                      | "tethered"                                                                  |
-      | nodeAggregateClassification   | "tethered"                                                                  |
     And the event NodeSpecializationVariantWasCreated was published with payload:
       | Key                     | Value                    |
       | contentStreamIdentifier | "cs-identifier"          |
@@ -135,23 +120,3 @@ Feature: Increase node aggregate coverage
       | additionalCoverage        | [{"language": "de"}]     |
       | recursive                 | false                    |
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyCoverDimensionSpacePointSet"
-
-  Scenario: Try to increase node aggregate coverage of a root node aggregate
-    When the command IncreaseNodeAggregateCoverage is executed with payload and exceptions are caught:
-      | Key                       | Value                    |
-      | contentStreamIdentifier   | "cs-identifier"          |
-      | nodeAggregateIdentifier   | "lady-eleonode-rootford" |
-      | originDimensionSpacePoint | {"language": "mul"}      |
-      | additionalCoverage        | [{"language": "de"}]     |
-      | recursive                 | false                    |
-    Then the last command should have thrown an exception of type "NodeAggregateIsRoot"
-
-  Scenario: Try to increase node aggregate coverage of a tethered node aggregate
-    When the command IncreaseNodeAggregateCoverage is executed with payload and exceptions are caught:
-      | Key                       | Value                    |
-      | contentStreamIdentifier   | "cs-identifier"          |
-      | nodeAggregateIdentifier   | "nodewyn-tetherton"      |
-      | originDimensionSpacePoint | {"language": "mul"}      |
-      | additionalCoverage        | [{"language": "de"}]     |
-      | recursive                 | false                    |
-    Then the last command should have thrown an exception of type "NodeAggregateIsTethered"

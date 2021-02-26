@@ -72,6 +72,8 @@ trait NodeCoverageIncrease
             $this->requireDimensionSpacePointToBeSpecialization($dimensionSpacePoint, $command->getOriginDimensionSpacePoint());
         }
         $nodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNodeAggregateIdentifier());
+        $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
+        $this->requireNodeAggregateToBeUntethered($nodeAggregate);
         $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->getOriginDimensionSpacePoint());
         $this->requireNodeAggregateToNotCoverDimensionSpacePoints($nodeAggregate, $command->getAdditionalCoverage());
         $parentNodeAggregate = $this->getContentGraph()->findParentNodeAggregateByChildOriginDimensionSpacePoint(
