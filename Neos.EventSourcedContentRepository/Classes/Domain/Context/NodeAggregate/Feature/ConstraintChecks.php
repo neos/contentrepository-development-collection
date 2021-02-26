@@ -33,7 +33,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\No
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyCoverDimensionSpacePoint;
-use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyCoverDimensionSpacePoints;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyCoverDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateIsDescendant;
@@ -344,7 +344,7 @@ trait ConstraintChecks
     /**
      * @param ReadableNodeAggregateInterface $nodeAggregate
      * @param DimensionSpacePointSet $dimensionSpacePointSet
-     * @throws NodeAggregateDoesCurrentlyCoverDimensionSpacePoints
+     * @throws NodeAggregateDoesCurrentlyCoverDimensionSpacePointSet
      */
     protected function requireNodeAggregateToNotCoverDimensionSpacePoints(
         ReadableNodeAggregateInterface $nodeAggregate,
@@ -352,7 +352,7 @@ trait ConstraintChecks
     ): void {
         $alreadyCoveredDimensionSpacePoints = $nodeAggregate->getCoveredDimensionSpacePoints()->getIntersection($dimensionSpacePointSet);
         if ($alreadyCoveredDimensionSpacePoints->count() > 0) {
-            throw NodeAggregateDoesCurrentlyCoverDimensionSpacePoints::butIsNotSupposedTo(
+            throw NodeAggregateDoesCurrentlyCoverDimensionSpacePointSet::butIsNotSupposedTo(
                 $nodeAggregate->getIdentifier(),
                 $alreadyCoveredDimensionSpacePoints
             );

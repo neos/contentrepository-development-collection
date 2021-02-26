@@ -22,10 +22,10 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-final class NodeAggregateDoesCurrentlyCoverDimensionSpacePoints extends \DomainException
+final class NodeAggregateDoesCurrentlyCoverDimensionSpacePointSet extends \DomainException
 {
     public static function butIsNotSupposedTo(NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePointSet $coveredDimensionSpacePoints): self
     {
-        return new self('Node aggregate "' . $nodeAggregateIdentifier . '" does currently cover dimension space points ' . json_encode($coveredDimensionSpacePoints) . '.', 1614296176);
+        return new self('Node aggregate "' . $nodeAggregateIdentifier . '" does currently cover dimension space point set ' . json_encode($coveredDimensionSpacePoints) . '.', 1614296176);
     }
 }

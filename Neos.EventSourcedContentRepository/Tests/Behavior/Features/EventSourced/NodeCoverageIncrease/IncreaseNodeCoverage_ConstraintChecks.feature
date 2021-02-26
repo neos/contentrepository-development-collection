@@ -119,4 +119,4 @@ Feature: Increase node aggregate coverage
       | originDimensionSpacePoint | {"language": "mul"}      |
       | additionalCoverage        | [{"language": "de"}]     |
       | recursive                 | false                    |
-    Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyCoverDimensionSpacePoints"
+    Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyCoverDimensionSpacePointSet"
