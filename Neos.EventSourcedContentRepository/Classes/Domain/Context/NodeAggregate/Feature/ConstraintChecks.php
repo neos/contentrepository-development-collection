@@ -15,6 +15,7 @@ namespace Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Featur
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointIsNoSpecialization;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\Domain\Model\NodeType;
@@ -31,6 +32,8 @@ use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\Di
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyDisablesDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateCurrentlyDoesNotExist;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyCoverDimensionSpacePoint;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyCoverDimensionSpacePoints;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregateIsDescendant;
@@ -78,6 +81,18 @@ trait ConstraintChecks
     {
         if (!$this->getAllowedDimensionSubspace()->contains($dimensionSpacePoint)) {
             throw new DimensionSpacePointNotFound(sprintf('%s was not found in the allowed dimension subspace', $dimensionSpacePoint), 1520260137);
+        }
+    }
+
+    /**
+     * @param DimensionSpacePoint $variant
+     * @param DimensionSpacePoint $reference
+     * @throws DimensionSpacePointIsNoSpecialization
+     */
+    public function requireDimensionSpacePointToBeSpecialization(DimensionSpacePoint $variant, DimensionSpacePoint $reference): void
+    {
+        if (!$this->getInterDimensionalVariationGraph()->getIndexedSpecializations($reference)->contains($variant)) {
+            throw new DimensionSpacePointIsNoSpecialization('Dimension space point ' . json_encode($variant) . ' is no specialization of ' . json_encode($reference), 1614297251);
         }
     }
 
@@ -281,15 +296,65 @@ trait ConstraintChecks
      * @param DimensionSpacePointSet $dimensionSpacePointSet
      * @throws NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet
      */
-    protected function requireNodeAggregateToCoverDimensionSpacePoints(
+    protected function requireNodeAggregateToExactlyCoverDimensionSpacePoints(
         ReadableNodeAggregateInterface $nodeAggregate,
         DimensionSpacePointSet $dimensionSpacePointSet
     ): void {
-        if (!$nodeAggregate->getCoveredDimensionSpacePoints()->getPointHashes() === $dimensionSpacePointSet->getPointHashes()) {
+        if ($nodeAggregate->getCoveredDimensionSpacePoints()->getPointHashes() !== $dimensionSpacePointSet->getPointHashes()) {
             throw NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet::butWasSupposedTo(
                 $nodeAggregate->getIdentifier(),
                 $dimensionSpacePointSet,
                 $nodeAggregate->getCoveredDimensionSpacePoints()
+            );
+        }
+    }
+
+    /**
+     * @param ReadableNodeAggregateInterface $nodeAggregate
+     * @param DimensionSpacePointSet $dimensionSpacePointSet
+     * @throws NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet
+     */
+    protected function requireNodeAggregateToCoverDimensionSpacePoints(
+        ReadableNodeAggregateInterface $nodeAggregate,
+        DimensionSpacePointSet $dimensionSpacePointSet
+    ): void {
+        if ($dimensionSpacePointSet->getDifference($nodeAggregate->getCoveredDimensionSpacePoints())->count() > 0) {
+            throw NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet::butWasSupposedTo(
+                $nodeAggregate->getIdentifier(),
+                $dimensionSpacePointSet,
+                $nodeAggregate->getCoveredDimensionSpacePoints()
+            );
+        }
+    }
+
+    /**
+     * @param ReadableNodeAggregateInterface $nodeAggregate
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @throws NodeAggregateDoesCurrentlyCoverDimensionSpacePoint
+     */
+    protected function requireNodeAggregateToNotCoverDimensionSpacePoint(
+        ReadableNodeAggregateInterface $nodeAggregate,
+        DimensionSpacePoint $dimensionSpacePoint
+    ): void {
+        if ($nodeAggregate->coversDimensionSpacePoint($dimensionSpacePoint)) {
+            throw new NodeAggregateDoesCurrentlyCoverDimensionSpacePoint('Node aggregate "' . $nodeAggregate->getIdentifier() . '" does currently cover dimension space point ' . json_encode($dimensionSpacePoint) . '.', 1614296176);
+        }
+    }
+
+    /**
+     * @param ReadableNodeAggregateInterface $nodeAggregate
+     * @param DimensionSpacePointSet $dimensionSpacePointSet
+     * @throws NodeAggregateDoesCurrentlyCoverDimensionSpacePoints
+     */
+    protected function requireNodeAggregateToNotCoverDimensionSpacePoints(
+        ReadableNodeAggregateInterface $nodeAggregate,
+        DimensionSpacePointSet $dimensionSpacePointSet
+    ): void {
+        $alreadyCoveredDimensionSpacePoints = $nodeAggregate->getCoveredDimensionSpacePoints()->getIntersection($dimensionSpacePointSet);
+        if ($alreadyCoveredDimensionSpacePoints->count() > 0) {
+            throw NodeAggregateDoesCurrentlyCoverDimensionSpacePoints::butIsNotSupposedTo(
+                $nodeAggregate->getIdentifier(),
+                $alreadyCoveredDimensionSpacePoints
             );
         }
     }

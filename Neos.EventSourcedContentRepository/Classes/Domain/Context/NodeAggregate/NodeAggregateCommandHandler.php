@@ -20,6 +20,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\ConstraintChecks;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeCoverageIncrease;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeCreation;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeDisabling;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Feature\NodeModification;
@@ -48,6 +49,7 @@ final class NodeAggregateCommandHandler
     use NodeRetyping;
     use NodeVariation;
     use TetheredNodeInternals;
+    use NodeCoverageIncrease;
 
     /**
      * @var ContentStream\ContentStreamRepository
