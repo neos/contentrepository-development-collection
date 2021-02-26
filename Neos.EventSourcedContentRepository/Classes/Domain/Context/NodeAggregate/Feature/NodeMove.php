@@ -105,7 +105,7 @@ trait NodeMove
 
                 $newParentNodeAggregate = $this->requireProjectedNodeAggregate($command->getContentStreamIdentifier(), $command->getNewParentNodeAggregateIdentifier());
 
-                $this->requireNodeAggregateToExactlyCoverDimensionSpacePoints(
+                $this->requireNodeAggregateToCoverDimensionSpacePoints(
                     $newParentNodeAggregate,
                     $affectedDimensionSpacePoints
                 );

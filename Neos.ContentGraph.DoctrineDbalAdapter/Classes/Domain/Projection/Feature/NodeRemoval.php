@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelationRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodeAggregateWasRemoved;
@@ -54,10 +54,10 @@ trait NodeRemoval
     }
 
     /**
-     * @param HierarchyRelation $ingoingRelation
+     * @param HierarchyRelationRecord $ingoingRelation
      * @throws \Doctrine\DBAL\DBALException
      */
-    protected function removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes(HierarchyRelation $ingoingRelation)
+    protected function removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes(HierarchyRelationRecord $ingoingRelation)
     {
         $ingoingRelation->removeFromDatabase($this->getDatabaseConnection());
 

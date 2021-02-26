@@ -26,7 +26,6 @@ use Neos\Flow\Annotations as Flow;
  * * using an already occupied (origin) dimension space point to define the node that is to cover the additional DSPs
  * * by a given set of dimension space points
  * * initiated by a given user
- * * recursive or not
  *
  * @Flow\Proxy(false)
  */
@@ -42,22 +41,18 @@ final class IncreaseNodeAggregateCoverage implements \JsonSerializable
 
     private UserIdentifier $initiatingUserIdentifier;
 
-    private bool $recursive;
-
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePointSet $additionalCoverage,
-        UserIdentifier $initiatingUserIdentifier,
-        bool $recursive
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->additionalCoverage = $additionalCoverage;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
-        $this->recursive = $recursive;
     }
 
     public static function fromArray(array $array): self
@@ -67,8 +62,7 @@ final class IncreaseNodeAggregateCoverage implements \JsonSerializable
             NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
             OriginDimensionSpacePoint::fromArray($array['originDimensionSpacePoint']),
             DimensionSpacePointSet::fromArray($array['additionalCoverage']),
-            UserIdentifier::fromString($array['initiatingUserIdentifier']),
-            $array['recursive']
+            UserIdentifier::fromString($array['initiatingUserIdentifier'])
         );
     }
 
@@ -97,11 +91,6 @@ final class IncreaseNodeAggregateCoverage implements \JsonSerializable
         return $this->initiatingUserIdentifier;
     }
 
-    public function getRecursive(): bool
-    {
-        return $this->recursive;
-    }
-
     public function jsonSerialize(): array
     {
         return [
@@ -109,8 +98,7 @@ final class IncreaseNodeAggregateCoverage implements \JsonSerializable
             'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
             'originDimensionSpacePoint' => $this->originDimensionSpacePoint,
             'additionalCoverage' => $this->additionalCoverage,
-            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
-            'recursive' => $this->recursive,
+            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
         ];
     }
 }

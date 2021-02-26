@@ -51,6 +51,8 @@ interface ReadableNodeAggregateInterface
 
     public function getNodeName(): ?NodeName;
 
+    public function isNamed(): bool;
+
     public function getOccupiedDimensionSpacePoints(): OriginDimensionSpacePointSet;
 
     /**

@@ -27,7 +27,6 @@ use Neos\Flow\Annotations as Flow;
  * * using an already occupied (origin) dimension space point to define the node that is to cover the additional DSPs
  * * by a given set of dimension space points
  * * initiated by a given user
- * * recursive or not
  *
  * @Flow\Proxy(false)
  */
@@ -43,22 +42,18 @@ final class NodeAggregateCoverageWasIncreased implements DomainEventInterface, P
 
     private UserIdentifier $initiatingUserIdentifier;
 
-    private bool $recursive;
-
     public function __construct(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePointSet $additionalCoverage,
-        UserIdentifier $initiatingUserIdentifier,
-        bool $recursive
+        UserIdentifier $initiatingUserIdentifier
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->additionalCoverage = $additionalCoverage;
         $this->initiatingUserIdentifier = $initiatingUserIdentifier;
-        $this->recursive = $recursive;
     }
 
     public function getContentStreamIdentifier(): ContentStreamIdentifier
@@ -86,11 +81,6 @@ final class NodeAggregateCoverageWasIncreased implements DomainEventInterface, P
         return $this->initiatingUserIdentifier;
     }
 
-    public function getRecursive(): bool
-    {
-        return $this->recursive;
-    }
-
     public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
     {
         return new self(
@@ -98,8 +88,7 @@ final class NodeAggregateCoverageWasIncreased implements DomainEventInterface, P
             $this->nodeAggregateIdentifier,
             $this->originDimensionSpacePoint,
             $this->additionalCoverage,
-            $this->initiatingUserIdentifier,
-            $this->recursive
+            $this->initiatingUserIdentifier
         );
     }
 }

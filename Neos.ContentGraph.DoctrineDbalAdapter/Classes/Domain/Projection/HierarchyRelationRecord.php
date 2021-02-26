@@ -17,56 +17,29 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Domain\NodeAggregate\NodeName;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The active record for reading and writing hierarchy relations from and to the database
+ *
+ * @Flow\Proxy(false)
  */
-class HierarchyRelation
+class HierarchyRelationRecord
 {
-    /**
-     * @var NodeRelationAnchorPoint
-     */
-    public $parentNodeAnchor;
+    public NodeRelationAnchorPoint $parentNodeAnchor;
 
-    /**
-     * @var NodeRelationAnchorPoint
-     */
-    public $childNodeAnchor;
+    public NodeRelationAnchorPoint $childNodeAnchor;
 
-    /**
-     * @var NodeName
-     */
-    public $name;
+    public ?NodeName $name;
 
-    /**
-     * @var ContentStreamIdentifier
-     */
-    public $contentStreamIdentifier;
+    public ContentStreamIdentifier $contentStreamIdentifier;
 
-    /**
-     * @var DimensionSpacePoint
-     */
-    public $dimensionSpacePoint;
+    public DimensionSpacePoint $dimensionSpacePoint;
 
-    /**
-     * @var string
-     */
-    public $dimensionSpacePointHash;
+    public string $dimensionSpacePointHash;
 
-    /**
-     * @var int
-     */
-    public $position;
+    public int $position;
 
-    /**
-     * @param NodeRelationAnchorPoint $parentNodeAnchor
-     * @param NodeRelationAnchorPoint $childNodeAnchor
-     * @param NodeName|null $name
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param string $dimensionSpacePointHash
-     * @param int $position
-     */
     public function __construct(
         NodeRelationAnchorPoint $parentNodeAnchor,
         NodeRelationAnchorPoint $childNodeAnchor,
@@ -85,9 +58,19 @@ class HierarchyRelation
         $this->position = $position;
     }
 
-    /**
-     * @param Connection $databaseConnection
-     */
+    public static function fromDatabaseRow(array $databaseRow): self
+    {
+        return new self(
+            NodeRelationAnchorPoint::fromString($databaseRow['parentnodeanchor']),
+            NodeRelationAnchorPoint::fromString($databaseRow['childnodeanchor']),
+            $databaseRow['name'] ? NodeName::fromString($databaseRow['name']) : null,
+            ContentStreamIdentifier::fromString($databaseRow['contentstreamidentifier']),
+            DimensionSpacePoint::fromArray(json_decode($databaseRow['dimensionspacepoint'], true)),
+            $databaseRow['dimensionspacepointhash'],
+            (int)$databaseRow['position']
+        );
+    }
+
     public function addToDatabase(Connection $databaseConnection): void
     {
         $databaseConnection->insert('neos_contentgraph_hierarchyrelation', [
@@ -101,18 +84,11 @@ class HierarchyRelation
         ]);
     }
 
-    /**
-     * @param Connection $databaseConnection
-     */
     public function removeFromDatabase(Connection $databaseConnection): void
     {
         $databaseConnection->delete('neos_contentgraph_hierarchyrelation', $this->getDatabaseIdentifier());
     }
 
-    /**
-     * @param NodeRelationAnchorPoint $childAnchorPoint
-     * @param Connection $databaseConnection
-     */
     public function assignNewChildNode(NodeRelationAnchorPoint $childAnchorPoint, Connection $databaseConnection): void
     {
         $databaseConnection->update(
@@ -124,12 +100,6 @@ class HierarchyRelation
         );
     }
 
-    /**
-     * @param NodeRelationAnchorPoint $parentAnchorPoint
-     * @param int|null $position
-     * @param Connection $databaseConnection
-     * @throws \Doctrine\DBAL\DBALException
-     */
     public function assignNewParentNode(NodeRelationAnchorPoint $parentAnchorPoint, ?int $position, Connection $databaseConnection): void
     {
         $data = [
@@ -144,10 +114,7 @@ class HierarchyRelation
             $this->getDatabaseIdentifier()
         );
     }
-    /**
-     * @param int $position
-     * @param Connection $databaseConnection
-     */
+
     public function assignNewPosition(int $position, Connection $databaseConnection): void
     {
         $databaseConnection->update(
@@ -159,9 +126,6 @@ class HierarchyRelation
         );
     }
 
-    /**
-     * @return array
-     */
     public function getDatabaseIdentifier(): array
     {
         return [

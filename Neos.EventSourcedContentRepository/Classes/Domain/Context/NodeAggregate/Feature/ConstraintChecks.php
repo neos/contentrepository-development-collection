@@ -243,7 +243,7 @@ trait ConstraintChecks
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return NodeAggregate
+     * @return ReadableNodeAggregateInterface
      * @throws NodeAggregatesTypeIsAmbiguous
      * @throws NodeAggregateCurrentlyDoesNotExist
      */
@@ -449,7 +449,7 @@ trait ConstraintChecks
         $childNodeAggregates = $this->getContentGraph()->findChildNodeAggregatesByName($contentStreamIdentifier, $parentNodeAggregateIdentifier, $nodeName);
         foreach ($childNodeAggregates as $childNodeAggregate) {
             $alreadyCoveredDimensionSpacePoints = $childNodeAggregate->getCoveredDimensionSpacePoints()->getIntersection($dimensionSpacePointsToBeCovered);
-            if (!empty($alreadyCoveredDimensionSpacePoints)) {
+            if ($alreadyCoveredDimensionSpacePoints->count() > 0) {
                 throw new NodeNameIsAlreadyCovered('Node name "' . $nodeName . '" is already covered in dimension space points ' . $alreadyCoveredDimensionSpacePoints . ' by node aggregate "' . $childNodeAggregate->getIdentifier() . '".');
             }
         }

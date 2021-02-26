@@ -298,7 +298,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
                 $dimensionSpacePoint
             );
 
-            $hierarchyRelation = new HierarchyRelation(
+            $hierarchyRelation = new HierarchyRelationRecord(
                 $parentNodeAnchorPoint,
                 $childNodeAnchorPoint,
                 $relationName,
@@ -831,22 +831,22 @@ insert ignore into neos_contentgraph_restrictionrelation
     }
 
     /**
-     * @param HierarchyRelation $sourceHierarchyRelation
+     * @param HierarchyRelationRecord $sourceHierarchyRelation
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param NodeRelationAnchorPoint|null $newParent
      * @param NodeRelationAnchorPoint|null $newChild
-     * @return HierarchyRelation
+     * @return HierarchyRelationRecord
      * @throws \Doctrine\DBAL\DBALException
      */
     protected function copyHierarchyRelationToDimensionSpacePoint(
-        HierarchyRelation $sourceHierarchyRelation,
+        HierarchyRelationRecord $sourceHierarchyRelation,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         ?NodeRelationAnchorPoint $newParent = null,
         ?NodeRelationAnchorPoint $newChild = null
-    ): HierarchyRelation {
-        $copy = new HierarchyRelation(
+    ): HierarchyRelationRecord {
+        $copy = new HierarchyRelationRecord(
             $newParent ?: $sourceHierarchyRelation->parentNodeAnchor,
             $newChild ?: $sourceHierarchyRelation->childNodeAnchor,
             $sourceHierarchyRelation->name,
@@ -899,6 +899,25 @@ insert ignore into neos_contentgraph_restrictionrelation
                 $this->updateNodeRecordWithCopyOnWrite($event->getContentStreamIdentifier(), $anchorPoint, function (NodeRecord $node) use ($event) {
                     $node->nodeTypeName = $event->getNewNodeTypeName();
                 });
+            }
+        });
+    }
+
+    public function whenNodeAggregateCoverageWasIncreased(Event\NodeAggregateCoverageWasIncreased $event)
+    {
+        $this->transactional(function () use ($event) {
+            $originHierarchyRelation = $this->projectionContentGraph->findIngoingHierarchyRelationByIdentifiers(
+                $event->getContentStreamIdentifier(),
+                $event->getNodeAggregateIdentifier(),
+                $event->getOriginDimensionSpacePoint()
+            );
+
+            foreach ($event->getAdditionalCoverage() as $dimensionSpacePoint) {
+                $this->copyHierarchyRelationToDimensionSpacePoint(
+                    $originHierarchyRelation,
+                    $event->getContentStreamIdentifier(),
+                    $dimensionSpacePoint
+                );
             }
         });
     }
