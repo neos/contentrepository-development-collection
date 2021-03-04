@@ -163,12 +163,14 @@ final class NodeAggregate implements ReadableNodeAggregateInterface
         return $this->nodeTypeName;
     }
 
-    /**
-     * @return NodeName|null
-     */
     public function getNodeName(): ?NodeName
     {
         return $this->nodeName;
+    }
+
+    public function isNamed(): bool
+    {
+        return !is_null($this->nodeName);
     }
 
     public function getOccupiedDimensionSpacePoints(): OriginDimensionSpacePointSet

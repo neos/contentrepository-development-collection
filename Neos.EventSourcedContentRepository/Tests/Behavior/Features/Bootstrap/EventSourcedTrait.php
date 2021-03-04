@@ -33,6 +33,7 @@ use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStrea
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamRepository;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\DisableNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\Dto\PropertyValuesToWrite;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\IncreaseNodeAggregateCoverage;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\RemoveNodeAggregate;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeProperties;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Command\SetNodeReferences;
@@ -1020,6 +1021,35 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Given /^the command IncreaseNodeAggregateCoverage is executed with payload:$/
+     * @param TableNode $payloadTable
+     * @throws Exception
+     */
+    public function theCommandIncreaseNodeAggregateCoverageIsExecutedWithPayload(TableNode $payloadTable)
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        if (!isset($commandArguments['initiatingUserIdentifier'])) {
+            $commandArguments['initiatingUserIdentifier'] = 'initiating-user-identifier';
+        }
+        $command = IncreaseNodeAggregateCoverage::fromArray($commandArguments);
+        $this->lastCommandOrEventResult = $this->getNodeAggregateCommandHandler()
+            ->handleIncreaseNodeAggregateCoverage($command);
+    }
+
+    /**
+     * @Given /^the command IncreaseNodeAggregateCoverage is executed with payload and exceptions are caught:$/
+     * @param TableNode $payloadTable
+     */
+    public function theCommandIncreaseNodeAggregateCoverageIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
+    {
+        try {
+            $this->theCommandIncreaseNodeAggregateCoverageIsExecutedWithPayload($payloadTable);
+        } catch (Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
+    }
+
+    /**
      * @When /^the command CopyNodesRecursively is executed, copying the current node aggregate with payload:$/
      */
     public function theCommandCopynodesrecursivelyIsExecutedCopyingTheCurrentNodeAggregateWithPayload(TableNode $payloadTable)
@@ -1032,7 +1062,6 @@ trait EventSourcedTrait
         $this->lastCommandOrEventResult = $this->getNodeDuplicationCommandHandler()
             ->handleCopyNodesRecursively($command);
     }
-
 
     /**
      * @When /^the command "([^"]*)" is executed with payload:$/

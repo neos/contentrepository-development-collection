@@ -298,7 +298,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
                 $dimensionSpacePoint
             );
 
-            $hierarchyRelation = new HierarchyRelation(
+            $hierarchyRelation = new HierarchyRelationRecord(
                 $parentNodeAnchorPoint,
                 $childNodeAnchorPoint,
                 $relationName,
@@ -359,7 +359,7 @@ class GraphProjector extends AbstractProcessedEventsAwareProjector
         $offset = 0;
         $position = 0;
         $hierarchyRelations = $parentAnchorPoint
-            ? $this->projectionContentGraph->getOutgoingHierarchyRelationsForNodeAndSubgraph($parentAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint)
+            ? $this->projectionContentGraph->findOutgoingHierarchyRelationsForNodeAndSubgraph($parentAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint)
             : $this->projectionContentGraph->getIngoingHierarchyRelationsForNodeAndSubgraph($childAnchorPoint, $contentStreamIdentifier, $dimensionSpacePoint);
 
         foreach ($hierarchyRelations as $relation) {
@@ -831,22 +831,22 @@ insert ignore into neos_contentgraph_restrictionrelation
     }
 
     /**
-     * @param HierarchyRelation $sourceHierarchyRelation
+     * @param HierarchyRelationRecord $sourceHierarchyRelation
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param NodeRelationAnchorPoint|null $newParent
      * @param NodeRelationAnchorPoint|null $newChild
-     * @return HierarchyRelation
+     * @return HierarchyRelationRecord
      * @throws \Doctrine\DBAL\DBALException
      */
     protected function copyHierarchyRelationToDimensionSpacePoint(
-        HierarchyRelation $sourceHierarchyRelation,
+        HierarchyRelationRecord $sourceHierarchyRelation,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         ?NodeRelationAnchorPoint $newParent = null,
         ?NodeRelationAnchorPoint $newChild = null
-    ): HierarchyRelation {
-        $copy = new HierarchyRelation(
+    ): HierarchyRelationRecord {
+        $copy = new HierarchyRelationRecord(
             $newParent ?: $sourceHierarchyRelation->parentNodeAnchor,
             $newChild ?: $sourceHierarchyRelation->childNodeAnchor,
             $sourceHierarchyRelation->name,
@@ -901,6 +901,74 @@ insert ignore into neos_contentgraph_restrictionrelation
                 });
             }
         });
+    }
+
+    public function whenNodeAggregateCoverageWasIncreased(Event\NodeAggregateCoverageWasIncreased $event)
+    {
+        $this->transactional(function () use ($event) {
+            $originHierarchyRelation = $this->projectionContentGraph->findIngoingHierarchyRelationByIdentifiers(
+                $event->getContentStreamIdentifier(),
+                $event->getNodeAggregateIdentifier(),
+                $event->getOriginDimensionSpacePoint()
+            );
+
+            $this->recursivelyCopyHierarchyRelations(
+                $originHierarchyRelation,
+                $event->getContentStreamIdentifier(),
+                $event->getAdditionalCoverage(),
+                !$event->getRecursive()
+            );
+        });
+    }
+
+    private function recursivelyCopyHierarchyRelations(
+        HierarchyRelationRecord $originHierarchyRelation,
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePointSet $additionalCoverage,
+        bool $onlyTethered
+    ) {
+        foreach ($additionalCoverage as $dimensionSpacePoint) {
+            $this->copyHierarchyRelationToDimensionSpacePoint(
+                $originHierarchyRelation,
+                $contentStreamIdentifier,
+                $dimensionSpacePoint
+            );
+        }
+
+        if ($onlyTethered) {
+            $outgoingHierarchyRelations = $this->projectionContentGraph->findOutgoingTetheredHierarchyRelationsForNodeAndSubgraph(
+                $originHierarchyRelation->childNodeAnchor,
+                $contentStreamIdentifier,
+                $originHierarchyRelation->dimensionSpacePoint
+            );
+            foreach ($outgoingHierarchyRelations as $childHierarchyRelationRecord) {
+                $this->recursivelyCopyHierarchyRelations(
+                    $childHierarchyRelationRecord,
+                    $contentStreamIdentifier,
+                    $additionalCoverage,
+                    $onlyTethered
+                );
+            }
+        } else {
+            $outgoingHierarchyRelations = $this->projectionContentGraph->findOutgoingHierarchyRelationsForNodeAndSubgraph(
+                $originHierarchyRelation->childNodeAnchor,
+                $contentStreamIdentifier,
+                $originHierarchyRelation->dimensionSpacePoint
+            );
+            foreach ($outgoingHierarchyRelations as $childHierarchyRelationRecord) {
+                $presentCoverage = $this->projectionContentGraph->findCoverageOfNode(
+                    $childHierarchyRelationRecord->childNodeAnchor,
+                    $contentStreamIdentifier
+                );
+                $requiredAdditionalCoverage = $additionalCoverage->getDifference($presentCoverage);
+                $this->recursivelyCopyHierarchyRelations(
+                    $childHierarchyRelationRecord,
+                    $contentStreamIdentifier,
+                    $requiredAdditionalCoverage,
+                    $onlyTethered
+                );
+            }
+        }
     }
 
     /**
