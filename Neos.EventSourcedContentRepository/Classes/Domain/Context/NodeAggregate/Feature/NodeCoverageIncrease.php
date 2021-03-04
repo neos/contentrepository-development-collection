@@ -80,8 +80,18 @@ trait NodeCoverageIncrease
         }
         $events = DomainEvents::createEmpty();
         $this->getNodeAggregateEventPublisher()->withCommand($command, function () use ($command, &$events) {
-            $events = DomainEvents::fromArray(
-                $this->collectNodeCoverageIncreaseEvents($command, $command->getNodeAggregateIdentifier(), [])
+            $events = DomainEvents::withSingleEvent(
+                DecoratedEvent::addIdentifier(
+                    new NodeAggregateCoverageWasIncreased(
+                        $command->getContentStreamIdentifier(),
+                        $command->getNodeAggregateIdentifier(),
+                        $command->getOriginDimensionSpacePoint(),
+                        $command->getAdditionalCoverage(),
+                        $command->getInitiatingUserIdentifier(),
+                        $command->getRecursive()
+                    ),
+                    Uuid::uuid4()->toString()
+                )
             );
 
             $contentStreamEventStreamName = ContentStream\ContentStreamEventStreamName::fromContentStreamIdentifier($command->getContentStreamIdentifier());
@@ -92,30 +102,5 @@ trait NodeCoverageIncrease
         });
 
         return CommandResult::fromPublishedEvents($events);
-    }
-
-    private function collectNodeCoverageIncreaseEvents(
-        IncreaseNodeAggregateCoverage $command,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        array $events
-    ): array {
-        $events[] = DecoratedEvent::addIdentifier(
-            new NodeAggregateCoverageWasIncreased(
-                $command->getContentStreamIdentifier(),
-                $nodeAggregateIdentifier,
-                $command->getOriginDimensionSpacePoint(),
-                $command->getAdditionalCoverage(),
-                $command->getInitiatingUserIdentifier()
-            ),
-            Uuid::uuid4()->toString()
-        );
-        foreach ($this->getContentGraph()->findTetheredChildNodeAggregates(
-            $command->getContentStreamIdentifier(),
-            $nodeAggregateIdentifier
-        ) as $childNodeAggregate) {
-            $events = $this->collectNodeCoverageIncreaseEvents($command, $childNodeAggregate->getIdentifier(), $events);
-        }
-
-        return $events;
     }
 }

@@ -83,6 +83,7 @@ Feature: Increase node aggregate coverage
       | nodeAggregateIdentifier   | "nody-mc-nodeface"    |
       | originDimensionSpacePoint | {"language": "de"}    |
       | additionalCoverage        | [{"language": "gsw"}] |
+      | recursive                 | false                 |
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
 
   Scenario: Try to increase node aggregate coverage of a non-existent node aggregate
@@ -92,6 +93,7 @@ Feature: Increase node aggregate coverage
       | nodeAggregateIdentifier   | "i-do-not-exist"      |
       | originDimensionSpacePoint | {"language": "de"}    |
       | additionalCoverage        | [{"language": "gsw"}] |
+      | recursive                 | false                 |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
   Scenario: Try to increase node aggregate coverage using a origin dimension space point the node aggregate does not occupy
@@ -101,6 +103,7 @@ Feature: Increase node aggregate coverage
       | nodeAggregateIdentifier   | "nody-mc-nodeface"    |
       | originDimensionSpacePoint | {"language": "mul"}   |
       | additionalCoverage        | [{"language": "gsw"}] |
+      | recursive                 | false                 |
     Then the last command should have thrown an exception of type "DimensionSpacePointIsNotYetOccupied"
 
   Scenario: Try to increase node aggregate coverage to a dimension space point that is not a specialization of the origin dimension space point
@@ -110,6 +113,7 @@ Feature: Increase node aggregate coverage
       | nodeAggregateIdentifier   | "nody-mc-nodeface"   |
       | originDimensionSpacePoint | {"language": "de"}   |
       | additionalCoverage        | [{"language": "en"}] |
+      | recursive                 | false                |
     Then the last command should have thrown an exception of type "DimensionSpacePointIsNoSpecialization"
 
   Scenario: Try to increase node aggregate coverage by a dimension space point the parent node aggregate does not cover
@@ -119,6 +123,7 @@ Feature: Increase node aggregate coverage
       | nodeAggregateIdentifier   | "nody-mc-nodeface"    |
       | originDimensionSpacePoint | {"language": "de"}    |
       | additionalCoverage        | [{"language": "ltz"}] |
+      | recursive                 | false                 |
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet"
 
   Scenario: Try to increase node aggregate coverage to a dimension space point that is already covered
@@ -128,6 +133,7 @@ Feature: Increase node aggregate coverage
       | nodeAggregateIdentifier   | "sir-david-nodenborough" |
       | originDimensionSpacePoint | {"language": "mul"}      |
       | additionalCoverage        | [{"language": "de"}]     |
+      | recursive                 | false                    |
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyCoverDimensionSpacePointSet"
 
   Scenario: Try to increase node aggregate coverage of a root node aggregate
@@ -137,6 +143,7 @@ Feature: Increase node aggregate coverage
       | nodeAggregateIdentifier   | "lady-eleonode-rootford" |
       | originDimensionSpacePoint | {"language": "mul"}      |
       | additionalCoverage        | [{"language": "de"}]     |
+      | recursive                 | false                    |
     Then the last command should have thrown an exception of type "NodeAggregateIsRoot"
 
   Scenario: Try to increase node aggregate coverage of a tethered node aggregate
@@ -146,6 +153,7 @@ Feature: Increase node aggregate coverage
       | nodeAggregateIdentifier   | "nodewyn-tetherton"  |
       | originDimensionSpacePoint | {"language": "mul"}  |
       | additionalCoverage        | [{"language": "de"}] |
+      | recursive                 | false                |
     Then the last command should have thrown an exception of type "NodeAggregateIsTethered"
 
   Scenario: Try to increase node aggregate coverage by a dimension space point where the name is already taken
@@ -166,6 +174,7 @@ Feature: Increase node aggregate coverage
       | nodeAggregateIdentifier   | "nody-mc-nodeface"    |
       | originDimensionSpacePoint | {"language": "de"}    |
       | additionalCoverage        | [{"language": "gsw"}] |
+      | recursive                 | false                 |
     Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
 
     # Tethered child aggregates always cover the same dimension space point set,

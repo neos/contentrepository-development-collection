@@ -18,6 +18,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelationRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
+use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\NodeAggregateClassification;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\OriginDimensionSpacePoint;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\Service\DbalClient;
 use Neos\ContentRepository\Domain\ContentStream\ContentStreamIdentifier;
@@ -349,9 +350,9 @@ class ProjectionContentGraph
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @return HierarchyRelationRecord[]
-     * @throws DBALException
+     * @throws \Doctrine\DBAL\Driver\Exception
      */
-    public function getOutgoingHierarchyRelationsForNodeAndSubgraph(
+    public function findOutgoingHierarchyRelationsForNodeAndSubgraph(
         NodeRelationAnchorPoint $parentAnchorPoint,
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
@@ -367,7 +368,39 @@ class ProjectionContentGraph
                 'contentStreamIdentifier' => (string)$contentStreamIdentifier,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->getHash()
             ]
-        )->fetchAll() as $relationData) {
+        )->fetchAllAssociative() as $relationData) {
+            $relations[] = $this->mapRawDataToHierarchyRelation($relationData);
+        }
+
+        return $relations;
+    }
+
+    /**
+     * @param NodeRelationAnchorPoint $parentAnchorPoint
+     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param DimensionSpacePoint $dimensionSpacePoint
+     * @return HierarchyRelationRecord[]
+     * @throws \Doctrine\DBAL\Driver\Exception
+     */
+    public function findOutgoingTetheredHierarchyRelationsForNodeAndSubgraph(
+        NodeRelationAnchorPoint $parentAnchorPoint,
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint
+    ): array {
+        $relations = [];
+        foreach ($this->getDatabaseConnection()->executeQuery(
+            'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
+                    INNER JOIN neos_contentgraph_node n ON h.childnodeanchor = n.relationanchorpoint
+                    WHERE h.parentnodeanchor = :parentAnchorPoint
+                    AND h.contentstreamidentifier = :contentStreamIdentifier
+                    AND h.dimensionspacepointhash = :dimensionSpacePointHash
+                    AND n.classification = "' . NodeAggregateClassification::CLASSIFICATION_TETHERED . '"' ,
+            [
+                'parentAnchorPoint' => (string)$parentAnchorPoint,
+                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                'dimensionSpacePointHash' => $dimensionSpacePoint->getHash()
+            ]
+        )->fetchAllAssociative() as $relationData) {
             $relations[] = $this->mapRawDataToHierarchyRelation($relationData);
         }
 
@@ -434,6 +467,19 @@ class ProjectionContentGraph
         }
 
         return $relations;
+    }
+
+    public function findCoverageOfNode(NodeRelationAnchorPoint $childAnchorPoint, ContentStreamIdentifier $contentStreamIdentifier): DimensionSpacePointSet
+    {
+        $coveredDimensionSpacePoints = [];
+        foreach ($this->findIngoingHierarchyRelationsForNode(
+            $childAnchorPoint,
+            $contentStreamIdentifier
+        ) as $ingoingChildRelation) {
+            $coveredDimensionSpacePoints[] = $ingoingChildRelation->dimensionSpacePoint;
+        }
+
+        return new DimensionSpacePointSet($coveredDimensionSpacePoints);
     }
 
     /**

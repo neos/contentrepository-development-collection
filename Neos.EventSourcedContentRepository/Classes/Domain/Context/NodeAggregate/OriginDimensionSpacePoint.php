@@ -27,7 +27,7 @@ final class OriginDimensionSpacePoint extends DimensionSpacePoint
 {
     public static function fromDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): self
     {
-        return new static($dimensionSpacePoint->getCoordinates());
+        return new self($dimensionSpacePoint->getCoordinates());
     }
 
     public function toDimensionSpacePoint(): DimensionSpacePoint
