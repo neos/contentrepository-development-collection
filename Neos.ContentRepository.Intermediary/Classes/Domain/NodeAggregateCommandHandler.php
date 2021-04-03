@@ -140,6 +140,11 @@ final class NodeAggregateCommandHandler
         $nodeType = $this->nodeTypeManager->getNodeType((string) $nodeTypeName);
         $defaultValues = [];
         foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
+            if (is_object($defaultValue) && $defaultValue instanceof \DateTimeInterface) {
+                // HACK: Special case to "undo" $nodeType->getDefaultValuesForProperties() ;-)
+                // can be removed as soon as the ES CR is merged and we can change NodeType::getDefaultValuesForProperties() as well.
+                $defaultValue = $defaultValue->format(\DateTimeInterface::RFC3339);
+            }
             $propertyType = PropertyType::fromNodeTypeDeclaration($nodeType->getPropertyType($propertyName));
             $defaultValues[$propertyName] = $this->propertyConverter->deserializePropertyValue(
                 new SerializedPropertyValue($defaultValue, $propertyType->getSerializationType())
