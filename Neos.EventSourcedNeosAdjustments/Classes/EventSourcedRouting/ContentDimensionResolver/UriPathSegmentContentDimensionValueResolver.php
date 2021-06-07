@@ -17,6 +17,17 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 
 /**
+ *
+ * de/b2b
+ * de_b2b
+ * de___b2b
+ *
+ * b2b
+ *
+ * _b2b
+ *
+ * /de_b2b/foo
+ *
  * URI path segment based dimension value resolver
  */
 final class UriPathSegmentContentDimensionValueResolver implements ContentDimensionResolverInterface
@@ -31,7 +42,7 @@ final class UriPathSegmentContentDimensionValueResolver implements ContentDimens
     public function resolveDimensionSpacePoint(ContentDimensionResolverContext $context): ContentDimensionResolverContext
     {
         foreach ($this->contentDimension->getValues() as $contentDimensionValue) {
-            $resolutionValue = $contentDimensionValue->getConfigurationValue('resolution.value') ?? $contentDimensionValue->getValue();
+            $resolutionValue = $contentDimensionValue->getConfigurationValue('meta.uriRepresentation') ?? $contentDimensionValue->getValue();
             if ($resolutionValue !== '' && strpos($context->remainingUriPath(), $resolutionValue) === 0) {
                 return $context
                     ->withRemainingUriPath(ltrim(substr($context->remainingUriPath(), strlen($resolutionValue)), '/'))
@@ -48,7 +59,7 @@ final class UriPathSegmentContentDimensionValueResolver implements ContentDimens
         if ($contentDimensionValue === null) {
             // TODO throw exception
         }
-        $resolutionValue = $contentDimensionValue->getConfigurationValue('resolution.value') ?? $contentDimensionValue->getValue();
+        $resolutionValue = $contentDimensionValue->getConfigurationValue('meta.uriRepresentation') ?? $contentDimensionValue->getValue();
         if ($resolutionValue === '') {
             return $uriConstraints;
         }

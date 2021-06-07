@@ -13,32 +13,47 @@ use Neos\Flow\Annotations as Flow;
  */
 final class ContentDimensionResolverContext
 {
+    private string $uriPath;
     private string $remainingUriPath;
     private RouteParameters $routeParameters;
-    private array $dimensionSpacePointCoordinates;
+    private array $dimensionSpacePointCoordinates = [];
 
-    private function __construct(string $remainingUriPath, RouteParameters $routeParameters, array $dimensionSpacePointCoordinates)
+    private function __construct(string $uriPath, RouteParameters $routeParameters)
     {
-        $this->remainingUriPath = $remainingUriPath;
+        $this->uriPath = $uriPath;
+        $this->remainingUriPath = $uriPath;
         $this->routeParameters = $routeParameters;
-        $this->dimensionSpacePointCoordinates = $dimensionSpacePointCoordinates;
     }
 
     public static function fromUriPathAndRouteParameters(string $uriPath, RouteParameters $routeParameters): self
     {
-        return new self($uriPath, $routeParameters, []);
+        return new self($uriPath, $routeParameters);
     }
 
     public function addDimensionSpacePointCoordinate(ContentDimensionIdentifier $dimensionIdentifier, ContentDimensionValue $dimensionValue): self
     {
         $dimensionSpacePointCoordinates = $this->dimensionSpacePointCoordinates;
         $dimensionSpacePointCoordinates[(string)$dimensionIdentifier] = $dimensionValue->getValue();
-        return new self($this->remainingUriPath, $this->routeParameters, $dimensionSpacePointCoordinates);
+        $newInstance = clone $this;
+        $newInstance->dimensionSpacePointCoordinates = $dimensionSpacePointCoordinates;
+        return $newInstance;
     }
 
     public function withRemainingUriPath(string $remainingUriPath): self
     {
-        return new self($remainingUriPath, $this->routeParameters, $this->dimensionSpacePointCoordinates);
+        $newInstance = clone $this;
+        $newInstance->remainingUriPath = $remainingUriPath;
+        return $newInstance;
+    }
+
+    public function routeParameters(): RouteParameters
+    {
+        return $this->routeParameters;
+    }
+
+    public function uriPath(): string
+    {
+        return $this->uriPath;
     }
 
     public function remainingUriPath(): string
@@ -48,6 +63,7 @@ final class ContentDimensionResolverContext
 
     public function dimensionSpacePoint(): DimensionSpacePoint
     {
+        // TODO validate dsp == complete (ContentDimensionZookeeper::getAllowedDimensionSubspace()->contains()...)
         return DimensionSpacePoint::fromArray($this->dimensionSpacePointCoordinates);
     }
 }

@@ -12,6 +12,10 @@ use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
  */
 interface ContentDimensionResolverInterface
 {
+    /**
+     * @param ContentDimensionResolverContext $context
+     * @return ContentDimensionResolverContext Note: This can contain an "incomplete" dimension space point... TODO
+     */
     public function resolveDimensionSpacePoint(ContentDimensionResolverContext $context): ContentDimensionResolverContext;
 
     public function resolveDimensionUriConstraints(UriConstraints $uriConstraints, DimensionSpacePoint $dimensionSpacePoint): UriConstraints;
