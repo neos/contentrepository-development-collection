@@ -1,0 +1,12 @@
+diff --git a/Neos.ContentRepository/Classes/Domain/Model/Node.php b/Neos.ContentRepository/Classes/Domain/Model/Node.php
+index 551a73c27..ed255dacf 100644
+--- a/Neos.ContentRepository/Classes/Domain/Model/Node.php
++++ b/Neos.ContentRepository/Classes/Domain/Model/Node.php
+@@ -106,6 +106,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
+      */
+     public function __construct(NodeData $nodeData, Context $context)
+     {
++        throw new \Neos\Flow\Exception(sprintf('A %s legacy node was instantiated, but that is no longer supported, please check the backtrace', __CLASS__), 1613401289);
+         $this->nodeData = $nodeData;
+         $this->context = $context;
+     }
