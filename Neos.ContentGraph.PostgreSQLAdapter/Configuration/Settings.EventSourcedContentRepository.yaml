@@ -1,0 +1,8 @@
+Neos:
+  EventSourcedContentRepository:
+    testing:
+      projectorsToBeReset:
+        'Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector': true
+    projection:
+      defaultProjectorsToBeBlocked:
+        'Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector': true

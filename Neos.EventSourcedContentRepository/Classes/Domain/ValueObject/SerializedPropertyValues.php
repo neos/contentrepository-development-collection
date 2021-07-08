@@ -77,6 +77,16 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
         return new self($values);
     }
 
+    public static function fromJsonString(string $jsonString): self
+    {
+        return self::fromArray(\json_decode($jsonString, true));
+    }
+
+    public static function fromNode(NodeInterface $node): self
+    {
+        return $node->getProperties();
+    }
+
     private static function assertTypeIsNoReference(string $propertyTypeFromSchema)
     {
         if ($propertyTypeFromSchema === 'reference' || $propertyTypeFromSchema === 'references') {
@@ -111,11 +121,6 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     public function getValues(): array
     {
         return $this->values;
-    }
-
-    public static function fromNode(NodeInterface $node): self
-    {
-        return $node->getProperties();
     }
 
     /**

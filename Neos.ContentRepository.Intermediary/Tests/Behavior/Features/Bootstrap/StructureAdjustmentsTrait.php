@@ -26,7 +26,10 @@ use PHPUnit\Framework\Assert;
  */
 trait StructureAdjustmentsTrait
 {
-    protected StructureAdjustmentService $structureAdjustmentService;
+    /**
+     * @var StructureAdjustmentService
+     */
+    protected $structureAdjustmentService;
 
     /**
      * @return ObjectManagerInterface

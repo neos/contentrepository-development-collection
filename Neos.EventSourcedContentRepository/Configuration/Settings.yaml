@@ -1,7 +1,12 @@
 Neos:
   EventSourcedContentRepository:
     contentDimensions: {}
-
+    testing:
+      projectorsToBeReset: {}
+    projection:
+      defaultProjectorsToBeBlocked:
+        'Neos\EventSourcedContentRepository\Domain\Projection\ContentStream\ContentStreamProjector': true
+        'Neos\EventSourcedContentRepository\Domain\Projection\Workspace\WorkspaceProjector': true
   EventSourcing:
     EventStore:
       stores:

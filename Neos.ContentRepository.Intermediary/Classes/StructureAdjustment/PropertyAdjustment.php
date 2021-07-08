@@ -9,11 +9,12 @@ use Neos\EventSourcedContentRepository\Domain\Context\Parameters\VisibilityConst
 use Neos\EventSourcedContentRepository\Domain\Projection\Content\NodeInterface;
 use Neos\EventSourcedContentRepository\Domain\Context\ContentStream\ContentStreamEventStreamName;
 use Neos\EventSourcedContentRepository\Domain\Context\NodeAggregate\Event\NodePropertiesWereSet;
+use Neos\EventSourcedContentRepository\Domain\CommandResult;
 use Neos\ContentRepository\Intermediary\StructureAdjustment\Traits\LoadNodeTypeTrait;
-use Neos\EventSourcedContentRepository\Domain\ValueObject\CommandResult;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValue;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\SerializedPropertyValues;
 use Neos\EventSourcedContentRepository\Domain\ValueObject\UserIdentifier;
+use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
@@ -35,6 +36,7 @@ class PropertyAdjustment
     protected ProjectedNodeIterator $projectedNodeIterator;
     protected NodeTypeManager $nodeTypeManager;
     protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
+    protected RuntimeBlocker $runtimeBlocker;
     protected ReadModelFactory $readModelFactory;
     protected ContentGraph $contentGraph;
 
@@ -43,6 +45,7 @@ class PropertyAdjustment
         ProjectedNodeIterator $projectedNodeIterator,
         NodeTypeManager $nodeTypeManager,
         ReadSideMemoryCacheManager $readSideMemoryCacheManager,
+        RuntimeBlocker $runtimeBlocker,
         ReadModelFactory $readModelFactory,
         ContentGraph $contentGraph
     ) {
@@ -50,6 +53,7 @@ class PropertyAdjustment
         $this->projectedNodeIterator = $projectedNodeIterator;
         $this->nodeTypeManager = $nodeTypeManager;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
+        $this->runtimeBlocker = $runtimeBlocker;
         $this->readModelFactory = $readModelFactory;
         $this->contentGraph = $contentGraph;
     }
@@ -74,10 +78,16 @@ class PropertyAdjustment
 
                     // detect obsolete properties
                     if (!array_key_exists($propertyKey, $expectedPropertiesFromNodeType)) {
-                        yield StructureAdjustment::createForNode($node, StructureAdjustment::OBSOLETE_PROPERTY, 'The property "' . $propertyKey . '" is not defined anymore in the current NodeType schema. Suggesting to remove it.', function () use ($node, $propertyKey) {
-                            $this->readSideMemoryCacheManager->disableCache();
-                            return $this->removeProperty($node, $propertyKey);
-                        });
+                        yield StructureAdjustment::createForNode(
+                            $node,
+                            StructureAdjustment::OBSOLETE_PROPERTY,
+                            'The property "' . $propertyKey . '" is not defined anymore in the current NodeType schema. Suggesting to remove it.',
+                            $this->runtimeBlocker,
+                            function () use ($node, $propertyKey) {
+                                $this->readSideMemoryCacheManager->disableCache();
+                                return $this->removeProperty($node, $propertyKey);
+                            }
+                        );
                     }
 
                     // detect non-deserializable properties
@@ -85,10 +95,16 @@ class PropertyAdjustment
                         $nodeReadModel->getProperties()->offsetGet($propertyKey);
                     } catch (\Exception $e) {
                         $message = sprintf('The property "%s" was not deserializable. Error was: %s %s. Remove the property?', $propertyKey, get_class($e), $e->getMessage());
-                        yield StructureAdjustment::createForNode($node, StructureAdjustment::NON_DESERIALIZABLE_PROPERTY, $message, function () use ($node, $propertyKey) {
-                            $this->readSideMemoryCacheManager->disableCache();
-                            return $this->removeProperty($node, $propertyKey);
-                        });
+                        yield StructureAdjustment::createForNode(
+                            $node,
+                            StructureAdjustment::NON_DESERIALIZABLE_PROPERTY,
+                            $message,
+                            $this->runtimeBlocker,
+                            function () use ($node, $propertyKey) {
+                                $this->readSideMemoryCacheManager->disableCache();
+                                return $this->removeProperty($node, $propertyKey);
+                            }
+                        );
                     }
                 }
 
@@ -98,10 +114,16 @@ class PropertyAdjustment
                         $propertyValue = json_encode($propertyValue);
                     }
                     if (!array_key_exists($propertyKey, $propertyKeysInNode)) {
-                        yield StructureAdjustment::createForNode($node, StructureAdjustment::MISSING_DEFAULT_VALUE, 'The property "' . $propertyKey . '" is is missing in the node. Suggesting to add it.', function () use ($node, $propertyKey, $defaultValue) {
-                            $this->readSideMemoryCacheManager->disableCache();
-                            return $this->addProperty($node, $propertyKey, $defaultValue);
-                        });
+                        yield StructureAdjustment::createForNode(
+                            $node,
+                            StructureAdjustment::MISSING_DEFAULT_VALUE,
+                            'The property "' . $propertyKey . '" is is missing in the node. Suggesting to add it.',
+                            $this->runtimeBlocker,
+                            function () use ($node, $propertyKey, $defaultValue) {
+                                $this->readSideMemoryCacheManager->disableCache();
+                                return $this->addProperty($node, $propertyKey, $defaultValue);
+                            }
+                        );
                     }
                 }
             }
@@ -141,7 +163,8 @@ class PropertyAdjustment
 
         $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($node->getContentStreamIdentifier());
         $this->eventStore->commit($streamName->getEventStreamName(), $events);
-        return CommandResult::fromPublishedEvents($events);
+
+        return CommandResult::fromPublishedEvents($events, $this->runtimeBlocker);
     }
 
     protected function getNodeTypeManager(): NodeTypeManager

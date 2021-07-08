@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Intermediary\StructureAdjustment;
 
+use Neos\EventSourcedContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Intermediary\StructureAdjustment\Traits\LoadNodeTypeTrait;
 use Neos\ContentRepository\Intermediary\StructureAdjustment\Traits\RemoveNodeAggregateTrait;
 use Neos\EventSourcedContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
@@ -24,13 +25,25 @@ class UnknownNodeTypeAdjustment
     protected ProjectedNodeIterator $projectedNodeIterator;
     protected NodeTypeManager $nodeTypeManager;
     protected ReadSideMemoryCacheManager $readSideMemoryCacheManager;
+    protected RuntimeBlocker $runtimeBlocker;
 
-    public function __construct(EventStore $eventStore, ProjectedNodeIterator $projectedNodeIterator, NodeTypeManager $nodeTypeManager, ReadSideMemoryCacheManager $readSideMemoryCacheManager)
-    {
+    public function __construct(
+        EventStore $eventStore,
+        ProjectedNodeIterator $projectedNodeIterator,
+        NodeTypeManager $nodeTypeManager,
+        ReadSideMemoryCacheManager $readSideMemoryCacheManager,
+        RuntimeBlocker $runtimeBlocker
+    ) {
         $this->eventStore = $eventStore;
         $this->projectedNodeIterator = $projectedNodeIterator;
         $this->nodeTypeManager = $nodeTypeManager;
         $this->readSideMemoryCacheManager = $readSideMemoryCacheManager;
+        $this->runtimeBlocker = $runtimeBlocker;
+    }
+
+    public function getRuntimeBlocker(): RuntimeBlocker
+    {
+        return $this->runtimeBlocker;
     }
 
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
@@ -50,10 +63,16 @@ class UnknownNodeTypeAdjustment
     private function removeAllNodesOfType(NodeTypeName $nodeTypeName): \Generator
     {
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
-            yield StructureAdjustment::createForNodeAggregate($nodeAggregate, StructureAdjustment::NODE_TYPE_MISSING, 'The node type "' . $nodeTypeName->jsonSerialize() . '" is not found; so the node should be removed (or converted)', function () use ($nodeAggregate) {
-                $this->readSideMemoryCacheManager->disableCache();
-                return $this->removeNodeAggregate($nodeAggregate);
-            });
+            yield StructureAdjustment::createForNodeAggregate(
+                $nodeAggregate,
+                StructureAdjustment::NODE_TYPE_MISSING,
+                'The node type "' . $nodeTypeName->jsonSerialize() . '" is not found; so the node should be removed (or converted)',
+                $this->runtimeBlocker,
+                function () use ($nodeAggregate) {
+                    $this->readSideMemoryCacheManager->disableCache();
+                    return $this->removeNodeAggregate($nodeAggregate);
+                }
+            );
         }
     }
 
