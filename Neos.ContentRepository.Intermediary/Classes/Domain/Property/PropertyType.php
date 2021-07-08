@@ -192,6 +192,10 @@ final class PropertyType
             }
         }
 
+        if ($this->isDate()) {
+            return $propertyValue instanceof \DateTimeInterface;
+        }
+
         $className = $this->value[0] != '\\'
             ? '\\' . $this->value
             : $this->value;

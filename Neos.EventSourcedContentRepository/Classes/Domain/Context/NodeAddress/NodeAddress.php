@@ -31,12 +31,24 @@ use Neos\EventSourcedContentRepository\Domain\ValueObject\WorkspaceName;
  */
 final class NodeAddress
 {
+    /**
+     * @var ContentStreamIdentifier
+     */
     protected ContentStreamIdentifier $contentStreamIdentifier;
 
+    /**
+     * @var DimensionSpacePoint
+     */
     protected DimensionSpacePoint $dimensionSpacePoint;
 
+    /**
+     * @var NodeAggregateIdentifier
+     */
     protected NodeAggregateIdentifier $nodeAggregateIdentifier;
 
+    /**
+     * @var WorkspaceName|null
+     */
     protected ?WorkspaceName $workspaceName;
 
     public function __construct(

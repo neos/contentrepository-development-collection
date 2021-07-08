@@ -57,10 +57,10 @@ final class SqlQueryBuilder
 
     /**
      * @param Connection $connection
-     * @return Statement
+     * @return \Doctrine\DBAL\Driver\ResultStatement|Statement|\Doctrine\DBAL\ForwardCompatibility\Result|\Doctrine\DBAL\Result
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function execute(Connection $connection): Statement
+    public function execute(Connection $connection)
     {
         return $connection->executeQuery($this->query, $this->parameters, $this->types);
     }

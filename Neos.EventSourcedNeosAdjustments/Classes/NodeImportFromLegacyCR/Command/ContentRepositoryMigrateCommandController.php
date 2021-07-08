@@ -170,7 +170,6 @@ class ContentRepositoryMigrateCommandController extends CommandController
         $this->outputLine('');
         $this->outputLine('!!!!! NOW, run ./flow projection:replay change');
         $this->outputLine('!!!!! NOW, run ./flow projection:replay nodehiddenstate');
-
-        // ChangeProjector catchup
+        $this->outputLine('!!!!! NOW, run ./flow projection:replay documenturipath');
     }
 }
