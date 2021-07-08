@@ -40,18 +40,23 @@ final class PropertyConverter
         $serializedPropertyValues = [];
 
         foreach ($propertyValuesToWrite->getValues() as $propertyName => $propertyValue) {
-            // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call, so we need to trigger another method beforehand.
-            $nodeType->getOptions();
+            if ($propertyValue !== null) {
+                // WORKAROUND: $nodeType->getPropertyType() is missing the "initialize" call, so we need to trigger another method beforehand.
+                $nodeType->getOptions();
 
-            $propertyType = PropertyType::fromNodeTypeDeclaration($nodeType->getPropertyType($propertyName));
+                $propertyType = PropertyType::fromNodeTypeDeclaration($nodeType->getPropertyType($propertyName));
 
-            try {
-                $propertyValue = $this->serializer->normalize($propertyValue);
-            } catch (NotEncodableValueException | NotNormalizableValueException $e) {
-                throw new \RuntimeException('TODO: There was a problem serializing ' . get_class($propertyValue), 1594842314, $e);
+                try {
+                    $propertyValue = $this->serializer->normalize($propertyValue);
+                } catch (NotEncodableValueException | NotNormalizableValueException $e) {
+                    throw new \RuntimeException('TODO: There was a problem serializing ' . get_class($propertyValue), 1594842314, $e);
+                }
+
+                $serializedPropertyValues[$propertyName] = new SerializedPropertyValue($propertyValue, (string)$propertyType);
+            } else {
+                // $propertyValue == null -> we want to unset $propertyName!
+                $serializedPropertyValues[$propertyName] = null;
             }
-
-            $serializedPropertyValues[$propertyName] = new SerializedPropertyValue($propertyValue, (string)$propertyType);
         }
 
         return SerializedPropertyValues::fromArray($serializedPropertyValues);

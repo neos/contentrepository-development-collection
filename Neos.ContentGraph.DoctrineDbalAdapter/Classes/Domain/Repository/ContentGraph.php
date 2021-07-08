@@ -79,37 +79,6 @@ final class ContentGraph implements ContentGraphInterface
 
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param OriginDimensionSpacePoint $originDimensionSpacePoint
-     * @return NodeInterface|null
-     * @throws DBALException
-     */
-    public function findNodeByIdentifiers(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        OriginDimensionSpacePoint $originDimensionSpacePoint
-    ): ?NodeInterface {
-        $connection = $this->client->getConnection();
-
-        // HINT: we check the ContentStreamIdentifier on the EDGE; as this is where we actually find out whether the node exists in the content stream
-        $nodeRow = $connection->executeQuery(
-            'SELECT n.*, h.contentstreamidentifier, h.name FROM neos_contentgraph_node n
-                  INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
-                  WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
-                  AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
-                  AND h.contentstreamidentifier = :contentStreamIdentifier',
-            [
-                'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
-                'originDimensionSpacePointHash' => $originDimensionSpacePoint->getHash(),
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier
-            ]
-        )->fetch();
-
-        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
-    }
-
-    /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeTypeName $nodeTypeName
      * @throws DBALException
      * @throws \Exception
@@ -140,7 +109,7 @@ final class ContentGraph implements ContentGraphInterface
         return $this->nodeFactory->mapNodeRowsToNodeAggregate([$nodeRow]);
     }
 
-    public function findNodeAggregatesByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): \Iterator
+    public function findNodeAggregatesByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): iterable
     {
         $connection = $this->client->getConnection();
 
@@ -154,10 +123,8 @@ final class ContentGraph implements ContentGraphInterface
             'nodeTypeName' => (string)$nodeTypeName,
         ];
 
-        $resultStatement = $connection->executeQuery($query, $parameters);
-        while ($nodeRow = $resultStatement->fetch()) {
-            yield $this->nodeFactory->mapNodeRowsToNodeAggregate([$nodeRow]);
-        }
+        $resultStatement = $connection->executeQuery($query, $parameters)->fetchAllAssociative();
+        return $this->nodeFactory->mapNodeRowsToNodeAggregates($resultStatement);
     }
 
     /**
@@ -198,14 +165,14 @@ final class ContentGraph implements ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return array|NodeAggregate[]
+     * @return iterable<NodeAggregate>
      * @throws DBALException
      * @throws \Exception
      */
     public function findParentNodeAggregates(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $nodeAggregateIdentifier
-    ): array {
+    ): iterable {
         $connection = $this->client->getConnection();
 
         $query = 'SELECT p.*,
@@ -283,14 +250,14 @@ final class ContentGraph implements ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @return array|NodeAggregate[]
+     * @return iterable<NodeAggregate>
      * @throws DBALException
      * @throws \Exception
      */
     public function findChildNodeAggregates(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier
-    ): array {
+    ): iterable {
         $connection = $this->client->getConnection();
 
         $query = $this->createChildNodeAggregateQuery();
@@ -309,14 +276,14 @@ final class ContentGraph implements ContentGraphInterface
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
      * @param NodeName $name
-     * @return array
+     * @return iterable<NodeAggregate>
      * @throws DBALException
      */
     public function findChildNodeAggregatesByName(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier,
         NodeName $name
-    ): array {
+    ): iterable {
         $connection = $this->client->getConnection();
 
         $query = $this->createChildNodeAggregateQuery() . '
@@ -336,13 +303,13 @@ final class ContentGraph implements ContentGraphInterface
     /**
      * @param ContentStreamIdentifier $contentStreamIdentifier
      * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
-     * @return array|NodeAggregate[]
+     * @return iterable<NodeAggregate>
      * @throws DBALException
      */
     public function findTetheredChildNodeAggregates(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $parentNodeAggregateIdentifier
-    ): array {
+    ): iterable {
         $connection = $this->client->getConnection();
 
         $query = $this->createChildNodeAggregateQuery() . '
@@ -431,47 +398,7 @@ final class ContentGraph implements ContentGraphInterface
         return (int) $connection->executeQuery($query)->fetch()['COUNT(*)'];
     }
 
-    /**
-     * Returns all content stream identifiers
-     *
-     * @return ContentStreamIdentifier[]
-     */
-    public function findProjectedContentStreamIdentifiers(): array
-    {
-        $connection = $this->client->getConnection();
-
-        $rows = $connection->executeQuery('SELECT DISTINCT contentstreamidentifier FROM neos_contentgraph_hierarchyrelation')->fetchAll();
-        return array_map(function (array $row) {
-            return ContentStreamIdentifier::fromString($row['contentstreamidentifier']);
-        }, $rows);
-    }
-
-    public function findProjectedDimensionSpacePoints(): DimensionSpacePointSet
-    {
-        $records = $this->client->getConnection()->executeQuery(
-            'SELECT DISTINCT dimensionspacepoint FROM neos_contentgraph_hierarchyrelation'
-        )->fetchAll();
-
-        $records = array_map(function (array $record) {
-            return DimensionSpacePoint::fromJsonString($record['dimensionspacepoint']);
-        }, $records);
-
-        return new DimensionSpacePointSet($records);
-    }
-
-    public function findProjectedNodeAggregateIdentifiersInContentStream(ContentStreamIdentifier $contentStreamIdentifier): array
-    {
-        $records = $this->client->getConnection()->executeQuery(
-            'SELECT DISTINCT nodeaggregateidentifier FROM neos_contentgraph_node'
-        )->fetchAll();
-
-        return array_map(function (array $record) {
-            return NodeAggregateIdentifier::fromString($record['nodeaggregateidentifier']);
-        }, $records);
-    }
-
-
-    public function findProjectedNodeTypes(): iterable
+    public function findUsedNodeTypeNames(): iterable
     {
         $connection = $this->client->getConnection();
 

@@ -1351,11 +1351,14 @@ trait EventSourcedTrait
     public function iExpectANodeWithIdentifierToExistInTheContentGraph(string $serializedNodeIdentifier)
     {
         $nodeIdentifier = NodeDiscriminator::fromArray(json_decode($serializedNodeIdentifier, true));
-        $this->currentNode = $this->contentGraph->findNodeByIdentifiers(
-            $nodeIdentifier->getContentStreamIdentifier(),
-            $nodeIdentifier->getNodeAggregateIdentifier(),
-            $nodeIdentifier->getOriginDimensionSpacePoint()
-        );
+
+        $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier($nodeIdentifier->getContentStreamIdentifier(), $nodeIdentifier->getNodeAggregateIdentifier());
+        if ($nodeAggregate !== null) {
+            $this->currentNode = $nodeAggregate->getNodeByOccupiedDimensionSpacePoint($nodeIdentifier->getOriginDimensionSpacePoint());
+        } else {
+            $this->currentNode = null;
+        }
+
         Assert::assertNotNull(
             $this->currentNode,
             'Node with aggregate identifier "' . $nodeIdentifier->getNodeAggregateIdentifier()
@@ -1588,6 +1591,19 @@ trait EventSourcedTrait
     }
 
     /**
+     * @Then /^I expect the node "([^"]*)" to have the name "([^"]*)"$/
+     * @param string $nodeAggregateIdentifier
+     * @param string $nodeName
+     */
+    public function iExpectTheNodeToHaveTheName(string $nodeAggregateIdentifier, string $nodeName)
+    {
+        $node = $this->contentGraph
+            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
+            ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
+        Assert::assertEquals($nodeName, (string)$node->getNodeName(), 'Node Names do not match');
+    }
+
+    /**
      * @Then /^I expect this node to have the properties:$/
      * @param TableNode $expectedProperties
      */
@@ -1624,25 +1640,6 @@ trait EventSourcedTrait
     }
 
     /**
-     * @Then /^I expect the current Node to have the properties:$/
-     * @param TableNode $expectedProperties
-     */
-    public function iExpectTheCurrentNodeToHaveTheProperties(TableNode $expectedProperties)
-    {
-        Assert::assertNotNull($this->currentNode, 'current node not found');
-        $this->currentNode = $this->contentGraph
-            ->getSubgraphByIdentifier($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-            ->findNodeByNodeAggregateIdentifier($this->currentNode->getNodeAggregateIdentifier());
-
-        $properties = $this->currentNode->getProperties();
-        foreach ($expectedProperties->getHash() as $row) {
-            Assert::assertTrue($properties->propertyExists($row['Key']), 'Property "' . $row['Key'] . '" not found');
-            $actualProperty = $properties->getProperty($row['Key'])->getValue();
-            Assert::assertEquals($row['Value'], $actualProperty, 'Node property ' . $row['Key'] . ' does not match. Expected: ' . json_encode($row['Value']) . '; Actual: ' . json_encode($actualProperty));
-        }
-    }
-
-    /**
      * @Then /^I expect this node to have no properties$/
      */
     public function iExpectThisNodeToHaveNoProperties()
@@ -1651,6 +1648,14 @@ trait EventSourcedTrait
         $properties = $this->currentNode->getProperties();
         $properties = iterator_to_array($properties);
         Assert::assertCount(0, $properties, 'I expect no properties');
+    }
+
+    /**
+     * @Then I expect this node to not have the property :propertyName
+     */
+    public function iExpectThisNodeToNotHaveTheProperty(string $propertyName)
+    {
+        Assert::assertFalse($this->currentNode->hasProperty($propertyName));
     }
 
     /**

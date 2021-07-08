@@ -16,10 +16,13 @@ require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Fe
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/EventSourcedTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Intermediary/Tests/Behavior/Features/Bootstrap/IntermediaryCommandTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/MigrationsTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.EventSourcedContentRepository/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
 require_once(__DIR__ . '/BrowserTrait.php');
 require_once(__DIR__ . '/FlowSubcommandTrait.php');
 require_once(__DIR__ . '/FlowQueryTrait.php');
+
+use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\MigrationsTrait;
 use Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
@@ -38,6 +41,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
     use FlowQueryTrait;
     use IsolatedBehatStepsTrait;
     use RoutingTrait;
+    use MigrationsTrait;
 
     public function __construct()
     {
@@ -48,6 +52,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
 
         $this->setupFlowSubcommandTrait();
         $this->setupEventSourcedTrait();
+        $this->setupMigrationsTrait();
         $this->readModelFactory = $this->objectManager->get(\Neos\ContentRepository\Intermediary\Domain\ReadModelFactory::class);
     }
 
