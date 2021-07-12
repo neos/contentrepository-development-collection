@@ -5,8 +5,6 @@ Neos:
         label: 'Neos.Demo:Main:contentDimensions.language'
         icon: icon-language
         defaultValue: en_US
-        resolution:
-          mode: 'uriPathSegment'
         values:
           en_US:
             label: 'English (US)'

@@ -3,10 +3,32 @@
 Feature: Routing functionality with multiple content dimensions
 
   Background:
-    Given I have the following content dimensions:
-      | Identifier | Default | Values      | Generalizations | ResolutionMode | ResolutionValues      |
-      | market     | DE      | DE, CH      | CH->DE          |                |                       |
-      | language   | en      | en, de, gsw | gsw->de->en     | uriPathSegment | en:en, de:de, gsw:gsw |
+    Given I have the following content dimension configuration:
+      """
+      market:
+        defaultValue: DE
+        values:
+          DE:
+           resolution:
+             value: ''
+           specializations:
+             CH:
+               resolution:
+                 value: ''
+      language:
+        defaultValue: en
+        values:
+          en:
+            resolution:
+              value: ''
+            specializations:
+              de:
+                resolution:
+                  value: 'de'
+              gsw:
+                resolution:
+                  value: 'gsw'
+      """
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value           |
       | workspaceName              | "live"          |

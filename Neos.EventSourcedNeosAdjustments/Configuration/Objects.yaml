@@ -43,3 +43,20 @@ Neos\EventSourcedNeosAdjustments\EventSourcedRouting\Projection\DocumentUriPathF
       object:
         factoryObjectName: 'Doctrine\ORM\EntityManagerInterface'
         factoryMethodName: 'getConnection'
+
+#'NeosDemo:LanguageDimensionIdentifier':
+#  className: Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier
+#  arguments:
+#    1:
+#      value: 'language'
+#
+#'NeosDemo:LanguageDimension':
+#  className: Neos\ContentRepository\DimensionSpace\Dimension\ContentDimension
+#  factoryObjectName: Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface
+#  factoryMethodName: getDimension
+#  arguments:
+#    1:
+#      object: 'NeosDemo:LanguageDimensionIdentifier'
+
+Neos\EventSourcedNeosAdjustments\EventSourcedRouting\ContentDimensionResolver\ContentDimensionResolverInterface:
+  className: 'Neos\EventSourcedNeosAdjustments\EventSourcedRouting\ContentDimensionResolver\DefaultContentDimensionResolver'

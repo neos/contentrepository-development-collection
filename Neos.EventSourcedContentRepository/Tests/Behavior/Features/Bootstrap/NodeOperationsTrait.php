@@ -12,6 +12,7 @@ namespace Neos\EventSourcedContentRepository\Tests\Behavior\Features\Bootstrap;
  * source code.
  */
 
+use Behat\Gherkin\Node\PyStringNode;
 use Neos\ContentRepository\DimensionSpace\Dimension\ConfigurationBasedContentDimensionSource;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimension;
 use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
@@ -78,7 +79,6 @@ trait NodeOperationsTrait
 
     /**
      * @Given /^I have the following content dimensions:$/
-     * @throws \JsonException
      */
     public function iHaveTheFollowingContentDimensions($table)
     {
@@ -102,23 +102,10 @@ trait NodeOperationsTrait
                     }
                 }
 
-                $resolutionValues = [];
-                if (isset($row['ResolutionValues'])) {
-                    foreach (Arrays::trimExplode(',', $row['ResolutionValues']) as $resolutionValueMap) {
-                        [$key, $value] = Arrays::trimExplode(':', $resolutionValueMap);
-                        $resolutionValues[$key] = $value;
-                    }
-                }
                 foreach (Arrays::trimExplode(',', $row['Values']) as $rawDimensionValue) {
-                    $dimensionValueConfiguration = [];
-                    if (isset($resolutionValues[$rawDimensionValue])) {
-                        $dimensionValueConfiguration['resolution']['value'] = $resolutionValues[$rawDimensionValue];
-                    }
                     $dimensionValues[$rawDimensionValue] = new ContentDimensionValue(
                         $rawDimensionValue,
-                        new ContentDimensionValueSpecializationDepth($specializationDepths[$rawDimensionValue] ?? 0),
-                        [],
-                        $dimensionValueConfiguration
+                        new ContentDimensionValueSpecializationDepth($specializationDepths[$rawDimensionValue] ?? 0)
                     );
                 }
 
@@ -126,16 +113,11 @@ trait NodeOperationsTrait
                     $variationEdges[] = new ContentDimensionValueVariationEdge($dimensionValues[$rawSpecializationValue], $dimensionValues[$rawGeneralizationValue]);
                 }
 
-                $dimensionConfiguration = [];
-                if (!empty($row['ResolutionMode'])) {
-                    $dimensionConfiguration['resolution']['mode'] = $row['ResolutionMode'];
-                }
                 $dimensions[$row['Identifier']] = new ContentDimension(
                     new ContentDimensionIdentifier($row['Identifier']),
                     $dimensionValues,
                     $dimensionValues[$row['Default']],
-                    $variationEdges,
-                    $dimensionConfiguration
+                    $variationEdges
                 );
             }
 
@@ -149,6 +131,27 @@ trait NodeOperationsTrait
             $this->resetDimensionSpaceRepositories();
         }
     }
+
+    /**
+     * @Given /^I have the following content dimension configuration:$/
+     */
+    public function iHaveTheFollowingContentDimensionConfiguration(PyStringNode $configuration)
+    {
+        if ($this->isolated === true) {
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(PyStringNode::class), escapeshellarg($configuration->getRaw())));
+        } else {
+            $contentDimensionSource = $this->getObjectManager()->get(ContentDimensionSourceInterface::class);
+            if (!$contentDimensionSource instanceof ConfigurationBasedContentDimensionSource) {
+                throw new \RuntimeException(sprintf('$contentDimensionSource must be of type ConfigurationBasedContentDimensionSource, %s given', get_class($contentDimensionSource)), 1614006218);
+            }
+            ObjectAccess::setProperty($contentDimensionSource, 'contentDimensions', null, true);
+            ObjectAccess::setProperty($contentDimensionSource, 'dimensionConfiguration', Yaml::parse($configuration->getRaw()), true);
+
+            $this->resetDimensionSpaceRepositories();
+        }
+    }
+
+
 
     /**
      * @Given /^I have no content dimensions$/
