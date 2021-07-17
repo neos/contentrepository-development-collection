@@ -68,7 +68,7 @@ final class ContentGraph implements ContentGraphInterface
         ContentStreamIdentifier $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         Domain\Context\Parameters\VisibilityConstraints $visibilityConstraints
-    ): ?ContentSubgraphInterface {
+    ): ContentSubgraphInterface {
         $index = (string)$contentStreamIdentifier . '-' . $dimensionSpacePoint->getHash() . '-' . $visibilityConstraints->getHash();
         if (!isset($this->subgraphs[$index])) {
             $this->subgraphs[$index] = new ContentSubgraph($contentStreamIdentifier, $dimensionSpacePoint, $visibilityConstraints);
@@ -105,7 +105,7 @@ final class ContentGraph implements ContentGraphInterface
             ]
         )->fetch();
 
-        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow) : null;
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode($nodeRow, $originDimensionSpacePoint) : null;
     }
 
     /**
@@ -113,7 +113,7 @@ final class ContentGraph implements ContentGraphInterface
      * @param NodeTypeName $nodeTypeName
      * @throws DBALException
      * @throws \Exception
-     * @return NodeAggregate|null
+     * @return NodeAggregate
      */
     public function findRootNodeAggregateByType(ContentStreamIdentifier $contentStreamIdentifier, NodeTypeName $nodeTypeName): NodeAggregate
     {
