@@ -17,6 +17,8 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Connection as DatabaseConnection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\CypherPattern;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\CypherPatternParser;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphChildQuery;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphParentQuery;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphQuery;
@@ -94,6 +96,23 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     public function getDimensionSpacePoint(): DimensionSpacePoint
     {
         return $this->dimensionSpacePoint;
+    }
+
+    public function findByCypherPattern(CypherPattern $cypherPattern): Nodes
+    {
+        $query = HypergraphQuery::fromCypherPattern(
+            $cypherPattern,
+            $this->contentStreamIdentifier,
+            $this->dimensionSpacePoint
+        );
+
+        /** @phpstan-ignore-next-line @todo check actual return type */
+        $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
+
+        return $this->nodeFactory->mapNodeRowsToNodes(
+            $nodeRows,
+            $this->visibilityConstraints
+        );
     }
 
     public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface

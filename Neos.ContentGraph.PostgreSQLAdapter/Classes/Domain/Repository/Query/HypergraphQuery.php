@@ -30,6 +30,23 @@ final class HypergraphQuery implements HypergraphQueryInterface
 {
     use CommonGraphQueryOperations;
 
+    public static function fromCypherPattern(
+        CypherPattern $pattern,
+        ContentStreamIdentifier $contentStreamIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint
+    ): self {
+        /** @var CypherNode $node */
+        $node = $pattern->path[0];
+
+        return self::create(
+            $contentStreamIdentifier,
+            false,
+        )->withDimensionSpacePoint($dimensionSpacePoint)
+            ->withNodeAggregateIdentifier(NodeAggregateIdentifier::fromString(
+                $node->properties->properties['nodeAggregateIdentifier']
+            ));
+    }
+
     public static function create(
         ContentStreamIdentifier $contentStreamIdentifier,
         bool $joinRestrictionRelations = false
